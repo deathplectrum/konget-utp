@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T18:38:49.222Z",
+  "checked_at": "2026-10-29T18:51:05.495Z",
   "previous_date": null,
-  "total_seconds": 39,
+  "total_seconds": 186,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
@@ -58,14 +58,17 @@
           "source_url": "https://tenet.ru/models/t9/"
         }
       ],
-      "screens": [],
+      "screens": [
+        "data/screens/1/model-4.jpg"
+      ],
       "comment": "",
       "status": "ok",
-      "seconds": 45,
+      "seconds": 47,
       "pages_opened": 9,
       "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "changes": [
+        "Записано моделей: 6"
+      ]
     },
     {
       "id": 2,
@@ -124,14 +127,17 @@
           "source_url": "https://tank.ru/models/wey-v9x/"
         }
       ],
-      "screens": [],
+      "screens": [
+        "data/screens/2/model-4.jpg"
+      ],
       "comment": "",
       "status": "ok",
-      "seconds": 154,
+      "seconds": 132,
       "pages_opened": 10,
       "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "changes": [
+        "Записано моделей: 8"
+      ]
     },
     {
       "id": 3,
@@ -196,52 +202,9 @@
       "seconds": 175,
       "pages_opened": 11,
       "change": "Первая проверка",
-      "changes": [],
-      "diff": []
-    },
-    {
-      "id": 5,
-      "company": "Belgee (тест)",
-      "responsible": "None",
-      "site": "belgee.ru",
-      "brand": "Belgee",
-      "file": "005-belgee.yaml",
-      "models": [
-        {
-          "model": "Новый X50",
-          "price": 2099990,
-          "max_benefit": 100000,
-          "source_url": "https://belgee.ru/model/belgee-x50-new/"
-        },
-        {
-          "model": "X50+",
-          "price": 2219990,
-          "max_benefit": 100000,
-          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
-        },
-        {
-          "model": "S50",
-          "price": 1729990,
-          "max_benefit": 200000,
-          "source_url": "https://belgee.ru/model/belgee-s50/"
-        },
-        {
-          "model": "X70",
-          "price": 2529990,
-          "max_benefit": 80000,
-          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
-        }
-      ],
-      "screens": [
-        "data/screens/5/model-1.jpg"
-      ],
-      "comment": "",
-      "status": "ok",
-      "seconds": 115,
-      "pages_opened": 7,
-      "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "changes": [
+        "Записано моделей: 8"
+      ]
     },
     {
       "id": 4,
@@ -287,11 +250,57 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 23,
+      "seconds": 24,
       "pages_opened": 8,
       "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "changes": [
+        "Записано моделей: 5"
+      ]
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "responsible": "None",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "file": "005-belgee.yaml",
+      "models": [
+        {
+          "model": "Новый X50",
+          "price": 2099990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-new/"
+        },
+        {
+          "model": "X50+",
+          "price": 2219990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
+        },
+        {
+          "model": "S50",
+          "price": 1729990,
+          "max_benefit": 200000,
+          "source_url": "https://belgee.ru/model/belgee-s50/"
+        },
+        {
+          "model": "X70",
+          "price": 2529990,
+          "max_benefit": 80000,
+          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
+        }
+      ],
+      "screens": [
+        "data/screens/5/model-1.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 113,
+      "pages_opened": 7,
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 4"
+      ]
     }
   ]
 }
