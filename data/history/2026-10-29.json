@@ -1,15 +1,15 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T17:35:40.528Z",
-  "previous_date": null,
-  "total_seconds": 189,
+  "checked_at": "2026-10-29T17:48:02.857Z",
+  "previous_date": "2026-10-28",
+  "total_seconds": 192,
   "parallel": 3,
   "summary": {
-    "Не изменилось": 0,
-    "Изменилось": 0,
+    "Не изменилось": 1,
+    "Изменилось": 4,
     "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 5,
+    "Первая проверка": 0,
     "Нет сценария": 0
   },
   "sites": [
@@ -62,11 +62,38 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 54,
+      "seconds": 49,
       "pages_opened": 9,
-      "change": "Первая проверка",
+      "change": "Изменилось",
       "changes": [
-        "Записано моделей: 6"
+        "T4L: 2 099 000 ₽/145 000 ₽ → 2 199 000 ₽/145 000 ₽",
+        "T7: 2 625 000 ₽/300 000 ₽ → 2 625 000 ₽/200 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "changed",
+          "model": "T4L",
+          "was": {
+            "price": 2099000,
+            "max_benefit": 145000
+          },
+          "now": {
+            "price": 2199000,
+            "max_benefit": 145000
+          }
+        },
+        {
+          "type": "changed",
+          "model": "T7",
+          "was": {
+            "price": 2625000,
+            "max_benefit": 300000
+          },
+          "now": {
+            "price": 2625000,
+            "max_benefit": 200000
+          }
+        }
       ]
     },
     {
@@ -130,11 +157,25 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 142,
+      "seconds": 156,
       "pages_opened": 10,
-      "change": "Первая проверка",
+      "change": "Изменилось",
       "changes": [
-        "Записано моделей: 8"
+        "300: 4 099 000 ₽/150 000 ₽ → 4 099 000 ₽/200 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "changed",
+          "model": "300",
+          "was": {
+            "price": 4099000,
+            "max_benefit": 150000
+          },
+          "now": {
+            "price": 4099000,
+            "max_benefit": 200000
+          }
+        }
       ]
     },
     {
@@ -196,11 +237,75 @@
       "screens": [],
       "comment": "",
       "status": "ok",
-      "seconds": 174,
+      "seconds": 175,
       "pages_opened": 11,
-      "change": "Первая проверка",
+      "change": "Изменилось",
       "changes": [
-        "Записано моделей: 8"
+        "Новая модель: MONJARO 4 409 990 ₽/190 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "new",
+          "model": "MONJARO",
+          "now": {
+            "price": 4409990,
+            "max_benefit": 190000
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "file": "005-belgee.yaml",
+      "models": [
+        {
+          "model": "Новый X50",
+          "price": 2099990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-new/"
+        },
+        {
+          "model": "X50+",
+          "price": 2219990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
+        },
+        {
+          "model": "S50",
+          "price": 1729990,
+          "max_benefit": 200000,
+          "source_url": "https://belgee.ru/model/belgee-s50/"
+        },
+        {
+          "model": "X70",
+          "price": 2529990,
+          "max_benefit": 80000,
+          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
+        }
+      ],
+      "screens": [
+        "data/screens/5/model-1.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 115,
+      "pages_opened": 7,
+      "change": "Изменилось",
+      "changes": [
+        "Модель пропала: X90"
+      ],
+      "diff": [
+        {
+          "type": "gone",
+          "model": "X90",
+          "was": {
+            "price": 2999990,
+            "max_benefit": 150000
+          }
+        }
       ]
     },
     {
@@ -246,56 +351,11 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 21,
+      "seconds": 27,
       "pages_opened": 8,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 5"
-      ]
-    },
-    {
-      "id": 5,
-      "company": "Belgee (тест)",
-      "site": "belgee.ru",
-      "brand": "Belgee",
-      "file": "005-belgee.yaml",
-      "models": [
-        {
-          "model": "Новый X50",
-          "price": 2099990,
-          "max_benefit": 100000,
-          "source_url": "https://belgee.ru/model/belgee-x50-new/"
-        },
-        {
-          "model": "X50+",
-          "price": 2219990,
-          "max_benefit": 100000,
-          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
-        },
-        {
-          "model": "S50",
-          "price": 1729990,
-          "max_benefit": 200000,
-          "source_url": "https://belgee.ru/model/belgee-s50/"
-        },
-        {
-          "model": "X70",
-          "price": 2529990,
-          "max_benefit": 80000,
-          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
-        }
-      ],
-      "screens": [
-        "data/screens/5/model-1.jpg"
-      ],
-      "comment": "",
-      "status": "ok",
-      "seconds": 112,
-      "pages_opened": 7,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 4"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     }
   ]
 }
