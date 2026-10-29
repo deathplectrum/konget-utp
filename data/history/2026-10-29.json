@@ -1,16 +1,76 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:23:00.633Z",
+  "checked_at": "2026-10-29T16:31:17.301Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 0,
+    "Требует проверки": 4,
     "Ошибка доступа": 0,
     "Первая проверка": 1,
     "Нет сценария": 0
   },
   "sites": [
+    {
+      "id": 2,
+      "company": "TANK (тест)",
+      "site": "tank.ru",
+      "brand": "TANK",
+      "file": "002-tank.yaml",
+      "models": [],
+      "screens": [
+        "data/screens/2/0.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
+    },
+    {
+      "id": 3,
+      "company": "Geely (тест)",
+      "site": "geely.ru",
+      "brand": "Geely",
+      "file": "003-geely.yaml",
+      "models": [],
+      "screens": [
+        "data/screens/3/0.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
+    },
+    {
+      "id": 4,
+      "company": "LiAuto (тест)",
+      "site": "liautoofficial.ru",
+      "brand": "LiAuto",
+      "file": "004-liauto.yaml",
+      "models": [],
+      "screens": [
+        "data/screens/4/0.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "file": "005-belgee.yaml",
+      "models": [],
+      "screens": [
+        "data/screens/5/0.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
+    },
     {
       "id": 1,
       "company": "Tenet (тест)",
