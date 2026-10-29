@@ -134,7 +134,7 @@ export default function Home() {
                         <b>{s.site}</b>
                         <small className={`tone-text-${statusMeta(s.change).tone}`}>{s.change}</small>
                         <small className="muted">
-                          Ответственный: {s.responsible ? `«${s.responsible}»` : 'не указан'}
+                          Ответственный: «{s.responsible || 'None'}»
                         </small>
                       </span>
                       <IonIcon icon={chevronForward} className="chev" />
