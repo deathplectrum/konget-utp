@@ -1,0 +1,53 @@
+# Сбор УТП. Запускается кнопкой «Собрать УТП» в приложении,
+# вручную на вкладке Actions или сам 1-го числа каждого месяца.
+name: Сбор УТП
+
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'ID одного сайта (пусто — все сайты)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 4 1 * *' # 1-е число, 07:00 по Москве
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Собрать цены и выгоды
+        run: |
+          if [ -n "${{ inputs.site }}" ]; then
+            npm run collect -- --site "${{ inputs.site }}"
+          else
+            npm run collect
+          fi
+
+      - name: Сохранить результат в репозиторий
+        run: |
+          git config user.name "konget-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A data
+          git diff --cached --quiet && exit 0
+          git commit -m "Сбор УТП $(date +%F)"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push

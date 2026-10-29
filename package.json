@@ -1,0 +1,27 @@
+{
+  "name": "konget-utp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "collect": "node collector/collect.mjs",
+    "test": "node --test collector/lib.test.mjs"
+  },
+  "dependencies": {
+    "@ionic/react": "^8.8.19",
+    "@ionic/react-router": "^8.8.19",
+    "ionicons": "^8.1.0",
+    "js-yaml": "^5.5.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^5.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "playwright": "^1.64.1",
+    "vite": "^5.4.21"
+  }
+}

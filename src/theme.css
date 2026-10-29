@@ -1,0 +1,86 @@
+/* Внешний вид приложения. Цвета статусов берутся из стандартной палитры Ionic. */
+:root {
+  --ion-color-primary: #1f6feb;
+  --ion-color-primary-rgb: 31, 111, 235;
+  --ion-color-primary-shade: #1b62cf;
+  --ion-color-primary-tint: #357df0;
+}
+
+ion-content::part(scroll) {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.small { font-size: 14px; }
+.muted { color: var(--ion-color-medium); }
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 8px;
+  text-align: center;
+}
+
+.collect-btn {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: none;
+  background: radial-gradient(circle at 30% 30%, #4a8ff5, var(--ion-color-primary));
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 12px 30px rgba(31, 111, 235, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.collect-btn ion-icon { font-size: 54px; }
+.collect-btn ion-spinner { width: 48px; height: 48px; color: #fff; }
+.collect-btn:active { transform: scale(0.96); }
+.collect-btn.busy { background: var(--ion-color-medium); box-shadow: none; cursor: default; }
+
+.hero-note p { margin: 6px 0; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+.tile { margin: 6px; }
+.tile-num { font-size: 34px; font-weight: 800; line-height: 1.1; }
+.tile-label { font-size: 14px; }
+.tile-primary .tile-num { color: var(--ion-color-primary); }
+.tile-warning .tile-num { color: var(--ion-color-warning-shade); }
+.tile-danger .tile-num { color: var(--ion-color-danger); }
+.tile-success .tile-num { color: var(--ion-color-success); }
+.tile-tertiary .tile-num { color: var(--ion-color-tertiary); }
+.tile-medium .tile-num { color: var(--ion-color-medium); }
+
+.status-chip { align-self: flex-start;
+  font-size: 12px; padding: 5px 8px; border-radius: 8px; font-weight: 600; }
+
+.site-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.change-line { padding: 3px 0; font-size: 14px; }
+.detail-title { margin-top: 10px; }
+
+.model-nums { display: flex; flex-direction: column; align-items: flex-end; font-size: 15px; }
+ion-note.model-nums b { color: var(--ion-text-color, #000); }
+.model-nums .benefit { color: var(--ion-color-success); font-size: 13px; }
+
+.screen { width: 100%; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--ion-color-light-shade); }
+
+.steps li { margin-bottom: 6px; }
+
+/* На широком экране (Windows) не растягиваем всё на всю ширину. */
+@media (min-width: 900px) {
+  ion-content::part(scroll) {
+    padding-left: calc(50% - 400px);
+    padding-right: calc(50% - 400px);
+  }
+  .tiles { grid-template-columns: repeat(3, 1fr); }
+}
