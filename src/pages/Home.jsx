@@ -64,11 +64,6 @@ export default function Home() {
             <div className="hero-info">
               <div className="hero-label">Последний сбор</div>
               <div className="hero-value">{running ? 'Собираю прямо сейчас…' : timeAgo(report?.checked_at)}</div>
-              {report && !running && (
-                <div className="hero-sub">
-                  {sites.length} {plural(sites.length, 'сайт', 'сайта', 'сайтов')}
-                </div>
-              )}
               {running && run?.created_at && (
                 <div className="hero-sub">Идёт {minutesSince(run.created_at)} мин · {progress?.text}</div>
               )}
