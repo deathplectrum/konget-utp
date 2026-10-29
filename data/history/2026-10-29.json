@@ -1,18 +1,74 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T17:18:54.286Z",
+  "checked_at": "2026-10-29T17:23:20.113Z",
   "previous_date": null,
-  "total_seconds": 196,
+  "total_seconds": 190,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 1,
+    "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 4,
+    "Первая проверка": 5,
     "Нет сценария": 0
   },
   "sites": [
+    {
+      "id": 1,
+      "company": "Tenet (тест)",
+      "site": "tenet.ru",
+      "brand": "Tenet",
+      "file": "001-tenet.yaml",
+      "models": [
+        {
+          "model": "T4L",
+          "price": 2199000,
+          "max_benefit": 145000,
+          "source_url": "https://tenet.ru/models/t4l/"
+        },
+        {
+          "model": "T4",
+          "price": 2089000,
+          "max_benefit": 100000,
+          "source_url": "https://tenet.ru/models/t4/"
+        },
+        {
+          "model": "T7",
+          "price": 2625000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/models/t7/"
+        },
+        {
+          "model": "T8",
+          "price": 2899000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/models/t8/"
+        },
+        {
+          "model": "A8",
+          "price": 2899000,
+          "max_benefit": 100000,
+          "source_url": "https://tenet.ru/models/a8/"
+        },
+        {
+          "model": "T9",
+          "price": 3749000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/models/t9/"
+        }
+      ],
+      "screens": [
+        "data/screens/1/model-4.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 55,
+      "pages_opened": 9,
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 6"
+      ]
+    },
     {
       "id": 2,
       "company": "TANK (тест)",
@@ -70,70 +126,15 @@
         }
       ],
       "screens": [
-        "data/screens/2/model-4.jpg",
-        "data/screens/2/1.jpg"
-      ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "seconds": 175,
-      "pages_opened": 11,
-      "change": "Требует проверки",
-      "changes": []
-    },
-    {
-      "id": 1,
-      "company": "Tenet (тест)",
-      "site": "tenet.ru",
-      "brand": "Tenet",
-      "file": "001-tenet.yaml",
-      "models": [
-        {
-          "model": "T4L",
-          "price": 2199000,
-          "max_benefit": 145000,
-          "source_url": "https://tenet.ru/models/t4l/"
-        },
-        {
-          "model": "T4",
-          "price": 2089000,
-          "max_benefit": 100000,
-          "source_url": "https://tenet.ru/models/t4/"
-        },
-        {
-          "model": "T7",
-          "price": 2625000,
-          "max_benefit": 200000,
-          "source_url": "https://tenet.ru/models/t7/"
-        },
-        {
-          "model": "T8",
-          "price": 2899000,
-          "max_benefit": 200000,
-          "source_url": "https://tenet.ru/models/t8/"
-        },
-        {
-          "model": "A8",
-          "price": 2899000,
-          "max_benefit": 100000,
-          "source_url": "https://tenet.ru/models/a8/"
-        },
-        {
-          "model": "T9",
-          "price": 3749000,
-          "max_benefit": 200000,
-          "source_url": "https://tenet.ru/models/t9/"
-        }
-      ],
-      "screens": [
-        "data/screens/1/model-4.jpg"
+        "data/screens/2/model-4.jpg"
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 55,
-      "pages_opened": 9,
+      "seconds": 137,
+      "pages_opened": 10,
       "change": "Первая проверка",
       "changes": [
-        "Записано моделей: 6"
+        "Записано моделей: 8"
       ]
     },
     {
@@ -195,7 +196,7 @@
       "screens": [],
       "comment": "",
       "status": "ok",
-      "seconds": 176,
+      "seconds": 175,
       "pages_opened": 11,
       "change": "Первая проверка",
       "changes": [
@@ -245,7 +246,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 26,
+      "seconds": 22,
       "pages_opened": 8,
       "change": "Первая проверка",
       "changes": [
@@ -289,7 +290,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 114,
+      "seconds": 113,
       "pages_opened": 7,
       "change": "Первая проверка",
       "changes": [
