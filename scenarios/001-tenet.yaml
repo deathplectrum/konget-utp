@@ -1,5 +1,7 @@
-# Тестовый сайт. Селекторы ещё не подобраны: при первом сборе
-# сборщик сделает снимки этих страниц, и по ним допишем сценарий.
+# Тестовый сайт (сайт марки Tenet).
+# Цены «от» берём из меню моделей на главной: там все модели с ценами.
+# Страница выгод пока без селекторов: при сборе сборщик сделает её снимок,
+# и по нему допишем, где на ней выгоды.
 id: 1
 company: Tenet (тест)
 site: tenet.ru
@@ -8,3 +10,9 @@ active: true
 
 pages:
   - url: https://tenet.ru/
+    card: .menu-models__left-item
+    model: .menu-models__left-item-title
+    price: .menu-models__left-item-price
+
+  - url: https://tenet.ru/customers/offers/
+    scroll: true
