@@ -1,15 +1,15 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:58:06.168Z",
+  "checked_at": "2026-10-29T17:02:06.439Z",
   "previous_date": null,
-  "total_seconds": 169,
+  "total_seconds": 193,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 4,
+    "Требует проверки": 3,
     "Ошибка доступа": 0,
-    "Первая проверка": 1,
+    "Первая проверка": 2,
     "Нет сценария": 0
   },
   "sites": [
@@ -75,7 +75,7 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 169,
+      "seconds": 146,
       "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
@@ -86,63 +86,64 @@
       "site": "geely-motors.com",
       "brand": "Geely",
       "file": "003-geely.yaml",
-      "models": [],
-      "screens": [
-        "data/screens/3/0.jpg"
-      ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "seconds": 18,
-      "pages_opened": 1,
-      "change": "Требует проверки",
-      "changes": []
-    },
-    {
-      "id": 4,
-      "company": "Li Auto (тест)",
-      "site": "liautoofficial.ru",
-      "brand": "Li",
-      "file": "004-liauto.yaml",
       "models": [
         {
-          "model": "L6",
-          "price": 6890000,
+          "model": "EX5 Гибрид",
+          "price": 3229990,
           "max_benefit": "-",
-          "source_url": "https://liautoofficial.ru/models/li-l6/"
+          "source_url": "https://www.geely-motors.com/model/geely-ex5-em-i/"
         },
         {
-          "model": "L7",
-          "price": 9019000,
+          "model": "НОВЫЙ COOLRAY",
+          "price": 2624990,
           "max_benefit": "-",
-          "source_url": "https://liautoofficial.ru/models/li-l7/"
+          "source_url": "https://www.geely-motors.com/model/coolray-2026/"
         },
         {
-          "model": "L9",
-          "price": 10495000,
+          "model": "CITYRAY",
+          "price": 2499990,
           "max_benefit": "-",
-          "source_url": "https://liautoofficial.ru/models/li-l9/"
+          "source_url": "https://www.geely-motors.com/model/cityray/"
         },
         {
-          "model": "L8",
-          "price": 10390000,
+          "model": "ATLAS",
+          "price": 3259990,
           "max_benefit": "-",
-          "source_url": "https://liautoofficial.ru/models/li-l8/"
+          "source_url": "https://www.geely-motors.com/model/geely-atlas-2024/"
         },
         {
-          "model": "L9 Livis",
-          "price": 12190000,
+          "model": "OKAVANGO",
+          "price": 3514990,
           "max_benefit": "-",
-          "source_url": "https://liautoofficial.ru/models/li-l9-livis/"
+          "source_url": "https://www.geely-motors.com/model/geely-okavango/"
+        },
+        {
+          "model": "MONJARO",
+          "price": 4409990,
+          "max_benefit": "-",
+          "source_url": "https://www.geely-motors.com/model/monjaro/"
+        },
+        {
+          "model": "PREFACE",
+          "price": 3079990,
+          "max_benefit": "-",
+          "source_url": "https://www.geely-motors.com/model/geely-preface/"
+        },
+        {
+          "model": "EX5",
+          "price": 4099990,
+          "max_benefit": "-",
+          "source_url": "https://www.geely-motors.com/model/geely-ex5/"
         }
       ],
       "screens": [
-        "data/screens/4/model-3.jpg",
-        "data/screens/4/1.jpg"
+        "data/screens/3/model-0.jpg",
+        "data/screens/3/1.jpg"
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 22,
-      "pages_opened": 8,
+      "seconds": 176,
+      "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
     },
@@ -184,7 +185,7 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 113,
+      "seconds": 115,
       "pages_opened": 7,
       "change": "Требует проверки",
       "changes": []
@@ -238,11 +239,61 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 42,
+      "seconds": 57,
       "pages_opened": 9,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 6"
+      ]
+    },
+    {
+      "id": 4,
+      "company": "Li Auto (тест)",
+      "site": "liautoofficial.ru",
+      "brand": "Li",
+      "file": "004-liauto.yaml",
+      "models": [
+        {
+          "model": "L6",
+          "price": 6890000,
+          "max_benefit": 1027000,
+          "source_url": "https://liautoofficial.ru/models/li-l6/"
+        },
+        {
+          "model": "L7",
+          "price": 9019000,
+          "max_benefit": 885500,
+          "source_url": "https://liautoofficial.ru/models/li-l7/"
+        },
+        {
+          "model": "L9",
+          "price": 10495000,
+          "max_benefit": 895500,
+          "source_url": "https://liautoofficial.ru/models/li-l9/"
+        },
+        {
+          "model": "L8",
+          "price": 10390000,
+          "max_benefit": "-",
+          "source_url": "https://liautoofficial.ru/models/li-l8/"
+        },
+        {
+          "model": "L9 Livis",
+          "price": 12190000,
+          "max_benefit": 1000000,
+          "source_url": "https://liautoofficial.ru/models/li-l9-livis/"
+        }
+      ],
+      "screens": [
+        "data/screens/4/model-3.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 21,
+      "pages_opened": 8,
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 5"
       ]
     }
   ]
