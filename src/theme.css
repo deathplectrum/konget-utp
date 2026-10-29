@@ -110,8 +110,9 @@ ion-content.app-bg {
   50% { box-shadow: 0 0 0 9px rgba(168, 85, 247, 0); }
 }
 .progress { position: relative; height: 6px; border-radius: 6px; margin-top: 14px; background: rgba(255, 255, 255, 0.25); overflow: hidden; }
-.progress span { position: absolute; inset: 0; width: 40%; border-radius: 6px; background: #fff; animation: slide 1.6s ease-in-out infinite; }
-@keyframes slide { 0% { left: -40%; } 100% { left: 100%; } }
+.progress span { position: absolute; left: 0; top: 0; bottom: 0; min-width: 6px; border-radius: 6px; background: #fff; transition: width 1s linear; overflow: hidden; }
+.progress span::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.0) 30%, rgba(120, 140, 255, 0.35) 50%, transparent 70%); animation: shine 1.8s ease-in-out infinite; }
+@keyframes shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
 /* Сообщения */
 .notice { display: flex; gap: 10px; align-items: flex-start; border-radius: 16px; padding: 12px 14px; margin: 12px 0; font-size: 14px; font-weight: 600; }

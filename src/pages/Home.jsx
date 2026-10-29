@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   IonContent, IonIcon, IonPage, IonRefresher, IonRefresherContent, IonSpinner, useIonToast,
@@ -9,13 +10,21 @@ import {
 } from '../lib/status';
 import BrandAvatar from '../components/BrandAvatar';
 import ChangeRow from '../components/ChangeRow';
+import { estimateSeconds, progressInfo } from '../lib/estimate';
 
 function minutesSince(iso) {
   return Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60_000));
 }
 
 export default function Home() {
-  const { settings, report, run, running, collect, refresh, error } = useApp();
+  const { settings, report, run, runSite, running, collect, refresh, error } = useApp();
+  const [, tick] = useState(0);
+  useEffect(() => {
+    if (!running) return undefined;
+    const t = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, [running]);
+  const progress = running && run?.created_at ? progressInfo(run.created_at, estimateSeconds(report, runSite)) : null;
   const [toast] = useIonToast();
   const history = useHistory();
 
@@ -62,7 +71,7 @@ export default function Home() {
                 </div>
               )}
               {running && run?.created_at && (
-                <div className="hero-sub">Идёт {minutesSince(run.created_at)} мин. Обычно 5–15 минут</div>
+                <div className="hero-sub">Идёт {minutesSince(run.created_at)} мин · {progress?.text}</div>
               )}
             </div>
             <button className="big-btn" onClick={onCollect} disabled={running}>
@@ -71,7 +80,11 @@ export default function Home() {
               </span>
               <span>{running ? 'Идёт сбор' : settings.token ? 'Собрать УТП' : 'Добавить ключ'}</span>
             </button>
-            {running && <div className="progress"><span /></div>}
+            {progress && (
+              <div className="progress" title={progress.text}>
+                <span style={{ width: `${Math.round(progress.share * 100)}%` }} />
+              </div>
+            )}
           </section>
 
           {failed && (

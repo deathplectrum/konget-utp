@@ -12,6 +12,7 @@ export function AppProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [run, setRun] = useState(null); // последний запуск сборщика на GitHub
+  const [runSite, setRunSite] = useState(''); // какой сайт перепроверяем ('' — все)
   const timer = useRef(null);
 
   const setSettings = (s) => {
@@ -49,6 +50,7 @@ export function AppProvider({ children }) {
     setError('');
     const startedAt = Date.now();
     await startCollect(settings, siteId);
+    setRunSite(siteId);
     setRun({ status: 'queued', created_at: new Date(startedAt).toISOString() });
     // GitHub не сразу показывает новый запуск: ждём немного, потом начинаем следить.
     clearTimeout(timer.current);
@@ -64,7 +66,7 @@ export function AppProvider({ children }) {
   const running = run && run.status !== 'completed';
 
   return (
-    <Ctx.Provider value={{ settings, setSettings, report, loading, error, refresh, run, running, collect }}>
+    <Ctx.Provider value={{ settings, setSettings, report, loading, error, refresh, run, runSite, running, collect }}>
       {children}
     </Ctx.Provider>
   );
