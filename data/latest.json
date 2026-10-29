@@ -1,7 +1,9 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:47:30.786Z",
+  "checked_at": "2026-10-29T16:58:06.168Z",
   "previous_date": null,
+  "total_seconds": 169,
+  "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
@@ -73,6 +75,8 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
+      "seconds": 169,
+      "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
     },
@@ -88,6 +92,8 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
+      "seconds": 18,
+      "pages_opened": 1,
       "change": "Требует проверки",
       "changes": []
     },
@@ -135,6 +141,8 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
+      "seconds": 22,
+      "pages_opened": 8,
       "change": "Требует проверки",
       "changes": []
     },
@@ -176,6 +184,8 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
+      "seconds": 113,
+      "pages_opened": 7,
       "change": "Требует проверки",
       "changes": []
     },
@@ -228,6 +238,8 @@
       ],
       "comment": "",
       "status": "ok",
+      "seconds": 42,
+      "pages_opened": 9,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 6"
