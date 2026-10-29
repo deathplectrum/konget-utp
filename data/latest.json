@@ -1,9 +1,12 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T18:06:42.537Z",
+  "checked_at": "2026-10-29T18:33:27.079Z",
   "previous_date": "2026-10-28",
-  "total_seconds": 116,
+  "total_seconds": 126,
   "parallel": 3,
+  "stopped": true,
+  "checked": 2,
+  "planned": 5,
   "summary": {
     "Не изменилось": 1,
     "Изменилось": 4,
@@ -63,7 +66,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 91,
+      "seconds": 45,
       "pages_opened": 9,
       "change": "Изменилось",
       "changes": [
@@ -356,7 +359,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 20,
+      "seconds": 23,
       "pages_opened": 8,
       "change": "Не изменилось",
       "changes": [],
