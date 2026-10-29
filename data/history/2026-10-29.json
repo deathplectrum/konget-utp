@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-29",
+  "checked_at": "2026-10-29T15:59:49.001Z",
+  "previous_date": null,
+  "summary": {
+    "Не изменилось": 0,
+    "Изменилось": 0,
+    "Требует проверки": 1,
+    "Ошибка доступа": 0,
+    "Первая проверка": 0,
+    "Нет сценария": 0
+  },
+  "sites": [
+    {
+      "id": 1,
+      "company": "Tenet (тест)",
+      "site": "tenet.ru",
+      "brand": "Tenet",
+      "file": "001-tenet.yaml",
+      "models": [],
+      "screens": [
+        "data/screens/1/0.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
+    }
+  ]
+}
