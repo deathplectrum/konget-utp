@@ -8,7 +8,7 @@ import BrandAvatar from '../components/BrandAvatar';
 function scenarioState(s) {
   if (s.change === 'Нет сценария') return { icon: documentText, tone: 'gray', text: 'Не настроен' };
   if (s.change === 'Ошибка доступа') return { icon: cloudOffline, tone: 'red', text: 'Не открылся' };
-  if (s.screens?.length || s.change === 'Требует проверки') return { icon: construct, tone: 'amber', text: 'Донастроить' };
+  if (s.change === 'Требует проверки') return { icon: construct, tone: 'amber', text: 'Донастроить' };
   return { icon: checkmarkCircle, tone: 'green', text: 'Работает' };
 }
 
