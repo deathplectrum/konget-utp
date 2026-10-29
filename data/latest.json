@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:17:19.801Z",
+  "checked_at": "2026-10-29T16:23:00.633Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
@@ -32,7 +32,7 @@
         },
         {
           "model": "T7",
-          "price": 2605000,
+          "price": 2625000,
           "max_benefit": 200000,
           "source_url": "https://tenet.ru/models/t7/"
         },
