@@ -1,15 +1,15 @@
 {
   "date": "2026-10-29",
   "checked_at": "2026-10-29T17:48:02.857Z",
-  "previous_date": "2026-10-28",
+  "previous_date": null,
   "total_seconds": 192,
   "parallel": 3,
   "summary": {
-    "Не изменилось": 1,
-    "Изменилось": 4,
+    "Не изменилось": 0,
+    "Изменилось": 0,
     "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 0,
+    "Первая проверка": 5,
     "Нет сценария": 0
   },
   "sites": [
@@ -64,37 +64,9 @@
       "status": "ok",
       "seconds": 49,
       "pages_opened": 9,
-      "change": "Изменилось",
-      "changes": [
-        "T4L: 2 099 000 ₽/145 000 ₽ → 2 199 000 ₽/145 000 ₽",
-        "T7: 2 625 000 ₽/300 000 ₽ → 2 625 000 ₽/200 000 ₽"
-      ],
-      "diff": [
-        {
-          "type": "changed",
-          "model": "T4L",
-          "was": {
-            "price": 2099000,
-            "max_benefit": 145000
-          },
-          "now": {
-            "price": 2199000,
-            "max_benefit": 145000
-          }
-        },
-        {
-          "type": "changed",
-          "model": "T7",
-          "was": {
-            "price": 2625000,
-            "max_benefit": 300000
-          },
-          "now": {
-            "price": 2625000,
-            "max_benefit": 200000
-          }
-        }
-      ]
+      "change": "Первая проверка",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 2,
@@ -159,24 +131,9 @@
       "status": "ok",
       "seconds": 156,
       "pages_opened": 10,
-      "change": "Изменилось",
-      "changes": [
-        "300: 4 099 000 ₽/150 000 ₽ → 4 099 000 ₽/200 000 ₽"
-      ],
-      "diff": [
-        {
-          "type": "changed",
-          "model": "300",
-          "was": {
-            "price": 4099000,
-            "max_benefit": 150000
-          },
-          "now": {
-            "price": 4099000,
-            "max_benefit": 200000
-          }
-        }
-      ]
+      "change": "Первая проверка",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 3,
@@ -239,20 +196,9 @@
       "status": "ok",
       "seconds": 175,
       "pages_opened": 11,
-      "change": "Изменилось",
-      "changes": [
-        "Новая модель: MONJARO 4 409 990 ₽/190 000 ₽"
-      ],
-      "diff": [
-        {
-          "type": "new",
-          "model": "MONJARO",
-          "now": {
-            "price": 4409990,
-            "max_benefit": 190000
-          }
-        }
-      ]
+      "change": "Первая проверка",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 5,
@@ -293,20 +239,9 @@
       "status": "ok",
       "seconds": 115,
       "pages_opened": 7,
-      "change": "Изменилось",
-      "changes": [
-        "Модель пропала: X90"
-      ],
-      "diff": [
-        {
-          "type": "gone",
-          "model": "X90",
-          "was": {
-            "price": 2999990,
-            "max_benefit": 150000
-          }
-        }
-      ]
+      "change": "Первая проверка",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 4,
@@ -353,7 +288,7 @@
       "status": "ok",
       "seconds": 27,
       "pages_opened": 8,
-      "change": "Не изменилось",
+      "change": "Первая проверка",
       "changes": [],
       "diff": []
     }
