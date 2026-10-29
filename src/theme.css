@@ -280,7 +280,9 @@ ion-tab-bar {
   --border: 0;
   backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 -6px 20px rgba(60, 50, 140, 0.08);
-  height: calc(62px + env(safe-area-inset-bottom));
+  /* Ionic сам добавляет отступ под полоску «домой» на iPhone; делаем его чуть меньше,
+     чтобы вкладки стояли ниже, как в родных приложениях. */
+  padding-bottom: max(env(safe-area-inset-bottom) - 14px, 4px);
 }
 ion-tab-button { --color: var(--muted); --color-selected: var(--ion-color-primary); font-weight: 700; }
 ion-tab-button ion-label { font-size: 11.5px; }
