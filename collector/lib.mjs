@@ -65,11 +65,19 @@ export function parseBenefits(text) {
 export function cleanModel(name, brand = '') {
   let m = String(name || '').replace(/[\u00a0\u202f]/g, ' ').replace(/\s+/g, ' ').trim();
   // «Ли Л6 | Li L6» — берём латинское название после черты.
-  if (m.includes('|')) m = m.split('|').map((x) => x.trim()).filter(Boolean).pop() || m;
+  if (/\s[|I]\s/.test(m) || m.includes('|')) m = m.split(/\s*\|\s*|\sI\s/).map((x) => x.trim()).filter(Boolean).pop() || m;
   m = m.split(/\s*[-–—:]?\s*(?:от|до|цена)\s+\d/i)[0];
   m = m.split(/\s\d{1,3}(?:[ .,]\d{3})+/)[0];
   if (brand && m.toLowerCase().startsWith(`${brand.toLowerCase()} `)) m = m.slice(brand.length + 1);
   return m.replace(/[\s*\-–—:]+$/, '').trim();
+}
+
+// Цены из текста. Если рядом есть «от 2 199 000», берём только такие суммы:
+// так в цену не попадут выгоды и годы из сносок.
+export function parsePrices(text) {
+  const clean = String(text || '').replace(/[\u00a0\u202f\u2009]/g, ' ');
+  const fromParts = [...clean.matchAll(/от\s*(\d[\d .,]*\d(?:\s*млн)?)/gi)].flatMap((m) => parseRubles(m[1]));
+  return fromParts.length ? fromParts : parseRubles(clean);
 }
 
 // Название модели для сравнения: без регистра и лишних пробелов.

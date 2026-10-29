@@ -11,7 +11,7 @@ import path from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 import { chromium } from 'playwright';
 import {
-  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
+  parsePrices, parseBenefits, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
 } from './lib.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -101,7 +101,7 @@ async function collectPage(context, site, pageCfg, index) {
     const screen = !hasSelectors || rows.length === 0 ? await snapshot(page, site, index) : null;
 
     const models = rows.map((r) => {
-      const prices = parseRubles(r.price);
+      const prices = parsePrices(r.price);
       const benefits = parseBenefits(r.benefit);
       return {
         model: cleanModel(r.model.split('\n').map((l) => l.trim()).find(Boolean), site.brand),
@@ -154,7 +154,7 @@ async function collectModelPages(context, site, cfg) {
           benefits: texts(document, benefit),
         };
       }, page);
-      const prices = found.prices.flatMap(parseRubles);
+      const prices = found.prices.flatMap(parsePrices);
       const benefits = found.benefits.flatMap(parseBenefits);
       const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
       // Снимок: если сценарий не дописан, или на странице модели не нашлось цены (один на сайт).

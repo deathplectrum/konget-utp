@@ -16,6 +16,13 @@ models:
     benefit: .web_block_media-model__text .tooltip__content   # сноска к цене: «прямой выгоды в 250 000 рублей…»
 
 pages:
+  # Меню «Модели» на главной: цена «от» каждой модели (и выгоды из сноски к цене, если есть).
+  # Нужно для моделей, у которых на странице модели нет списка комплектаций.
+  - url: https://tank.ru/
+    card: .menu-models__item, .js-menu-models-link
+    model: .menu-models__item-title
+    price: .menu-models__item-price
+    benefit: .menu-models__item-price
   # Спецпредложения: отсюда берём только выгоды.
   - url: https://tank.ru/customers/choise/special-offers/
     scroll: true

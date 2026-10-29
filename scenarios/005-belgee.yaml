@@ -13,6 +13,13 @@ models:
     benefit: .web_block_media-flow-icon__title
 
 pages:
+  # Меню «Модели» на главной: цена «от» каждой модели (и выгоды из сноски к цене, если есть).
+  # Нужно для моделей, у которых на странице модели нет списка комплектаций.
+  - url: https://belgee.ru/
+    card: .menu-models__item, .js-menu-models-link
+    model: .menu-models__item-title
+    price: .menu-models__item-price
+    benefit: .menu-models__item-price
   # Спецпредложения: снимок, чтобы найти выгоды.
   - url: https://belgee.ru/special-offers/
     scroll: true

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, diffDetails, historyToDelete, formatRub, CHANGE,
+  parseRubles, parsePrices, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, diffDetails, historyToDelete, formatRub, CHANGE,
 } from './lib.mjs';
 
 test('разбор цен в разных записях', () => {
@@ -74,6 +74,7 @@ test('чистка названия модели', () => {
   assert.equal(cleanModel(' T4L ', 'Tenet'), 'T4L');
   assert.equal(cleanModel('Ли Л6 | Li L6', 'Li'), 'L6');
   assert.equal(cleanModel('TANK 300', 'TANK'), '300');
+  assert.equal(cleanModel('Л9 Ливис I L9 Livis', 'Li'), 'L9 Livis');
 });
 
 test('выгоды: только то, что названо выгодой', () => {
@@ -101,4 +102,10 @@ test('изменения списком для приложения', () => {
   assert.deepEqual(d.map((x) => x.type), ['changed', 'new', 'gone']);
   assert.equal(d[0].was.price, 2199000);
   assert.equal(d[0].now.price, 2299000);
+});
+
+test('цена: берём суммы после «от», а не из сносок', () => {
+  assert.deepEqual(parsePrices('от 4 099 000 ₽ *Цена с учетом выгоды по трейд-ин в 200 000 рублей, 2026 года'), [4099000]);
+  assert.deepEqual(parsePrices('2 625 000 ₽'), [2625000]);
+  assert.deepEqual(parsePrices('ОТ 2 199 000 ₽*'), [2199000]);
 });
