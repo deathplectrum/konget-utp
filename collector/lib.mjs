@@ -46,12 +46,13 @@ const BENEFIT_WORD = /(выгод|скидк|преимуществ)[а-яё]*/g
 const NOT_BENEFIT = /лизинг|платеж|платёж|маркетплейс|в месяц/i;
 
 export function parseBenefits(text) {
-  const clean = String(text || '').replace(/[\u00a0\u202f\u2009]/g, ' ');
+  // Переносы строк убираем: «Максимальная выгода\nдо 100 000 ₽» — это одна фраза.
+  const clean = String(text || '').replace(/[\u00a0\u202f\u2009\n\r]/g, ' ');
   const out = [];
   for (const m of clean.matchAll(BENEFIT_WORD)) {
     const before = clean.slice(Math.max(0, m.index - 25), m.index);
     let after = clean.slice(m.index + m[0].length, m.index + m[0].length + 70);
-    after = after.split(/[;\n]|\.\s|(?=(выгод|скидк|преимуществ))/i)[0];
+    after = after.split(/;|\.\s|(?=(выгод|скидк|преимуществ))/i)[0];
     // «с учетом выгоды от 4 099 000» — это цена, а не выгода.
     if (NOT_BENEFIT.test(before + m[0] + after) || /^\s*от\s/i.test(after)) continue;
     const nums = parseRubles(after.replace(/\b(19|20)\d{2}\s*(г\.|год|года|г\b)/gi, ' '));

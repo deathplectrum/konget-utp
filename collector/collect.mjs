@@ -91,9 +91,13 @@ async function collectPage(context, site, pageCfg, index) {
         (cards, cfg) => cards.map((card) => {
           // innerText — текст как его видит человек; у скрытых блоков (например, меню) берём textContent.
           const text = (sel) => (sel ? [...card.querySelectorAll(sel)].map((e) => e.innerText || e.textContent).join(' ') : '');
-          return { model: text(cfg.model), price: text(cfg.price), benefit: text(cfg.benefit) };
+          // model_attr: название берём из атрибута (например, href ссылки), а не из текста.
+          const model = cfg.modelAttr
+            ? [...card.querySelectorAll(cfg.model)].map((e) => e.getAttribute(cfg.modelAttr) || '').join(' ')
+            : text(cfg.model);
+          return { model, price: text(cfg.price), benefit: text(cfg.benefit) };
         }),
-        { model: pageCfg.model, price: pageCfg.price, benefit: pageCfg.benefit },
+        { model: pageCfg.model, price: pageCfg.price, benefit: pageCfg.benefit, modelAttr: pageCfg.model_attr },
       );
     }
 
@@ -101,7 +105,13 @@ async function collectPage(context, site, pageCfg, index) {
     // по нему видно, где на сайте цены, и можно дописать сценарий.
     const screen = !hasSelectors || rows.length === 0 ? await snapshot(page, site, index) : null;
 
+    // model_map: когда на сайте вместо названия картинка, сопоставляем по коду модели из ссылки.
+    const mapName = (raw) => {
+      const hit = Object.entries(pageCfg.model_map || {}).find(([key]) => raw.includes(key));
+      return hit ? hit[1] : raw;
+    };
     const models = rows.map((r) => {
+      r.model = mapName(r.model);
       const prices = parsePrices(r.price);
       const benefits = (pageCfg.benefit_all ? parseAmounts : parseBenefits)(r.benefit);
       return {

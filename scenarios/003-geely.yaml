@@ -12,8 +12,8 @@ models:
   link: a.js-menu-models-link
   name: .menu__models-item-title
   page:
-    price: .web_block_grades__card-content .main-caps
-    benefit: .web_block_media-flow-icon__title
+    title: h1
+    price: .web_block_media-model-v2__text           # «от 3 229 990 ₽» в шапке модели
 
 pages:
   # Меню «Модели»: цена «от» каждой модели.
@@ -23,5 +23,5 @@ pages:
     price: .menu__models-item-price
 
   # Спецпредложения: снимок, чтобы найти выгоды по моделям.
-  - url: https://www.geely-motors.com/forbuyers/specialoffer/
+  - url: https://www.geely-motors.com/specialoffers/buyers/maximum-benefits/
     scroll: true

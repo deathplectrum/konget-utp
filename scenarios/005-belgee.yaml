@@ -20,6 +20,15 @@ pages:
     model: .menu-models__item-title
     price: .menu-models__item-price
     benefit: .menu-models__item-price
-  # Спецпредложения: снимок, чтобы найти выгоды.
+  # Спецпредложения: блок на каждую модель, внутри «Максимальная выгода до …» по комплектациям.
+  # Название модели там картинкой, поэтому узнаём модель по коду в ссылке «Получить предложение».
   - url: https://belgee.ru/forbuyers/specialoffer/
-    scroll: true
+    card: .web_block_benefits__model
+    model: a[href*="?model="]
+    model_attr: href
+    model_map:
+      d9q8410beucc73d8p9k0: Новый X50
+      d6fcdhobeucc73an32v0: X50+
+      d33sgmgbeucc739shbmg: X70
+      d2mmvi8beucc73dfv6m0: S50
+    benefit: .web_block_benefits__total
