@@ -24,9 +24,9 @@ pages:
     model: .menu-models__left-item-title
     price: .menu-models__left-item-price
 
-  # «Акции и спецпредложения»: карточки «TENET T8 - от 2 899 000 ₽» с выгодами.
+  # «Акции и спецпредложения»: отсюда берём только выгоды.
+  # Цену здесь не берём: цена считается по страницам моделей tenet.ru/models/...
   - url: https://tenet.ru/customers/offers/
     card: .web_block_popup__content
     model: .web_block_popup__content-title
-    price: .web_block_popup__content-title
     benefit: .web_block_popup__content-text
