@@ -1,13 +1,13 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:04:39.717Z",
+  "checked_at": "2026-10-29T16:13:27.745Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 0,
+    "Требует проверки": 1,
     "Ошибка доступа": 0,
-    "Первая проверка": 1,
+    "Первая проверка": 0,
     "Нет сценария": 0
   },
   "sites": [
@@ -22,46 +22,51 @@
           "model": "T4L",
           "price": 2199000,
           "max_benefit": 145000,
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/t4l/"
         },
         {
           "model": "T4",
           "price": 2089000,
           "max_benefit": 100000,
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/t4/"
         },
         {
           "model": "T7",
           "price": 2605000,
           "max_benefit": 200000,
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/t7/"
         },
         {
           "model": "T8",
           "price": 2899000,
           "max_benefit": 200000,
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/t8/"
         },
         {
           "model": "A8",
-          "price": 2899000,
+          "price": "-",
           "max_benefit": "-",
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/a8/"
         },
         {
           "model": "T9",
-          "price": 3749000,
+          "price": "-",
           "max_benefit": "-",
-          "source_url": "https://tenet.ru/"
+          "source_url": "https://tenet.ru/models/t9/"
         }
       ],
-      "screens": [],
-      "comment": "",
-      "status": "ok",
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 6"
-      ]
+      "screens": [
+        "data/screens/1/model-0.jpg",
+        "data/screens/1/model-1.jpg",
+        "data/screens/1/model-2.jpg",
+        "data/screens/1/model-3.jpg",
+        "data/screens/1/model-4.jpg",
+        "data/screens/1/model-5.jpg"
+      ],
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
+      "status": "needs_check",
+      "change": "Требует проверки",
+      "changes": []
     }
   ]
 }
