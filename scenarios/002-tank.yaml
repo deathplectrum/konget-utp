@@ -23,6 +23,3 @@ pages:
     model: .menu-models__item-title
     price: .menu-models__item-price
     benefit: .menu-models__item-price
-  # Спецпредложения: отсюда берём только выгоды.
-  - url: https://tank.ru/customers/choise/special-offers/
-    scroll: true
