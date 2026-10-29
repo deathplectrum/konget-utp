@@ -1,0 +1,11 @@
+# Сайт марки Belgee. Пока только адрес: сборщик сделает снимок главной,
+# по нему найдём список моделей и допишем обход по моделям.
+id: 5
+company: Belgee (тест)
+site: belgee.ru
+brand: Belgee
+active: true
+
+pages:
+  - url: https://belgee.ru/
+    scroll: true

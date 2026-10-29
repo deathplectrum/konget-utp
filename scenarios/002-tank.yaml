@@ -1,0 +1,11 @@
+# Сайт марки TANK. Пока только адрес: сборщик сделает снимок главной,
+# по нему найдём список моделей и допишем обход по моделям.
+id: 2
+company: TANK (тест)
+site: tank.ru
+brand: TANK
+active: true
+
+pages:
+  - url: https://tank.ru/
+    scroll: true

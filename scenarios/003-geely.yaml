@@ -1,0 +1,11 @@
+# Сайт марки Geely. Пока только адрес: сборщик сделает снимок главной,
+# по нему найдём список моделей и допишем обход по моделям.
+id: 3
+company: Geely (тест)
+site: geely.ru
+brand: Geely
+active: true
+
+pages:
+  - url: https://geely.ru/
+    scroll: true

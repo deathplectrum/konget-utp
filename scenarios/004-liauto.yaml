@@ -1,0 +1,11 @@
+# Сайт марки LiAuto. Пока только адрес: сборщик сделает снимок главной,
+# по нему найдём список моделей и допишем обход по моделям.
+id: 4
+company: LiAuto (тест)
+site: liautoofficial.ru
+brand: LiAuto
+active: true
+
+pages:
+  - url: https://liautoofficial.ru/
+    scroll: true
