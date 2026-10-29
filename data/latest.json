@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T18:51:05.495Z",
+  "checked_at": "2026-10-29T19:06:31.594Z",
   "previous_date": null,
-  "total_seconds": 186,
+  "total_seconds": 216,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
@@ -63,7 +63,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 47,
+      "seconds": 77,
       "pages_opened": 9,
       "change": "Первая проверка",
       "changes": [
@@ -132,7 +132,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 132,
+      "seconds": 147,
       "pages_opened": 10,
       "change": "Первая проверка",
       "changes": [
@@ -199,7 +199,7 @@
       "screens": [],
       "comment": "",
       "status": "ok",
-      "seconds": 175,
+      "seconds": 177,
       "pages_opened": 11,
       "change": "Первая проверка",
       "changes": [
@@ -295,7 +295,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 113,
+      "seconds": 115,
       "pages_opened": 7,
       "change": "Первая проверка",
       "changes": [
