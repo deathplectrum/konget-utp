@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseRubles, mergeModels, validateModels, diffModels, decideChange, historyToDelete, formatRub, CHANGE,
+  parseRubles, cleanModel, mergeModels, validateModels, diffModels, decideChange, historyToDelete, formatRub, CHANGE,
 } from './lib.mjs';
 
 test('разбор цен в разных записях', () => {
@@ -64,4 +64,12 @@ test('чистка истории: старое удаляем, самое св�
 test('формат рублей', () => {
   assert.equal(formatRub(2199000), '2 199 000 ₽');
   assert.equal(formatRub('-'), '-');
+});
+
+test('чистка названия модели', () => {
+  assert.equal(cleanModel('TENET\u00a0T8 - от 2\u00a0899\u00a0000\u00a0₽*', 'Tenet'), 'T8');
+  assert.equal(cleanModel('TENET T7 от 2 625 000 ₽*', 'Tenet'), 'T7');
+  assert.equal(cleanModel('Tiggo 8 Pro Max', 'Chery'), 'Tiggo 8 Pro Max');
+  assert.equal(cleanModel('Chery Tiggo 4 2 199 000 ₽', 'Chery'), 'Tiggo 4');
+  assert.equal(cleanModel(' T4L ', 'Tenet'), 'T4L');
 });

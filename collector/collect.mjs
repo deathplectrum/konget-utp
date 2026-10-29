@@ -11,7 +11,7 @@ import path from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 import { chromium } from 'playwright';
 import {
-  parseRubles, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
+  parseRubles, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
 } from './lib.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -68,7 +68,8 @@ async function collectPage(context, site, pageCfg, index) {
       rows = await page.$$eval(
         pageCfg.card,
         (cards, cfg) => cards.map((card) => {
-          const text = (sel) => (sel ? [...card.querySelectorAll(sel)].map((e) => e.innerText).join(' ') : '');
+          // innerText — текст как его видит человек; у скрытых блоков (например, меню) берём textContent.
+          const text = (sel) => (sel ? [...card.querySelectorAll(sel)].map((e) => e.innerText || e.textContent).join(' ') : '');
           return { model: text(cfg.model), price: text(cfg.price), benefit: text(cfg.benefit) };
         }),
         { model: pageCfg.model, price: pageCfg.price, benefit: pageCfg.benefit },
@@ -90,7 +91,7 @@ async function collectPage(context, site, pageCfg, index) {
       const prices = parseRubles(r.price);
       const benefits = parseRubles(r.benefit);
       return {
-        model: r.model.split('\n')[0].trim(),
+        model: cleanModel(r.model.split('\n').map((l) => l.trim()).find(Boolean), site.brand),
         price: prices.length ? Math.min(...prices) : '-',
         max_benefit: benefits.length ? Math.max(...benefits) : '-',
         source_url: pageCfg.url,

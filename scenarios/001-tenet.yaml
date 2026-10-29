@@ -1,7 +1,4 @@
 # Тестовый сайт (сайт марки Tenet).
-# Цены «от» берём из меню моделей на главной: там все модели с ценами.
-# Страница выгод пока без селекторов: при сборе сборщик сделает её снимок,
-# и по нему допишем, где на ней выгоды.
 id: 1
 company: Tenet (тест)
 site: tenet.ru
@@ -9,10 +6,15 @@ brand: Tenet
 active: true
 
 pages:
+  # Главная: в меню «Модели» все модели с ценой «от».
   - url: https://tenet.ru/
     card: .menu-models__left-item
     model: .menu-models__left-item-title
     price: .menu-models__left-item-price
 
+  # «Акции и спецпредложения»: карточки «TENET T8 - от 2 899 000 ₽» с выгодами.
   - url: https://tenet.ru/customers/offers/
-    scroll: true
+    card: .web_block_popup__content
+    model: .web_block_popup__content-title
+    price: .web_block_popup__content-title
+    benefit: .web_block_popup__content-text

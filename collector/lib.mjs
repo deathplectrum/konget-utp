@@ -39,6 +39,16 @@ export function parseRubles(text) {
   return out.filter((v) => v >= 1000);
 }
 
+// Чистит название модели: убирает марку в начале и хвост с ценой.
+// «TENET T8 - от 2 899 000 ₽*» → «T8».
+export function cleanModel(name, brand = '') {
+  let m = String(name || '').replace(/[\u00a0\u202f]/g, ' ').replace(/\s+/g, ' ').trim();
+  m = m.split(/\s*[-–—:]?\s*(?:от|до|цена)\s+\d/i)[0];
+  m = m.split(/\s\d{1,3}(?:[ .,]\d{3})+/)[0];
+  if (brand && m.toLowerCase().startsWith(`${brand.toLowerCase()} `)) m = m.slice(brand.length + 1);
+  return m.replace(/[\s*\-–—:]+$/, '').trim();
+}
+
 // Название модели для сравнения: без регистра и лишних пробелов.
 export function modelKey(name) {
   return String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
