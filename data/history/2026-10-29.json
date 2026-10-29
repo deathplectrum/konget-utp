@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T15:59:49.001Z",
+  "checked_at": "2026-10-29T16:01:58.922Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
@@ -19,7 +19,7 @@
       "file": "001-tenet.yaml",
       "models": [],
       "screens": [
-        "data/screens/1/0.jpg"
+        "data/screens/1/1.jpg"
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
