@@ -9,7 +9,6 @@ import {
   ATTENTION, STATUS, STATUS_ORDER, greeting, humanize, plural, statusMeta, timeAgo,
 } from '../lib/status';
 import BrandAvatar from '../components/BrandAvatar';
-import ChangeRow from '../components/ChangeRow';
 import { estimateSeconds, progressInfo } from '../lib/estimate';
 
 function minutesSince(iso) {
@@ -43,7 +42,7 @@ export default function Home() {
 
   const sites = report?.sites || [];
   const attention = sites.filter((s) => ATTENTION.includes(s.change));
-  const feed = sites.flatMap((s) => (s.diff || []).map((d) => ({ ...d, site: s.site, brand: s.brand, id: s.id })));
+  const changed = sites.filter((s) => s.change === 'Изменилось');
   const failed = run?.status === 'completed' && run.conclusion && run.conclusion !== 'success';
 
   return (
@@ -126,16 +125,25 @@ export default function Home() {
               )}
 
               <h2 className="section-title">Что изменилось</h2>
-              {feed.length ? (
-                <div className="card">
-                  {feed.slice(0, 8).map((d, i) => (
-                    <button key={i} className="feed-row" onClick={() => history.push(`/utp/${d.id}`)}>
-                      <BrandAvatar brand={d.brand} size={34} />
-                      <ChangeRow item={d} site={d.site} />
+              {changed.length ? (
+                <div className="card list-card">
+                  {changed.slice(0, 20).map((s) => (
+                    <button key={s.id} className="list-row" onClick={() => history.push(`/utp/${s.id}`)}>
+                      <BrandAvatar brand={s.brand} size={38} />
+                      <span className="list-text">
+                        <b>{s.site}</b>
+                        <small className={`tone-text-${statusMeta(s.change).tone}`}>{s.change}</small>
+                        <small className="muted">
+                          Ответственный: {s.responsible ? `«${s.responsible}»` : 'не указан'}
+                        </small>
+                      </span>
+                      <IonIcon icon={chevronForward} className="chev" />
                     </button>
                   ))}
-                  {feed.length > 8 && (
-                    <button className="more-link" onClick={() => history.push('/utp')}>Ещё {feed.length - 8} →</button>
+                  {changed.length > 20 && (
+                    <button className="more-link" onClick={() => history.push(`/utp?status=${encodeURIComponent('Изменилось')}`)}>
+                      Ещё {changed.length - 20} →
+                    </button>
                   )}
                 </div>
               ) : (

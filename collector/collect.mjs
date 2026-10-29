@@ -197,7 +197,7 @@ async function autoScroll(page) {
 
 async function collectSite(browser, site) {
   const base = {
-    id: site.id, company: site.company || '', site: site.site, brand: site.brand || '', file: site.file,
+    id: site.id, company: site.company || '', responsible: site.responsible || '', site: site.site, brand: site.brand || '', file: site.file,
     models: [], screens: [], comment: '',
   };
   if (!site.pages?.length && !site.models) {

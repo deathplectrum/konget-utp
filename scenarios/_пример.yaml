@@ -13,6 +13,7 @@ company: ООО «Пример Авто»   # компания-дилер
 site: example-dealer.ru      # адрес сайта без https://
 brand: Chery                 # марка
 active: true                 # false — сайт временно не проверяем
+responsible: Иван Петров     # кто отвечает за этот сайт (видно на главной)
 
 pages:
   - url: https://example-dealer.ru/models   # страница с моделями и ценами
