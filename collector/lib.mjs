@@ -45,19 +45,27 @@ export function parseRubles(text) {
 // Лизинг, ежемесячные платежи и маркетплейсы пропускаем, годы («2026 года») не считаем.
 const BENEFIT_WORD = /(выгод|скидк|преимуществ)[а-яё]*/gi;
 const NOT_BENEFIT = /лизинг|платеж|платёж|маркетплейс|в месяц/i;
+// «Скидка на ТО / КАСКО / аксессуары» — скидка не на машину. Смотрим только сразу после слова «скидка».
+const SERVICE = /^[\s:—–-]*(на|для)?\s*(ТО(?![А-ЯЁа-яё])|техобслуж|обслуживан|каско|страхов|аксессуар|шин|запчаст|сервис)/i;
+// Выгода на машину меньше 10 000 ₽ не бывает: это скидка на что-то другое.
+const MIN_BENEFIT = 10_000;
 
 export function parseBenefits(text) {
   // Переносы строк убираем: «Максимальная выгода\nдо 100 000 ₽» — это одна фраза.
   const clean = String(text || '').replace(/[\u00a0\u202f\u2009\n\r]/g, ' ');
   const out = [];
   for (const m of clean.matchAll(BENEFIT_WORD)) {
-    const before = clean.slice(Math.max(0, m.index - 25), m.index);
+    // Слова до «выгоды» смотрим только в той же фразе: «Платёж 25 000 ₽. Выгода…» — разные фразы.
+    const before = clean.slice(Math.max(0, m.index - 25), m.index).split(/[.;!?]\s/).at(-1);
     let after = clean.slice(m.index + m[0].length, m.index + m[0].length + 70);
     after = after.split(/;|\.\s|(?=(выгод|скидк|преимуществ))/i)[0];
     // «с учетом выгоды от 4 099 000» — это цена, а не выгода.
-    if (NOT_BENEFIT.test(before + m[0] + after) || /^\s*от\s/i.test(after)) continue;
-    const nums = parseRubles(after.replace(/\b(19|20)\d{2}\s*(г\.|год|года|г\b)/gi, ' '));
-    if (nums.length) out.push(nums[0]);
+    if (NOT_BENEFIT.test(before + m[0] + after) || SERVICE.test(after)) continue;
+    // «от 50 000 до 300 000» — берём то, что после «до». Просто «от 4 099 000» — это цена, пропускаем.
+    const upTo = after.match(/(?:^|[\s:—–-])до\s+(.*)/i);
+    if (!upTo && /^[\s:—–-]*от\s/i.test(after)) continue;
+    const nums = parseRubles((upTo ? upTo[1] : after).replace(/\b(19|20)\d{2}\s*(г\.|год|года|г\b)/gi, ' '));
+    if (nums.length && nums[0] >= MIN_BENEFIT) out.push(nums[0]);
   }
   return out;
 }
