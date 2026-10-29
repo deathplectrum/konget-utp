@@ -36,7 +36,8 @@ export function parseRubles(text) {
     const value = Number(m[0].replace(/[ .,]/g, ''));
     if (value >= 1000) out.push(value);
   }
-  return out.filter((v) => v >= 1000);
+  // Больше миллиарда — это склеенные числа, а не цена.
+  return out.filter((v) => v >= 1000 && v < 1_000_000_000);
 }
 
 // Выгоды из текста. Берём только сумму сразу после слов «выгода», «скидка» или «преимущество»

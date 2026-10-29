@@ -22,6 +22,11 @@ pages:
     model: .menu__models-item-title
     price: .menu__models-item-price
 
-  # Спецпредложения: снимок, чтобы найти выгоды по моделям.
+  # «Максимальные выгоды»: здесь всегда актуальные выгоды Geely (подтвердил Владимир).
+  # На каждую модель раскрывающийся блок с таблицей выгод по комплектациям.
+  # Все суммы в таблице — выгоды, берём самую большую.
   - url: https://www.geely-motors.com/specialoffers/buyers/maximum-benefits/
-    scroll: true
+    card: .web_block_accordion__item
+    model: .web_block_accordion__header
+    benefit: .web_block_table__content td
+    benefit_all: true

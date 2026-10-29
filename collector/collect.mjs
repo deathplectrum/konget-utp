@@ -90,10 +90,11 @@ async function collectPage(context, site, pageCfg, index) {
         pageCfg.card,
         (cards, cfg) => cards.map((card) => {
           // innerText — текст как его видит человек; у скрытых блоков (например, меню) берём textContent.
-          const text = (sel) => (sel ? [...card.querySelectorAll(sel)].map((e) => e.innerText || e.textContent).join(' ') : '');
+          // Куски склеиваем через « | », чтобы соседние суммы «455 000» и «455 000» не слиплись в одно число.
+          const text = (sel) => (sel ? [...card.querySelectorAll(sel)].map((e) => e.innerText || e.textContent).join(' | ') : '');
           // model_attr: название берём из атрибута (например, href ссылки), а не из текста.
           const model = cfg.modelAttr
-            ? [...card.querySelectorAll(cfg.model)].map((e) => e.getAttribute(cfg.modelAttr) || '').join(' ')
+            ? [...card.querySelectorAll(cfg.model)].map((e) => e.getAttribute(cfg.modelAttr) || '').join(' | ')
             : text(cfg.model);
           return { model, price: text(cfg.price), benefit: text(cfg.benefit) };
         }),
