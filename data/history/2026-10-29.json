@@ -1,8 +1,8 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T18:01:04.896Z",
+  "checked_at": "2026-10-29T18:06:42.537Z",
   "previous_date": "2026-10-28",
-  "total_seconds": 223,
+  "total_seconds": 116,
   "parallel": 3,
   "summary": {
     "Не изменилось": 1,
@@ -295,7 +295,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 113,
+      "seconds": 115,
       "pages_opened": 7,
       "change": "Изменилось",
       "changes": [
