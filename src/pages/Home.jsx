@@ -42,7 +42,6 @@ export default function Home() {
   };
 
   const sites = report?.sites || [];
-  const models = sites.reduce((n, s) => n + (s.models?.length || 0), 0);
   const attention = sites.filter((s) => ATTENTION.includes(s.change));
   const feed = sites.flatMap((s) => (s.diff || []).map((d) => ({ ...d, site: s.site, brand: s.brand, id: s.id })));
   const failed = run?.status === 'completed' && run.conclusion && run.conclusion !== 'success';
@@ -67,7 +66,7 @@ export default function Home() {
               <div className="hero-value">{running ? 'Собираю прямо сейчас…' : timeAgo(report?.checked_at)}</div>
               {report && !running && (
                 <div className="hero-sub">
-                  {sites.length} {plural(sites.length, 'сайт', 'сайта', 'сайтов')} · {models} {plural(models, 'модель', 'модели', 'моделей')}
+                  {sites.length} {plural(sites.length, 'сайт', 'сайта', 'сайтов')}
                 </div>
               )}
               {running && run?.created_at && (
