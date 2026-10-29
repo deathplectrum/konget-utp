@@ -257,16 +257,68 @@ async function main() {
   const prevById = new Map((previous?.sites || []).map((s) => [String(s.id), s]));
   log(`Сайтов к проверке: ${scenarios.length}. Прошлый сбор: ${previous?.date || 'нет'}`);
 
-  fs.rmSync(SCREENS, { recursive: true, force: true });
   // CHROMIUM_PATH: путь к своему браузеру, если Playwright не скачал свой.
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
   const results = [];
   const queue = [...scenarios];
+
+  // Сохраняет итог. stopped = сбор остановили кнопкой в приложении: пишем то, что успели,
+  // а непроверенные сайты оставляем как в прошлом сборе, чтобы ничего не потерять.
+  let saved = false;
+  function saveReport(stopped) {
+    if (saved) return;
+    saved = true;
+    const done = new Set(results.map((r) => String(r.id)));
+    let sites = results;
+    if (onlyId || stopped) {
+      const latest = readJson(path.join(DATA, 'latest.json'));
+      // У непроверенных сайтов оставляем только снимки, которые ещё лежат на месте.
+      const kept = (latest?.sites || []).filter((s) => !done.has(String(s.id)))
+        .map((s) => ({ ...s, screens: (s.screens || []).filter((f) => fs.existsSync(path.join(ROOT, f))) }));
+      sites = [...kept, ...results];
+    }
+    sites = sortSites(sites);
+    // Снимки сайтов, которых больше нет в списке, не нужны.
+    const keep = new Set(sites.map((s) => String(s.id)));
+    if (fs.existsSync(SCREENS)) {
+      for (const d of fs.readdirSync(SCREENS)) if (!keep.has(d)) fs.rmSync(path.join(SCREENS, d), { recursive: true, force: true });
+    }
+    const report = {
+      date: today,
+      checked_at: now.toISOString(),
+      previous_date: previous?.date || null,
+      total_seconds: Math.round((Date.now() - now.getTime()) / 1000),
+      parallel: PARALLEL,
+      ...(stopped ? { stopped: true, checked: results.length, planned: scenarios.length } : {}),
+      summary: summarize(sites),
+      sites,
+    };
+
+    fs.mkdirSync(HISTORY, { recursive: true });
+    fs.writeFileSync(path.join(DATA, 'latest.json'), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(HISTORY, `${today}.json`), JSON.stringify(report, null, 2));
+
+    const dates = fs.readdirSync(HISTORY).map((f) => f.replace('.json', ''));
+    for (const d of historyToDelete(dates, today)) {
+      fs.rmSync(path.join(HISTORY, `${d}.json`));
+      log(`Удалён старый сбор ${d}`);
+    }
+    log(stopped ? `Сбор остановлен: проверено ${results.length} из ${scenarios.length}, сохранено` : `Готово за ${report.total_seconds} с:`, JSON.stringify(report.summary));
+  }
+  // GitHub при отмене сначала посылает сигнал и даёт несколько секунд: успеваем сохранить.
+  for (const sig of ['SIGINT', 'SIGTERM']) {
+    process.on(sig, () => {
+      saveReport(true);
+      process.exit(0);
+    });
+  }
   async function worker() {
     while (queue.length) {
       const site = queue.shift();
       log(`→ [${site.id}] ${site.site}`);
       const started = Date.now();
+      // Старые снимки сайта удаляем только перед его проверкой: у остальных они остаются.
+      fs.rmSync(path.join(SCREENS, String(site.id)), { recursive: true, force: true });
       const res = await collectSite(browser, site);
       // Сколько времени и страниц ушло на сайт: по этому считаем, сколько сайтов успеем за один сбор.
       res.seconds = Math.round((Date.now() - started) / 1000);
@@ -279,33 +331,7 @@ async function main() {
   await Promise.all(Array.from({ length: PARALLEL }, worker));
   await browser.close();
 
-  // Если проверяли один сайт, остальные берём из прошлого latest.json без изменений.
-  let sites = results;
-  if (onlyId) {
-    const latest = readJson(path.join(DATA, 'latest.json'));
-    sites = [...(latest?.sites || []).filter((s) => String(s.id) !== String(onlyId)), ...results];
-  }
-  sites = sortSites(sites);
-  const report = {
-    date: today,
-    checked_at: now.toISOString(),
-    previous_date: previous?.date || null,
-    total_seconds: Math.round((Date.now() - now.getTime()) / 1000),
-    parallel: PARALLEL,
-    summary: summarize(sites),
-    sites,
-  };
-
-  fs.mkdirSync(HISTORY, { recursive: true });
-  fs.writeFileSync(path.join(DATA, 'latest.json'), JSON.stringify(report, null, 2));
-  fs.writeFileSync(path.join(HISTORY, `${today}.json`), JSON.stringify(report, null, 2));
-
-  const dates = fs.readdirSync(HISTORY).map((f) => f.replace('.json', ''));
-  for (const d of historyToDelete(dates, today)) {
-    fs.rmSync(path.join(HISTORY, `${d}.json`));
-    log(`Удалён старый сбор ${d}`);
-  }
-  log(`Готово за ${report.total_seconds} с:`, JSON.stringify(report.summary));
+  saveReport(false);
 }
 
 main().catch((e) => {

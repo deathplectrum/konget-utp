@@ -1,7 +1,7 @@
 // Общее состояние приложения: настройки, последний сбор и идёт ли сбор сейчас.
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { loadSettings, saveSettings } from './settings';
-import { lastRun, loadLatest, startCollect } from './github';
+import { cancelRun, lastRun, loadLatest, startCollect } from './github';
 
 const Ctx = createContext(null);
 const POLL_MS = 10_000;
@@ -13,6 +13,7 @@ export function AppProvider({ children }) {
   const [error, setError] = useState('');
   const [run, setRun] = useState(null); // последний запуск сборщика на GitHub
   const [runSite, setRunSite] = useState(''); // какой сайт перепроверяем ('' — все)
+  const [stopping, setStopping] = useState(false); // нажали «Остановить», ждём, пока GitHub остановит
   const timer = useRef(null);
 
   const setSettings = (s) => {
@@ -38,6 +39,7 @@ export function AppProvider({ children }) {
     if (!settings.token || !settings.repo) return;
     const r = await lastRun(settings).catch(() => null);
     setRun(r);
+    if (r?.status === 'completed') setStopping(false);
     clearTimeout(timer.current);
     if (r && r.status !== 'completed') {
       timer.current = setTimeout(pollRun, POLL_MS);
@@ -57,6 +59,15 @@ export function AppProvider({ children }) {
     timer.current = setTimeout(pollRun, 5_000);
   };
 
+  const stop = async () => {
+    const r = run?.id ? run : await lastRun(settings);
+    if (!r?.id || r.status === 'completed') return;
+    await cancelRun(settings, r.id);
+    setStopping(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(pollRun, 3_000);
+  };
+
   useEffect(() => {
     refresh();
     pollRun();
@@ -66,7 +77,7 @@ export function AppProvider({ children }) {
   const running = run && run.status !== 'completed';
 
   return (
-    <Ctx.Provider value={{ settings, setSettings, report, loading, error, refresh, run, runSite, running, collect }}>
+    <Ctx.Provider value={{ settings, setSettings, report, loading, error, refresh, run, runSite, running, stopping, collect, stop }}>
       {children}
     </Ctx.Provider>
   );

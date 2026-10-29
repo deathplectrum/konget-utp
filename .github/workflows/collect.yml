@@ -37,12 +37,14 @@ jobs:
       - name: Собрать цены и выгоды
         run: |
           if [ -n "${{ inputs.site }}" ]; then
-            npm run collect -- --site "${{ inputs.site }}"
+            exec node collector/collect.mjs --site "${{ inputs.site }}"
           else
-            npm run collect
+            exec node collector/collect.mjs
           fi
 
+      # Сохраняем и тогда, когда сбор остановили кнопкой: то, что успели собрать, не пропадёт.
       - name: Сохранить результат в репозиторий
+        if: success() || cancelled()
         run: |
           git config user.name "konget-collector"
           git config user.email "actions@users.noreply.github.com"

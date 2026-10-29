@@ -11,12 +11,10 @@ export function estimateSeconds(report, siteId = '') {
     const site = sites.find((s) => String(s.id) === String(siteId));
     return OVERHEAD + (site?.seconds || avg);
   }
+  // Сайты идут по несколько одновременно, поэтому сумму делим на число потоков.
   const parallel = report?.parallel || 3;
-  const untimed = sites.length - timed.length;
-  const work = report?.total_seconds
-    ? report.total_seconds + (untimed * avg) / parallel
-    : (Math.max(sites.length, 1) * avg) / parallel;
-  return OVERHEAD + work;
+  const sum = sites.reduce((a, s) => a + (s.seconds > 0 ? s.seconds : avg), 0) || avg;
+  return OVERHEAD + sum / parallel;
 }
 
 // Доля выполненного (0…1) и подпись «осталось». Если сбор идёт дольше обычного, полоска замирает на 97%.

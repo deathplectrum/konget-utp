@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
-  IonContent, IonIcon, IonPage, IonRefresher, IonRefresherContent, IonSpinner, useIonToast,
+  IonContent, IonIcon, IonPage, IonRefresher, IonRefresherContent, IonSpinner, useIonAlert, useIonToast,
 } from '@ionic/react';
 import { play, keyOutline, chevronForward, alertCircle, partlySunny } from 'ionicons/icons';
 import { useApp } from '../lib/AppContext';
@@ -16,7 +16,7 @@ function minutesSince(iso) {
 }
 
 export default function Home() {
-  const { settings, report, run, runSite, running, collect, refresh, error } = useApp();
+  const { settings, report, run, runSite, running, stopping, collect, stop, refresh, error } = useApp();
   const [, tick] = useState(0);
   useEffect(() => {
     if (!running) return undefined;
@@ -25,9 +25,35 @@ export default function Home() {
   }, [running]);
   const progress = running && run?.created_at ? progressInfo(run.created_at, estimateSeconds(report, runSite)) : null;
   const [toast] = useIonToast();
+  const [alert] = useIonAlert();
   const history = useHistory();
 
+  // Нажали на кнопку во время сбора: спрашиваем, точно ли остановить (чтобы не нажать случайно).
+  const onStop = () => {
+    if (stopping) return;
+    alert({
+      header: 'Остановить сбор?',
+      message: 'То, что уже собрано, сохранится. Сайты, до которых сбор не дошёл, останутся с данными прошлого сбора.',
+      buttons: [
+        { text: 'Продолжить сбор', role: 'cancel' },
+        {
+          text: 'Остановить',
+          role: 'destructive',
+          handler: () => {
+            stop()
+              .then(() => toast({ message: 'Останавливаю. Собранное сохранится через минуту.', duration: 3500, color: 'warning', position: 'top' }))
+              .catch((e) => toast({ message: e.message, duration: 4000, color: 'danger', position: 'top' }));
+          },
+        },
+      ],
+    });
+  };
+
   const onCollect = async () => {
+    if (running) {
+      onStop();
+      return;
+    }
     if (!settings.token) {
       history.push('/settings');
       return;
@@ -43,7 +69,8 @@ export default function Home() {
   const sites = report?.sites || [];
   const attention = sites.filter((s) => ATTENTION.includes(s.change));
   const changed = sites.filter((s) => s.change === 'Изменилось');
-  const failed = run?.status === 'completed' && run.conclusion && run.conclusion !== 'success';
+  const cancelled = run?.status === 'completed' && run.conclusion === 'cancelled';
+  const failed = run?.status === 'completed' && run.conclusion && !['success', 'cancelled'].includes(run.conclusion);
 
   return (
     <IonPage>
@@ -67,11 +94,14 @@ export default function Home() {
                 <div className="hero-sub">Идёт {minutesSince(run.created_at)} мин · {progress?.text}</div>
               )}
             </div>
-            <button className="big-btn" onClick={onCollect} disabled={running}>
+            <button className={`big-btn ${running ? 'is-stop' : ''}`} onClick={onCollect} disabled={stopping}>
               <span className="big-btn-icon">
                 {running ? <IonSpinner name="crescent" /> : <IonIcon icon={settings.token ? play : keyOutline} />}
               </span>
-              <span>{running ? 'Идёт сбор' : settings.token ? 'Собрать УТП' : 'Добавить ключ'}</span>
+              <span className="big-btn-text">
+                {stopping ? 'Останавливаю…' : running ? 'Идёт сбор' : settings.token ? 'Собрать УТП' : 'Добавить ключ'}
+                {running && !stopping && <small>нажмите, чтобы остановить</small>}
+              </span>
             </button>
             {progress && (
               <div className="progress" title={progress.text}>
@@ -85,6 +115,15 @@ export default function Home() {
               <IonIcon icon={alertCircle} />
               <span>Последний сбор сломался. Нажми, чтобы посмотреть подробности на GitHub</span>
             </a>
+          )}
+          {cancelled && !running && (
+            <div className="notice notice-amber">
+              <IonIcon icon={alertCircle} />
+              <span>
+                Сбор остановлен вручную.
+                {report?.stopped ? ` Проверено ${report.checked} из ${report.planned} сайтов, остальные — по прошлому сбору.` : ' Собранное сохранено.'}
+              </span>
+            </div>
           )}
           {error && <div className="notice notice-amber"><IonIcon icon={alertCircle} /><span>{error}</span></div>}
 

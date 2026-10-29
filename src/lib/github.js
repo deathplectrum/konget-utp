@@ -49,6 +49,16 @@ export async function startCollect({ repo, token }, siteId = '') {
   if (!res.ok) throw new Error(`Не удалось запустить сбор (${res.status})`);
 }
 
+// Экстренная остановка: GitHub останавливает сборщик, тот успевает сохранить собранное.
+export async function cancelRun({ repo, token }, runId) {
+  const res = await fetch(`${API}/repos/${repo}/actions/runs/${runId}/cancel`, {
+    method: 'POST',
+    headers: headers(token),
+  });
+  if (res.status === 409) return; // уже закончился
+  if (!res.ok) throw new Error(`Не удалось остановить сбор (${res.status})`);
+}
+
 // Последний запуск сборщика: идёт ли он сейчас и чем закончился.
 export async function lastRun({ repo, token }) {
   const res = await fetch(`${API}/repos/${repo}/actions/workflows/${WORKFLOW}/runs?per_page=1`, {
