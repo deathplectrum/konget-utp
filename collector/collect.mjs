@@ -20,7 +20,7 @@ const DATA = path.join(ROOT, 'data');
 const HISTORY = path.join(DATA, 'history');
 const SCREENS = path.join(DATA, 'screens');
 const PAGE_TIMEOUT = 45_000;
-const PARALLEL = 3; // сколько сайтов проверять одновременно
+const PARALLEL = Number(process.env.PARALLEL) || 3; // сколько сайтов проверять одновременно
 
 function log(...args) {
   console.log(new Date().toISOString().slice(11, 19), ...args);
@@ -52,6 +52,7 @@ function loadPrevious(today) {
 
 // Открывает страницу и выполняет шаги сценария: нажать кнопки, подождать, прокрутить.
 async function openPage(context, site, url, cfg = {}) {
+  site.pagesOpened = (site.pagesOpened || 0) + 1;
   const page = await context.newPage();
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT });
@@ -254,9 +255,13 @@ async function main() {
     while (queue.length) {
       const site = queue.shift();
       log(`→ [${site.id}] ${site.site}`);
+      const started = Date.now();
       const res = await collectSite(browser, site);
+      // Сколько времени и страниц ушло на сайт: по этому считаем, сколько сайтов успеем за один сбор.
+      res.seconds = Math.round((Date.now() - started) / 1000);
+      res.pages_opened = site.pagesOpened || 0;
       Object.assign(res, decideChange(res, prevById.get(String(site.id))));
-      log(`  [${site.id}] ${res.change}. Моделей: ${res.models.length}${res.comment ? `. ${res.comment}` : ''}`);
+      log(`  [${site.id}] ${res.change}. Моделей: ${res.models.length}. ${res.seconds} с, страниц: ${res.pages_opened}${res.comment ? `. ${res.comment}` : ''}`);
       results.push(res);
     }
   }
@@ -270,7 +275,15 @@ async function main() {
     sites = [...(latest?.sites || []).filter((s) => String(s.id) !== String(onlyId)), ...results];
   }
   sites = sortSites(sites);
-  const report = { date: today, checked_at: now.toISOString(), previous_date: previous?.date || null, summary: summarize(sites), sites };
+  const report = {
+    date: today,
+    checked_at: now.toISOString(),
+    previous_date: previous?.date || null,
+    total_seconds: Math.round((Date.now() - now.getTime()) / 1000),
+    parallel: PARALLEL,
+    summary: summarize(sites),
+    sites,
+  };
 
   fs.mkdirSync(HISTORY, { recursive: true });
   fs.writeFileSync(path.join(DATA, 'latest.json'), JSON.stringify(report, null, 2));
@@ -281,7 +294,7 @@ async function main() {
     fs.rmSync(path.join(HISTORY, `${d}.json`));
     log(`Удалён старый сбор ${d}`);
   }
-  log('Готово:', JSON.stringify(report.summary));
+  log(`Готово за ${report.total_seconds} с:`, JSON.stringify(report.summary));
 }
 
 main().catch((e) => {
