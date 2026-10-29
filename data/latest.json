@@ -1,21 +1,22 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T17:48:02.857Z",
-  "previous_date": null,
-  "total_seconds": 192,
+  "checked_at": "2026-10-29T18:01:04.896Z",
+  "previous_date": "2026-10-28",
+  "total_seconds": 223,
   "parallel": 3,
   "summary": {
-    "Не изменилось": 0,
-    "Изменилось": 0,
+    "Не изменилось": 1,
+    "Изменилось": 4,
     "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 5,
+    "Первая проверка": 0,
     "Нет сценария": 0
   },
   "sites": [
     {
       "id": 1,
       "company": "Tenet (тест)",
+      "responsible": "None",
       "site": "tenet.ru",
       "brand": "Tenet",
       "file": "001-tenet.yaml",
@@ -62,15 +63,44 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 49,
+      "seconds": 91,
       "pages_opened": 9,
-      "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "change": "Изменилось",
+      "changes": [
+        "T4L: 2 099 000 ₽/145 000 ₽ → 2 199 000 ₽/145 000 ₽",
+        "T7: 2 625 000 ₽/300 000 ₽ → 2 625 000 ₽/200 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "changed",
+          "model": "T4L",
+          "was": {
+            "price": 2099000,
+            "max_benefit": 145000
+          },
+          "now": {
+            "price": 2199000,
+            "max_benefit": 145000
+          }
+        },
+        {
+          "type": "changed",
+          "model": "T7",
+          "was": {
+            "price": 2625000,
+            "max_benefit": 300000
+          },
+          "now": {
+            "price": 2625000,
+            "max_benefit": 200000
+          }
+        }
+      ]
     },
     {
       "id": 2,
       "company": "TANK (тест)",
+      "responsible": "None",
       "site": "tank.ru",
       "brand": "TANK",
       "file": "002-tank.yaml",
@@ -129,15 +159,31 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 156,
+      "seconds": 154,
       "pages_opened": 10,
-      "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "change": "Изменилось",
+      "changes": [
+        "300: 4 099 000 ₽/150 000 ₽ → 4 099 000 ₽/200 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "changed",
+          "model": "300",
+          "was": {
+            "price": 4099000,
+            "max_benefit": 150000
+          },
+          "now": {
+            "price": 4099000,
+            "max_benefit": 200000
+          }
+        }
+      ]
     },
     {
       "id": 3,
       "company": "Geely (тест)",
+      "responsible": "None",
       "site": "geely-motors.com",
       "brand": "Geely",
       "file": "003-geely.yaml",
@@ -196,13 +242,25 @@
       "status": "ok",
       "seconds": 175,
       "pages_opened": 11,
-      "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "change": "Изменилось",
+      "changes": [
+        "Новая модель: MONJARO 4 409 990 ₽/190 000 ₽"
+      ],
+      "diff": [
+        {
+          "type": "new",
+          "model": "MONJARO",
+          "now": {
+            "price": 4409990,
+            "max_benefit": 190000
+          }
+        }
+      ]
     },
     {
       "id": 5,
       "company": "Belgee (тест)",
+      "responsible": "None",
       "site": "belgee.ru",
       "brand": "Belgee",
       "file": "005-belgee.yaml",
@@ -237,15 +295,27 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 115,
+      "seconds": 113,
       "pages_opened": 7,
-      "change": "Первая проверка",
-      "changes": [],
-      "diff": []
+      "change": "Изменилось",
+      "changes": [
+        "Модель пропала: X90"
+      ],
+      "diff": [
+        {
+          "type": "gone",
+          "model": "X90",
+          "was": {
+            "price": 2999990,
+            "max_benefit": 150000
+          }
+        }
+      ]
     },
     {
       "id": 4,
       "company": "Li Auto (тест)",
+      "responsible": "None",
       "site": "liautoofficial.ru",
       "brand": "Li",
       "file": "004-liauto.yaml",
@@ -286,9 +356,9 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 27,
+      "seconds": 20,
       "pages_opened": 8,
-      "change": "Первая проверка",
+      "change": "Не изменилось",
       "changes": [],
       "diff": []
     }
