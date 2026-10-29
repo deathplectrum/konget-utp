@@ -1,13 +1,13 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:01:58.922Z",
+  "checked_at": "2026-10-29T16:04:39.717Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 1,
+    "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 0,
+    "Первая проверка": 1,
     "Нет сценария": 0
   },
   "sites": [
@@ -17,14 +17,51 @@
       "site": "tenet.ru",
       "brand": "Tenet",
       "file": "001-tenet.yaml",
-      "models": [],
-      "screens": [
-        "data/screens/1/1.jpg"
+      "models": [
+        {
+          "model": "T4L",
+          "price": 2199000,
+          "max_benefit": 145000,
+          "source_url": "https://tenet.ru/"
+        },
+        {
+          "model": "T4",
+          "price": 2089000,
+          "max_benefit": 100000,
+          "source_url": "https://tenet.ru/"
+        },
+        {
+          "model": "T7",
+          "price": 2605000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/"
+        },
+        {
+          "model": "T8",
+          "price": 2899000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/"
+        },
+        {
+          "model": "A8",
+          "price": 2899000,
+          "max_benefit": "-",
+          "source_url": "https://tenet.ru/"
+        },
+        {
+          "model": "T9",
+          "price": 3749000,
+          "max_benefit": "-",
+          "source_url": "https://tenet.ru/"
+        }
       ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "change": "Требует проверки",
-      "changes": []
+      "screens": [],
+      "comment": "",
+      "status": "ok",
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 6"
+      ]
     }
   ]
 }
