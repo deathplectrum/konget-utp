@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, historyToDelete, formatRub, CHANGE,
+  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, diffDetails, historyToDelete, formatRub, CHANGE,
 } from './lib.mjs';
 
 test('разбор цен в разных записях', () => {
@@ -83,4 +83,14 @@ test('выгоды: только то, что названо выгодой', ()
     [200000, 50000],
   );
   assert.deepEqual(parseBenefits('Цена 2 199 000 ₽'), []);
+});
+
+test('изменения списком для приложения', () => {
+  const d = diffDetails(
+    [{ model: 'T7', price: 2199000, max_benefit: 300000 }, { model: 'A8', price: 1, max_benefit: '-' }],
+    [{ model: 'T7', price: 2299000, max_benefit: 300000 }, { model: 'T9', price: 3, max_benefit: '-' }],
+  );
+  assert.deepEqual(d.map((x) => x.type), ['changed', 'new', 'gone']);
+  assert.equal(d[0].was.price, 2199000);
+  assert.equal(d[0].now.price, 2299000);
 });

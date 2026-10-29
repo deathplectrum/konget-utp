@@ -1,74 +1,66 @@
-import {
-  IonButton, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonNote, IonPage,
-  IonText, IonTitle, IonToolbar,
-} from '@ionic/react';
-import { add, alertCircle, checkmarkCircle, construct, documentText, folderOpen } from 'ionicons/icons';
+import { IonContent, IonIcon, IonPage } from '@ionic/react';
+import { add, checkmarkCircle, construct, documentText, folderOpen, cloudOffline, chevronForward } from 'ionicons/icons';
 import { useApp } from '../lib/AppContext';
 import { newScenarioUrl } from '../lib/github';
+import BrandAvatar from '../components/BrandAvatar';
 
 // Насколько готов сценарий сайта, по итогам последнего сбора.
 function scenarioState(s) {
-  if (s.change === 'Нет сценария') return { icon: documentText, color: 'medium', text: 'Сценария нет' };
-  if (s.change === 'Ошибка доступа') return { icon: alertCircle, color: 'danger', text: 'Сайт не открылся' };
-  if (s.screens?.length || s.change === 'Требует проверки') {
-    return { icon: construct, color: 'warning', text: 'Поправить сценарий' };
-  }
-  return { icon: checkmarkCircle, color: 'success', text: 'Сценарий работает' };
+  if (s.change === 'Нет сценария') return { icon: documentText, tone: 'gray', text: 'Не настроен' };
+  if (s.change === 'Ошибка доступа') return { icon: cloudOffline, tone: 'red', text: 'Не открылся' };
+  if (s.screens?.length || s.change === 'Требует проверки') return { icon: construct, tone: 'amber', text: 'Донастроить' };
+  return { icon: checkmarkCircle, tone: 'green', text: 'Работает' };
 }
 
 export default function Sites() {
   const { report, settings } = useApp();
   const repo = settings.repo;
   const sites = [...(report?.sites || [])].sort((a, b) => a.id - b.id);
+  const ready = sites.filter((s) => scenarioState(s).tone === 'green').length;
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Сайты</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <div className="ion-padding">
-          <IonText color="medium">
-            <p className="small">
-              Каждый сайт — это файл-сценарий в папке scenarios на GitHub: где на сайте модели, цены и выгоды.
-              Новый сайт появится в списке после ближайшего сбора.
-            </p>
-          </IonText>
-          <IonButton expand="block" href={newScenarioUrl(repo)} target="_blank" disabled={!repo}>
-            <IonIcon slot="start" icon={add} /> Добавить сайт
-          </IonButton>
-          <IonButton expand="block" fill="outline" href={`https://github.com/${repo}/tree/main/scenarios`} target="_blank" disabled={!repo}>
-            <IonIcon slot="start" icon={folderOpen} /> Все сценарии на GitHub
-          </IonButton>
-        </div>
+      <IonContent fullscreen className="app-bg">
+        <div className="page">
+          <header className="greet">
+            <div className="greet-small">{ready} из {sites.length} работают</div>
+            <h1>Сайты</h1>
+          </header>
 
-        {sites.length > 0 && (
-          <IonList inset>
-            <IonListHeader>
-              <IonLabel>В последнем сборе: {sites.length}</IonLabel>
-            </IonListHeader>
-            {sites.map((s) => {
-              const st = scenarioState(s);
-              return (
-                <IonItem
-                  key={s.id}
-                  href={s.file ? `https://github.com/${repo}/edit/main/scenarios/${s.file}` : undefined}
-                  target="_blank"
-                  detail
-                >
-                  <IonIcon slot="start" icon={st.icon} color={st.color} />
-                  <IonLabel>
-                    <h3>{s.site}</h3>
-                    <p>{s.brand}{s.company ? ` · ${s.company}` : ''}</p>
-                  </IonLabel>
-                  <IonNote slot="end" color={st.color} className="small">{st.text}</IonNote>
-                </IonItem>
-              );
-            })}
-          </IonList>
-        )}
+          <div className="card how">
+            <div className="how-title">Как это устроено</div>
+            <p>У каждого сайта есть сценарий: подсказка сборщику, где на сайте модели, цены и выгоды.
+              Новый сайт появится здесь после ближайшего сбора.</p>
+            <div className="btn-row">
+              <a className="soft-btn primary" href={newScenarioUrl(repo)} target="_blank" rel="noreferrer">
+                <IonIcon icon={add} /> Добавить сайт
+              </a>
+              <a className="soft-btn" href={`https://github.com/${repo}/tree/main/scenarios`} target="_blank" rel="noreferrer">
+                <IonIcon icon={folderOpen} /> Все сценарии
+              </a>
+            </div>
+          </div>
+
+          {sites.length > 0 && (
+            <div className="card list-card">
+              {sites.map((s) => {
+                const st = scenarioState(s);
+                return (
+                  <a key={s.id} className="list-row" target="_blank" rel="noreferrer"
+                    href={s.file ? `https://github.com/${repo}/edit/main/scenarios/${s.file}` : undefined}>
+                    <BrandAvatar brand={s.brand} size={40} />
+                    <span className="list-text">
+                      <b>{s.site}</b>
+                      <small className="muted">{s.brand} · {s.models?.length || 0} моделей</small>
+                    </span>
+                    <span className={`pill pill-sm tone-${st.tone}`}><IonIcon icon={st.icon} />{st.text}</span>
+                    <IonIcon icon={chevronForward} className="chev" />
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

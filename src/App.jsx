@@ -3,7 +3,7 @@ import {
   IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact,
 } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
-import { home, pricetags, globe, settings } from 'ionicons/icons';
+import { sparkles, pricetags, globe, settings } from 'ionicons/icons';
 
 import { AppProvider } from './lib/AppContext';
 import Home from './pages/Home';
@@ -43,7 +43,7 @@ export default function App() {
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
               <IonTabButton tab="home" href="/home">
-                <IonIcon icon={home} />
+                <IonIcon icon={sparkles} />
                 <IonLabel>Главная</IonLabel>
               </IonTabButton>
               <IonTabButton tab="utp" href="/utp">

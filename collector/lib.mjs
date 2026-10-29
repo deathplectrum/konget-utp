@@ -126,6 +126,25 @@ export function diffModels(prev, curr) {
   return changes;
 }
 
+// То же сравнение, но списком объектов: приложение рисует по нему стрелки и цвета.
+export function diffDetails(prev, curr) {
+  const out = [];
+  const pick = (m) => ({ price: m.price, max_benefit: m.max_benefit });
+  const prevMap = new Map(prev.map((m) => [modelKey(m.model), m]));
+  const currMap = new Map(curr.map((m) => [modelKey(m.model), m]));
+  for (const [key, m] of currMap) {
+    const old = prevMap.get(key);
+    if (!old) out.push({ type: 'new', model: m.model, now: pick(m) });
+    else if (old.price !== m.price || old.max_benefit !== m.max_benefit) {
+      out.push({ type: 'changed', model: m.model, was: pick(old), now: pick(m) });
+    }
+  }
+  for (const [key, m] of prevMap) {
+    if (!currMap.has(key)) out.push({ type: 'gone', model: m.model, was: pick(m) });
+  }
+  return out;
+}
+
 // Решает, какой статус получит сайт, и что написать в «Что изменилось».
 export function decideChange(site, prevSite) {
   if (site.status === 'no_scenario') return { change: CHANGE.noScenario, changes: [] };
@@ -135,7 +154,8 @@ export function decideChange(site, prevSite) {
     return { change: CHANGE.first, changes: [`Записано моделей: ${site.models.length}`] };
   }
   const changes = diffModels(prevSite.models, site.models);
-  return { change: changes.length ? CHANGE.changed : CHANGE.same, changes };
+  const diff = diffDetails(prevSite.models, site.models);
+  return { change: changes.length ? CHANGE.changed : CHANGE.same, changes, diff };
 }
 
 export function sortSites(sites) {
