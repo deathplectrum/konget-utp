@@ -1,15 +1,15 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T17:02:06.439Z",
+  "checked_at": "2026-10-29T17:09:59.727Z",
   "previous_date": null,
-  "total_seconds": 193,
+  "total_seconds": 198,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 3,
+    "Требует проверки": 2,
     "Ошибка доступа": 0,
-    "Первая проверка": 2,
+    "Первая проверка": 3,
     "Нет сценария": 0
   },
   "sites": [
@@ -75,7 +75,7 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 146,
+      "seconds": 163,
       "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
@@ -88,7 +88,7 @@
       "file": "003-geely.yaml",
       "models": [
         {
-          "model": "EX5 Гибрид",
+          "model": "EX5 ГИБРИД",
           "price": 3229990,
           "max_benefit": "-",
           "source_url": "https://www.geely-motors.com/model/geely-ex5-em-i/"
@@ -137,56 +137,12 @@
         }
       ],
       "screens": [
-        "data/screens/3/model-0.jpg",
         "data/screens/3/1.jpg"
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 176,
+      "seconds": 177,
       "pages_opened": 11,
-      "change": "Требует проверки",
-      "changes": []
-    },
-    {
-      "id": 5,
-      "company": "Belgee (тест)",
-      "site": "belgee.ru",
-      "brand": "Belgee",
-      "file": "005-belgee.yaml",
-      "models": [
-        {
-          "model": "Новый X50",
-          "price": 2099990,
-          "max_benefit": "-",
-          "source_url": "https://belgee.ru/model/belgee-x50-new/"
-        },
-        {
-          "model": "X50+",
-          "price": 2219990,
-          "max_benefit": "-",
-          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
-        },
-        {
-          "model": "S50",
-          "price": 1729990,
-          "max_benefit": "-",
-          "source_url": "https://belgee.ru/model/belgee-s50/"
-        },
-        {
-          "model": "X70",
-          "price": 2529990,
-          "max_benefit": "-",
-          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
-        }
-      ],
-      "screens": [
-        "data/screens/5/model-1.jpg",
-        "data/screens/5/1.jpg"
-      ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "seconds": 115,
-      "pages_opened": 7,
       "change": "Требует проверки",
       "changes": []
     },
@@ -239,7 +195,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 57,
+      "seconds": 61,
       "pages_opened": 9,
       "change": "Первая проверка",
       "changes": [
@@ -289,11 +245,55 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 21,
+      "seconds": 23,
       "pages_opened": 8,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 5"
+      ]
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "file": "005-belgee.yaml",
+      "models": [
+        {
+          "model": "Новый X50",
+          "price": 2099990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-new/"
+        },
+        {
+          "model": "X50+",
+          "price": 2219990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
+        },
+        {
+          "model": "S50",
+          "price": 1729990,
+          "max_benefit": 200000,
+          "source_url": "https://belgee.ru/model/belgee-s50/"
+        },
+        {
+          "model": "X70",
+          "price": 2529990,
+          "max_benefit": 80000,
+          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
+        }
+      ],
+      "screens": [
+        "data/screens/5/model-1.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 114,
+      "pages_opened": 7,
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 4"
       ]
     }
   ]
