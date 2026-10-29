@@ -21,5 +21,5 @@ pages:
     price: .menu-models__item-price
     benefit: .menu-models__item-price
   # Спецпредложения: снимок, чтобы найти выгоды.
-  - url: https://belgee.ru/special-offers/
+  - url: https://belgee.ru/forbuyers/specialoffer/
     scroll: true

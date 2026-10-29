@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseRubles, parsePrices, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, diffDetails, historyToDelete, formatRub, CHANGE,
+  parseRubles, parsePrices, parseBenefits, parseAmounts, cleanModel, mergeModels, validateModels, diffModels, decideChange, diffDetails, historyToDelete, formatRub, CHANGE,
 } from './lib.mjs';
 
 test('разбор цен в разных записях', () => {
@@ -75,6 +75,7 @@ test('чистка названия модели', () => {
   assert.equal(cleanModel('Ли Л6 | Li L6', 'Li'), 'L6');
   assert.equal(cleanModel('TANK 300', 'TANK'), '300');
   assert.equal(cleanModel('Л9 Ливис I L9 Livis', 'Li'), 'L9 Livis');
+  assert.equal(cleanModel('Ли Л6 | Li L6¹', 'Li'), 'L6');
 });
 
 test('выгоды: только то, что названо выгодой', () => {
@@ -108,4 +109,9 @@ test('цена: берём суммы после «от», а не из снос
   assert.deepEqual(parsePrices('от 4 099 000 ₽ *Цена с учетом выгоды по трейд-ин в 200 000 рублей, 2026 года'), [4099000]);
   assert.deepEqual(parsePrices('2 625 000 ₽'), [2625000]);
   assert.deepEqual(parsePrices('ОТ 2 199 000 ₽*'), [2199000]);
+});
+
+test('все суммы как выгоды (benefit_all)', () => {
+  assert.deepEqual(parseAmounts('Для комплектации Про / Pro - 980 000 рублей Для комплектации Макс / Max - 1 027 000 рублей'), [980000, 1027000]);
+  assert.deepEqual(parseAmounts('автомобили 2025 года, 300 000 ₽'), [300000]);
 });

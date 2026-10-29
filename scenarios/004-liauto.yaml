@@ -20,6 +20,11 @@ pages:
     model: .menu-models__item-title
     price: .menu-models__item-price
     benefit: .menu-models__item-price
-  # Специальные предложения: отсюда берём только выгоды.
+  # Специальные предложения: карточка на каждую модель, внутри «Специальное предложение»,
+  # «Трейд-ин», «Лояльный трейд-ин» с суммами по комплектациям. Слова «выгода» там нет,
+  # поэтому считаем все суммы (benefit_all). Цену отсюда не берём.
   - url: https://liautoofficial.ru/purchase/buy/offers/
-    scroll: true
+    card: .web_block_media-accordion
+    model: .web_block_media-accordion__title
+    benefit: .web_block_media-accordion__accordion-text
+    benefit_all: true

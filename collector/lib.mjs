@@ -60,10 +60,16 @@ export function parseBenefits(text) {
   return out;
 }
 
+// Все суммы из текста как выгоды — для блоков, где сайт пишет сумму без слова «выгода»
+// (в сценарии: benefit_all: true). Годы («2026 г.») не считаем.
+export function parseAmounts(text) {
+  return parseRubles(String(text || '').replace(/\b(19|20)\d{2}\s*(г\.|год|года|г\b)/gi, ' '));
+}
+
 // Чистит название модели: убирает марку в начале и хвост с ценой.
 // «TENET T8 - от 2 899 000 ₽*» → «T8».
 export function cleanModel(name, brand = '') {
-  let m = String(name || '').replace(/[\u00a0\u202f]/g, ' ').replace(/\s+/g, ' ').trim();
+  let m = String(name || '').replace(/[\u00a0\u202f]/g, ' ').replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰*]/g, '').replace(/\s+/g, ' ').trim();
   // «Ли Л6 | Li L6» — берём латинское название после черты.
   if (/\s[|I]\s/.test(m) || m.includes('|')) m = m.split(/\s*\|\s*|\sI\s/).map((x) => x.trim()).filter(Boolean).pop() || m;
   m = m.split(/\s*[-–—:]?\s*(?:от|до|цена)\s+\d/i)[0];

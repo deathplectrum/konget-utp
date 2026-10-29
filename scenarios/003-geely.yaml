@@ -1,11 +1,27 @@
 # Geely. На geely.ru сейчас заглушка «сайт в разработке»,
-# официальный сайт Geely в России — geely-motors.com. Пока снимаем главную.
+# официальный сайт Geely в России — geely-motors.com. Движок сайта похож на tenet.ru.
 id: 3
 company: Geely (тест)
 site: geely-motors.com
 brand: Geely
 active: true
 
+# Обход по моделям: ссылки на все модели из меню «Модели».
+models:
+  list_url: https://www.geely-motors.com/
+  link: a.js-menu-models-link
+  name: .menu__models-item-title
+  page:
+    price: .web_block_grades__card-content .main-caps
+    benefit: .web_block_media-flow-icon__title
+
 pages:
+  # Меню «Модели»: цена «от» каждой модели.
   - url: https://www.geely-motors.com/
+    card: .menu__models-item
+    model: .menu__models-item-title
+    price: .menu__models-item-price
+
+  # Спецпредложения: снимок, чтобы найти выгоды по моделям.
+  - url: https://www.geely-motors.com/forbuyers/specialoffer/
     scroll: true
