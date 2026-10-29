@@ -72,6 +72,8 @@ test('чистка названия модели', () => {
   assert.equal(cleanModel('Tiggo 8 Pro Max', 'Chery'), 'Tiggo 8 Pro Max');
   assert.equal(cleanModel('Chery Tiggo 4 2 199 000 ₽', 'Chery'), 'Tiggo 4');
   assert.equal(cleanModel(' T4L ', 'Tenet'), 'T4L');
+  assert.equal(cleanModel('Ли Л6 | Li L6', 'Li'), 'L6');
+  assert.equal(cleanModel('TANK 300', 'TANK'), '300');
 });
 
 test('выгоды: только то, что названо выгодой', () => {
@@ -83,6 +85,12 @@ test('выгоды: только то, что названо выгодой', ()
     [200000, 50000],
   );
   assert.deepEqual(parseBenefits('Цена 2 199 000 ₽'), []);
+  assert.deepEqual(parseBenefits('Выгода по программе «TENET Легко» - 145 000**'), [145000]);
+  assert.deepEqual(
+    parseBenefits('Цена на модель TANK 400 в комплектации Премиум 2026 года выпуска с учетом прямой выгоды в 250 000 рублей, с учетом выгоды по трейд-ин в 250 000 рублей, с учетом дополнительной выгоды по лояльному трейд-ин в 200 000 рублей при сдаче. Ставка 5%'),
+    [250000, 250000, 200000],
+  );
+  assert.deepEqual(parseBenefits('с учетом максимальной выгоды от 4 099 000'), []);
 });
 
 test('изменения списком для приложения', () => {

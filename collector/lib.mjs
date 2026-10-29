@@ -39,22 +39,33 @@ export function parseRubles(text) {
   return out.filter((v) => v >= 1000);
 }
 
-// Выгоды из текста. Считаем только строки, где сайт прямо пишет «выгода», «скидка»
-// или «преимущество», и пропускаем лизинг, ежемесячные платежи и маркетплейсы.
-const BENEFIT_WORDS = /выгод|скидк|преимуществ/i;
-const NOT_BENEFIT = /лизинг|платеж|платёж|маркетплейс|в месяц|%/i;
+// Выгоды из текста. Берём только сумму сразу после слов «выгода», «скидка» или «преимущество»
+// («Выгода по трейд-ин до 200 000 ₽», «с учетом прямой выгоды в 250 000 рублей»).
+// Лизинг, ежемесячные платежи и маркетплейсы пропускаем, годы («2026 года») не считаем.
+const BENEFIT_WORD = /(выгод|скидк|преимуществ)[а-яё]*/gi;
+const NOT_BENEFIT = /лизинг|платеж|платёж|маркетплейс|в месяц/i;
 
 export function parseBenefits(text) {
-  return String(text || '')
-    .split(/\n|(?<=₽\*{0,3})\s+(?=[А-ЯA-Z])/)
-    .filter((line) => BENEFIT_WORDS.test(line) && !NOT_BENEFIT.test(line))
-    .flatMap(parseRubles);
+  const clean = String(text || '').replace(/[\u00a0\u202f\u2009]/g, ' ');
+  const out = [];
+  for (const m of clean.matchAll(BENEFIT_WORD)) {
+    const before = clean.slice(Math.max(0, m.index - 25), m.index);
+    let after = clean.slice(m.index + m[0].length, m.index + m[0].length + 70);
+    after = after.split(/[;\n]|\.\s|(?=(выгод|скидк|преимуществ))/i)[0];
+    // «с учетом выгоды от 4 099 000» — это цена, а не выгода.
+    if (NOT_BENEFIT.test(before + m[0] + after) || /^\s*от\s/i.test(after)) continue;
+    const nums = parseRubles(after.replace(/\b(19|20)\d{2}\s*(г\.|год|года|г\b)/gi, ' '));
+    if (nums.length) out.push(nums[0]);
+  }
+  return out;
 }
 
 // Чистит название модели: убирает марку в начале и хвост с ценой.
 // «TENET T8 - от 2 899 000 ₽*» → «T8».
 export function cleanModel(name, brand = '') {
   let m = String(name || '').replace(/[\u00a0\u202f]/g, ' ').replace(/\s+/g, ' ').trim();
+  // «Ли Л6 | Li L6» — берём латинское название после черты.
+  if (m.includes('|')) m = m.split('|').map((x) => x.trim()).filter(Boolean).pop() || m;
   m = m.split(/\s*[-–—:]?\s*(?:от|до|цена)\s+\d/i)[0];
   m = m.split(/\s\d{1,3}(?:[ .,]\d{3})+/)[0];
   if (brand && m.toLowerCase().startsWith(`${brand.toLowerCase()} `)) m = m.slice(brand.length + 1);

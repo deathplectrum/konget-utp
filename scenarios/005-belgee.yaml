@@ -7,8 +7,12 @@ active: true
 
 models:
   list_url: https://belgee.ru/
-  link: a.web_block_model-range__card
+  link: a.footer__menu-link[href^="/model/"]        # ссылки на модели в подвале: «Новый X50», «X50+»…
   page:
-    title: h1
-    price: .web_block_grades__card-content .main-caps
+    price: .web_block_packages-single__card-price    # цены комплектаций
     benefit: .web_block_media-flow-icon__title
+
+pages:
+  # Спецпредложения: снимок, чтобы найти выгоды.
+  - url: https://belgee.ru/special-offers/
+    scroll: true

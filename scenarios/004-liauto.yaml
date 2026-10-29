@@ -9,8 +9,7 @@ models:
   list_url: https://liautoofficial.ru/
   link: .js-menu-models-link
   page:
-    title: h1
-    price: .web_block_grades__card-content .main-caps
+    price: .web_block_packages__item-price           # цены всех комплектаций
     benefit: .web_block_media-flow-icon__title
 
 pages:

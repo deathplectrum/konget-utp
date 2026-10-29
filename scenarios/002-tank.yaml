@@ -11,9 +11,9 @@ models:
   list_url: https://tank.ru/
   link: .js-menu-models-link
   page:
-    title: h1
-    price: .web_block_grades__card-content .main-caps
-    benefit: .web_block_media-flow-icon__title
+    title: .breadcrumbs div.breadcrumbs__link        # «TANK 300» из хлебных крошек
+    price: .web_block_media-model__text h2           # «от 4 099 000» в шапке модели
+    benefit: .web_block_media-model__text .tooltip__content   # сноска к цене: «прямой выгоды в 250 000 рублей…»
 
 pages:
   # Спецпредложения: отсюда берём только выгоды.
