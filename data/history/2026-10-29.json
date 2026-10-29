@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:37:33.337Z",
+  "checked_at": "2026-10-29T16:42:52.671Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
@@ -19,27 +19,27 @@
       "file": "002-tank.yaml",
       "models": [
         {
-          "model": "Следуй за открытиями",
-          "price": "-",
-          "max_benefit": "-",
+          "model": "300",
+          "price": 4099000,
+          "max_benefit": 200000,
           "source_url": "https://tank.ru/models/tank-300/"
         },
         {
           "model": "400",
-          "price": "-",
-          "max_benefit": "-",
+          "price": 5599000,
+          "max_benefit": 250000,
           "source_url": "https://tank.ru/models/tank-400/"
         },
         {
           "model": "500",
-          "price": "-",
-          "max_benefit": "-",
+          "price": 6399000,
+          "max_benefit": 300000,
           "source_url": "https://tank.ru/models/tank-500/"
         },
         {
           "model": "700",
-          "price": "-",
-          "max_benefit": "-",
+          "price": 10199000,
+          "max_benefit": 300000,
           "source_url": "https://tank.ru/models/tank-700/"
         },
         {
@@ -55,6 +55,12 @@
           "source_url": "https://tank.ru/models/wey-80-premium/"
         },
         {
+          "model": "WEY 80 Лаундж",
+          "price": "-",
+          "max_benefit": "-",
+          "source_url": "https://tank.ru/models/wey-80-business-lounge/"
+        },
+        {
           "model": "WEY V9X",
           "price": "-",
           "max_benefit": "-",
@@ -62,7 +68,7 @@
         }
       ],
       "screens": [
-        "data/screens/2/model-0.jpg",
+        "data/screens/2/model-4.jpg",
         "data/screens/2/0.jpg"
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
@@ -93,38 +99,38 @@
       "file": "004-liauto.yaml",
       "models": [
         {
-          "model": "Ли Л6 | Li L6",
-          "price": "-",
+          "model": "L6",
+          "price": 6890000,
           "max_benefit": "-",
           "source_url": "https://liautoofficial.ru/models/li-l6/"
         },
         {
-          "model": "Ли Л7 | Li L7",
-          "price": "-",
+          "model": "L7",
+          "price": 9019000,
           "max_benefit": "-",
           "source_url": "https://liautoofficial.ru/models/li-l7/"
         },
         {
-          "model": "Ли Л9 | Li L9",
-          "price": "-",
+          "model": "L9",
+          "price": 10495000,
           "max_benefit": "-",
           "source_url": "https://liautoofficial.ru/models/li-l9/"
         },
         {
-          "model": "Новый Ли Л8 | Li L8",
+          "model": "L8",
           "price": "-",
           "max_benefit": "-",
           "source_url": "https://liautoofficial.ru/models/li-l8/"
         },
         {
-          "model": "Новый Ли Л9 Ливис",
+          "model": "Л9 Ливис I L9 Livis",
           "price": "-",
           "max_benefit": "-",
           "source_url": "https://liautoofficial.ru/models/li-l9-livis/"
         }
       ],
       "screens": [
-        "data/screens/4/model-0.jpg",
+        "data/screens/4/model-3.jpg",
         "data/screens/4/0.jpg"
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
@@ -140,34 +146,35 @@
       "file": "005-belgee.yaml",
       "models": [
         {
-          "model": "ГОРОДСКОЙ КРОССОВЕР",
-          "price": "-",
+          "model": "Новый X50",
+          "price": 2099990,
           "max_benefit": "-",
           "source_url": "https://belgee.ru/model/belgee-x50-new/"
         },
         {
-          "model": "ЯРКИЙ КРОССОВЕР",
+          "model": "X50+",
           "price": "-",
           "max_benefit": "-",
           "source_url": "https://belgee.ru/model/belgee-x50-plus/"
         },
         {
-          "model": "Элегантный и практичный седан",
+          "model": "S50",
           "price": "-",
           "max_benefit": "-",
           "source_url": "https://belgee.ru/model/belgee-s50/"
         },
         {
-          "model": "Универсальный кроссовер",
+          "model": "X70",
           "price": "-",
           "max_benefit": "-",
           "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
         }
       ],
       "screens": [
-        "data/screens/5/model-0.jpg"
+        "data/screens/5/model-1.jpg",
+        "data/screens/5/0.jpg"
       ],
-      "comment": "Не нашлась цена: ГОРОДСКОЙ КРОССОВЕР, ЯРКИЙ КРОССОВЕР, Элегантный и практичный седан, Универсальный кроссовер",
+      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
       "change": "Требует проверки",
       "changes": []
