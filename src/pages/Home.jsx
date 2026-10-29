@@ -32,6 +32,7 @@ export default function Home() {
   const onStop = () => {
     if (stopping) return;
     alert({
+      cssClass: 'nice-alert',
       header: 'Остановить сбор?',
       message: 'То, что уже собрано, сохранится. Сайты, до которых сбор не дошёл, останутся с данными прошлого сбора.',
       buttons: [
