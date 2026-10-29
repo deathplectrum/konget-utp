@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-28",
+  "checked_at": "2026-10-28T12:00:00.000Z",
+  "previous_date": null,
+  "total_seconds": 189,
+  "parallel": 3,
+  "summary": {
+    "Не изменилось": 0,
+    "Изменилось": 0,
+    "Требует проверки": 0,
+    "Ошибка доступа": 0,
+    "Первая проверка": 5,
+    "Нет сценария": 0
+  },
+  "sites": [
+    {
+      "id": 1,
+      "company": "Tenet (тест)",
+      "site": "tenet.ru",
+      "brand": "Tenet",
+      "file": "001-tenet.yaml",
+      "models": [
+        {
+          "model": "T4L",
+          "price": 2099000,
+          "max_benefit": 145000,
+          "source_url": "https://tenet.ru/models/t4l/"
+        },
+        {
+          "model": "T4",
+          "price": 2089000,
+          "max_benefit": 100000,
+          "source_url": "https://tenet.ru/models/t4/"
+        },
+        {
+          "model": "T7",
+          "price": 2625000,
+          "max_benefit": 300000,
+          "source_url": "https://tenet.ru/models/t7/"
+        },
+        {
+          "model": "T8",
+          "price": 2899000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/models/t8/"
+        },
+        {
+          "model": "A8",
+          "price": 2899000,
+          "max_benefit": 100000,
+          "source_url": "https://tenet.ru/models/a8/"
+        },
+        {
+          "model": "T9",
+          "price": 3749000,
+          "max_benefit": 200000,
+          "source_url": "https://tenet.ru/models/t9/"
+        }
+      ],
+      "screens": [
+        "data/screens/1/model-4.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 54,
+      "pages_opened": 9,
+      "change": "Первая проверка",
+      "changes": [],
+      "responsible": "None"
+    },
+    {
+      "id": 2,
+      "company": "TANK (тест)",
+      "site": "tank.ru",
+      "brand": "TANK",
+      "file": "002-tank.yaml",
+      "models": [
+        {
+          "model": "300",
+          "price": 4099000,
+          "max_benefit": 150000,
+          "source_url": "https://tank.ru/models/tank-300/"
+        },
+        {
+          "model": "400",
+          "price": 5599000,
+          "max_benefit": 250000,
+          "source_url": "https://tank.ru/models/tank-400/"
+        },
+        {
+          "model": "500",
+          "price": 6399000,
+          "max_benefit": 300000,
+          "source_url": "https://tank.ru/models/tank-500/"
+        },
+        {
+          "model": "700",
+          "price": 10199000,
+          "max_benefit": 300000,
+          "source_url": "https://tank.ru/models/tank-700/"
+        },
+        {
+          "model": "WEY 07",
+          "price": 6149000,
+          "max_benefit": 300000,
+          "source_url": "https://tank.ru/models/wey-07/"
+        },
+        {
+          "model": "WEY 80",
+          "price": 6449000,
+          "max_benefit": 300000,
+          "source_url": "https://tank.ru/models/wey-80-premium/"
+        },
+        {
+          "model": "WEY 80 Лаундж",
+          "price": 8099000,
+          "max_benefit": 300000,
+          "source_url": "https://tank.ru/models/wey-80-business-lounge/"
+        },
+        {
+          "model": "WEY V9X",
+          "price": 9349000,
+          "max_benefit": 350000,
+          "source_url": "https://tank.ru/models/wey-v9x/"
+        }
+      ],
+      "screens": [
+        "data/screens/2/model-4.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 142,
+      "pages_opened": 10,
+      "change": "Первая проверка",
+      "changes": [],
+      "responsible": "None"
+    },
+    {
+      "id": 3,
+      "company": "Geely (тест)",
+      "site": "geely-motors.com",
+      "brand": "Geely",
+      "file": "003-geely.yaml",
+      "models": [
+        {
+          "model": "EX5 ГИБРИД",
+          "price": 3229990,
+          "max_benefit": 300000,
+          "source_url": "https://www.geely-motors.com/model/geely-ex5-em-i/"
+        },
+        {
+          "model": "НОВЫЙ COOLRAY",
+          "price": 2624990,
+          "max_benefit": 150000,
+          "source_url": "https://www.geely-motors.com/model/coolray-2026/"
+        },
+        {
+          "model": "CITYRAY",
+          "price": 2499990,
+          "max_benefit": 455000,
+          "source_url": "https://www.geely-motors.com/model/cityray/"
+        },
+        {
+          "model": "ATLAS",
+          "price": 3259990,
+          "max_benefit": 190000,
+          "source_url": "https://www.geely-motors.com/model/geely-atlas-2024/"
+        },
+        {
+          "model": "OKAVANGO",
+          "price": 3514990,
+          "max_benefit": 350000,
+          "source_url": "https://www.geely-motors.com/model/geely-okavango/"
+        },
+        {
+          "model": "PREFACE",
+          "price": 3079990,
+          "max_benefit": 250000,
+          "source_url": "https://www.geely-motors.com/model/geely-preface/"
+        },
+        {
+          "model": "EX5",
+          "price": 4099990,
+          "max_benefit": 200000,
+          "source_url": "https://www.geely-motors.com/model/geely-ex5/"
+        }
+      ],
+      "screens": [],
+      "comment": "",
+      "status": "ok",
+      "seconds": 174,
+      "pages_opened": 11,
+      "change": "Первая проверка",
+      "changes": [],
+      "responsible": "None"
+    },
+    {
+      "id": 4,
+      "company": "Li Auto (тест)",
+      "site": "liautoofficial.ru",
+      "brand": "Li",
+      "file": "004-liauto.yaml",
+      "models": [
+        {
+          "model": "L6",
+          "price": 6890000,
+          "max_benefit": 1027000,
+          "source_url": "https://liautoofficial.ru/models/li-l6/"
+        },
+        {
+          "model": "L7",
+          "price": 9019000,
+          "max_benefit": 885500,
+          "source_url": "https://liautoofficial.ru/models/li-l7/"
+        },
+        {
+          "model": "L9",
+          "price": 10495000,
+          "max_benefit": 895500,
+          "source_url": "https://liautoofficial.ru/models/li-l9/"
+        },
+        {
+          "model": "L8",
+          "price": 10390000,
+          "max_benefit": "-",
+          "source_url": "https://liautoofficial.ru/models/li-l8/"
+        },
+        {
+          "model": "L9 Livis",
+          "price": 12190000,
+          "max_benefit": 1000000,
+          "source_url": "https://liautoofficial.ru/models/li-l9-livis/"
+        }
+      ],
+      "screens": [
+        "data/screens/4/model-3.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 21,
+      "pages_opened": 8,
+      "change": "Первая проверка",
+      "changes": [],
+      "responsible": "None"
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "file": "005-belgee.yaml",
+      "models": [
+        {
+          "model": "Новый X50",
+          "price": 2099990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-new/"
+        },
+        {
+          "model": "X50+",
+          "price": 2219990,
+          "max_benefit": 100000,
+          "source_url": "https://belgee.ru/model/belgee-x50-plus/"
+        },
+        {
+          "model": "S50",
+          "price": 1729990,
+          "max_benefit": 200000,
+          "source_url": "https://belgee.ru/model/belgee-s50/"
+        },
+        {
+          "model": "X70",
+          "price": 2529990,
+          "max_benefit": 80000,
+          "source_url": "https://belgee.ru/model/belgee-x70-facelift/"
+        },
+        {
+          "model": "X90",
+          "price": 2999990,
+          "max_benefit": 150000,
+          "source_url": "https://belgee.ru/"
+        }
+      ],
+      "screens": [
+        "data/screens/5/model-1.jpg"
+      ],
+      "comment": "",
+      "status": "ok",
+      "seconds": 112,
+      "pages_opened": 7,
+      "change": "Первая проверка",
+      "changes": [],
+      "responsible": "None"
+    }
+  ]
+}
