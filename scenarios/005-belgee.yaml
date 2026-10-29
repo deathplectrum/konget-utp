@@ -1,11 +1,14 @@
-# Сайт марки Belgee. Пока только адрес: сборщик сделает снимок главной,
-# по нему найдём список моделей и допишем обход по моделям.
+# Belgee (belgee.ru). Тот же движок сайта, что у tenet.ru.
 id: 5
 company: Belgee (тест)
 site: belgee.ru
 brand: Belgee
 active: true
 
-pages:
-  - url: https://belgee.ru/
-    scroll: true
+models:
+  list_url: https://belgee.ru/
+  link: a.web_block_model-range__card
+  page:
+    title: h1
+    price: .web_block_grades__card-content .main-caps
+    benefit: .web_block_media-flow-icon__title

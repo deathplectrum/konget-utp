@@ -1,11 +1,11 @@
-# Сайт марки Geely. Пока только адрес: сборщик сделает снимок главной,
-# по нему найдём список моделей и допишем обход по моделям.
+# Geely. На geely.ru сейчас заглушка «сайт в разработке»,
+# официальный сайт Geely в России — geely-motors.com. Пока снимаем главную.
 id: 3
 company: Geely (тест)
-site: geely.ru
+site: geely-motors.com
 brand: Geely
 active: true
 
 pages:
-  - url: https://geely.ru/
+  - url: https://www.geely-motors.com/
     scroll: true

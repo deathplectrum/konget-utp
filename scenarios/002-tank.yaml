@@ -1,11 +1,21 @@
-# Сайт марки TANK. Пока только адрес: сборщик сделает снимок главной,
-# по нему найдём список моделей и допишем обход по моделям.
+# TANK и WEY (сайт tank.ru). Тот же движок сайта, что у tenet.ru.
 id: 2
 company: TANK (тест)
 site: tank.ru
 brand: TANK
 active: true
 
+# Обход по моделям: ссылки на все модели из меню «Модели»,
+# на странице каждой модели — цены всех комплектаций и выгоды.
+models:
+  list_url: https://tank.ru/
+  link: .js-menu-models-link
+  page:
+    title: h1
+    price: .web_block_grades__card-content .main-caps
+    benefit: .web_block_media-flow-icon__title
+
 pages:
-  - url: https://tank.ru/
+  # Спецпредложения: отсюда берём только выгоды.
+  - url: https://tank.ru/customers/choise/special-offers/
     scroll: true

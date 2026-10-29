@@ -157,7 +157,8 @@ async function collectModelPages(context, site, cfg) {
       const prices = found.prices.flatMap(parseRubles);
       const benefits = found.benefits.flatMap(parseBenefits);
       const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
-      if (!hasSelectors) screens.push(await snapshot(p, site, `model-${i}`));
+      // Снимок: если сценарий не дописан, или на странице модели не нашлось цены (один на сайт).
+      if (!hasSelectors || (!prices.length && !screens.length)) screens.push(await snapshot(p, site, `model-${i}`));
       models.push({
         model: name,
         price: prices.length ? Math.min(...prices) : '-',
