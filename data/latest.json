@@ -1,13 +1,13 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T16:13:27.745Z",
+  "checked_at": "2026-10-29T16:17:19.801Z",
   "previous_date": null,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 1,
+    "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 0,
+    "Первая проверка": 1,
     "Нет сценария": 0
   },
   "sites": [
@@ -44,29 +44,24 @@
         },
         {
           "model": "A8",
-          "price": "-",
-          "max_benefit": "-",
+          "price": 2899000,
+          "max_benefit": 100000,
           "source_url": "https://tenet.ru/models/a8/"
         },
         {
           "model": "T9",
-          "price": "-",
-          "max_benefit": "-",
+          "price": 3749000,
+          "max_benefit": 200000,
           "source_url": "https://tenet.ru/models/t9/"
         }
       ],
-      "screens": [
-        "data/screens/1/model-0.jpg",
-        "data/screens/1/model-1.jpg",
-        "data/screens/1/model-2.jpg",
-        "data/screens/1/model-3.jpg",
-        "data/screens/1/model-4.jpg",
-        "data/screens/1/model-5.jpg"
-      ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "change": "Требует проверки",
-      "changes": []
+      "screens": [],
+      "comment": "",
+      "status": "ok",
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 6"
+      ]
     }
   ]
 }
