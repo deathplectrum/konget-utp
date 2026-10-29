@@ -1,15 +1,15 @@
 {
   "date": "2026-10-29",
-  "checked_at": "2026-10-29T17:09:59.727Z",
+  "checked_at": "2026-10-29T17:18:54.286Z",
   "previous_date": null,
-  "total_seconds": 198,
+  "total_seconds": 196,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 2,
+    "Требует проверки": 1,
     "Ошибка доступа": 0,
-    "Первая проверка": 3,
+    "Первая проверка": 4,
     "Нет сценария": 0
   },
   "sites": [
@@ -75,73 +75,7 @@
       ],
       "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
       "status": "needs_check",
-      "seconds": 163,
-      "pages_opened": 11,
-      "change": "Требует проверки",
-      "changes": []
-    },
-    {
-      "id": 3,
-      "company": "Geely (тест)",
-      "site": "geely-motors.com",
-      "brand": "Geely",
-      "file": "003-geely.yaml",
-      "models": [
-        {
-          "model": "EX5 ГИБРИД",
-          "price": 3229990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/geely-ex5-em-i/"
-        },
-        {
-          "model": "НОВЫЙ COOLRAY",
-          "price": 2624990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/coolray-2026/"
-        },
-        {
-          "model": "CITYRAY",
-          "price": 2499990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/cityray/"
-        },
-        {
-          "model": "ATLAS",
-          "price": 3259990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/geely-atlas-2024/"
-        },
-        {
-          "model": "OKAVANGO",
-          "price": 3514990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/geely-okavango/"
-        },
-        {
-          "model": "MONJARO",
-          "price": 4409990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/monjaro/"
-        },
-        {
-          "model": "PREFACE",
-          "price": 3079990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/geely-preface/"
-        },
-        {
-          "model": "EX5",
-          "price": 4099990,
-          "max_benefit": "-",
-          "source_url": "https://www.geely-motors.com/model/geely-ex5/"
-        }
-      ],
-      "screens": [
-        "data/screens/3/1.jpg"
-      ],
-      "comment": "Сценарий не заполнен до конца, сделан снимок страницы",
-      "status": "needs_check",
-      "seconds": 177,
+      "seconds": 175,
       "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
@@ -195,11 +129,77 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 61,
+      "seconds": 55,
       "pages_opened": 9,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 6"
+      ]
+    },
+    {
+      "id": 3,
+      "company": "Geely (тест)",
+      "site": "geely-motors.com",
+      "brand": "Geely",
+      "file": "003-geely.yaml",
+      "models": [
+        {
+          "model": "EX5 ГИБРИД",
+          "price": 3229990,
+          "max_benefit": 300000,
+          "source_url": "https://www.geely-motors.com/model/geely-ex5-em-i/"
+        },
+        {
+          "model": "НОВЫЙ COOLRAY",
+          "price": 2624990,
+          "max_benefit": 150000,
+          "source_url": "https://www.geely-motors.com/model/coolray-2026/"
+        },
+        {
+          "model": "CITYRAY",
+          "price": 2499990,
+          "max_benefit": 455000,
+          "source_url": "https://www.geely-motors.com/model/cityray/"
+        },
+        {
+          "model": "ATLAS",
+          "price": 3259990,
+          "max_benefit": 190000,
+          "source_url": "https://www.geely-motors.com/model/geely-atlas-2024/"
+        },
+        {
+          "model": "OKAVANGO",
+          "price": 3514990,
+          "max_benefit": 350000,
+          "source_url": "https://www.geely-motors.com/model/geely-okavango/"
+        },
+        {
+          "model": "MONJARO",
+          "price": 4409990,
+          "max_benefit": 190000,
+          "source_url": "https://www.geely-motors.com/model/monjaro/"
+        },
+        {
+          "model": "PREFACE",
+          "price": 3079990,
+          "max_benefit": 250000,
+          "source_url": "https://www.geely-motors.com/model/geely-preface/"
+        },
+        {
+          "model": "EX5",
+          "price": 4099990,
+          "max_benefit": 200000,
+          "source_url": "https://www.geely-motors.com/model/geely-ex5/"
+        }
+      ],
+      "screens": [],
+      "comment": "",
+      "status": "ok",
+      "seconds": 176,
+      "pages_opened": 11,
+      "change": "Первая проверка",
+      "changes": [
+        "Записано моделей: 8"
       ]
     },
     {
@@ -245,7 +245,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 23,
+      "seconds": 26,
       "pages_opened": 8,
       "change": "Первая проверка",
       "changes": [
