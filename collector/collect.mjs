@@ -11,7 +11,7 @@ import path from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 import { chromium } from 'playwright';
 import {
-  parseRubles, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
+  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
 } from './lib.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -102,7 +102,7 @@ async function collectPage(context, site, pageCfg, index) {
 
     const models = rows.map((r) => {
       const prices = parseRubles(r.price);
-      const benefits = parseRubles(r.benefit);
+      const benefits = parseBenefits(r.benefit);
       return {
         model: cleanModel(r.model.split('\n').map((l) => l.trim()).find(Boolean), site.brand),
         price: prices.length ? Math.min(...prices) : '-',
@@ -150,14 +150,14 @@ async function collectModelPages(context, site, cfg) {
         return {
           title: texts(document, title)[0] || '',
           prices: roots.flatMap((r) => texts(r, price)),
-          benefits: roots.flatMap((r) => texts(r, benefit)),
+          // Выгоды часто стоят отдельно от комплектаций, поэтому ищем их по всей странице.
+          benefits: texts(document, benefit),
         };
       }, page);
       const prices = found.prices.flatMap(parseRubles);
-      const benefits = found.benefits.flatMap(parseRubles);
+      const benefits = found.benefits.flatMap(parseBenefits);
       const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
-      if (!hasSelectors || !prices.length) screens.push(await snapshot(p, site, `model-${i}`));
-      if (hasSelectors && !prices.length) notes.push(`${name}: на странице модели не нашлась цена`);
+      if (!hasSelectors) screens.push(await snapshot(p, site, `model-${i}`));
       models.push({
         model: name,
         price: prices.length ? Math.min(...prices) : '-',
@@ -224,6 +224,8 @@ async function collectSite(browser, site) {
 
     const models = mergeModels(rows.filter((r) => r.model));
     const problems = validateModels(models);
+    const noPrice = models.filter((m) => m.price === '-').map((m) => m.model);
+    if (noPrice.length && !unfinished) problems.push(`Не нашлась цена: ${noPrice.join(', ')}`);
     if (unfinished) problems.unshift('Сценарий не заполнен до конца, сделан снимок страницы');
     if (!models.length && !unfinished) problems.push('Модели не найдены');
     const all = [...problems, ...notes];

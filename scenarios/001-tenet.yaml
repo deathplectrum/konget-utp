@@ -6,14 +6,24 @@ brand: Tenet
 active: true
 
 # Обход по моделям: из меню «Модели» на главной берём ссылки на все модели
-# и заходим на страницу каждой. Где на странице модели цены и выгоды
-# комплектаций, допишем в page после первого сбора (по снимкам).
+# и заходим на страницу каждой. Там смотрим все комплектации
+# (блок «Комплектации. Предложения и цены») и выгоды в карточках.
 models:
   list_url: https://tenet.ru/
   link: .menu-models__left-item-link
   name: .menu-models__left-item-title
+  page:
+    price: .web_block_grades__card-content .main-caps   # цены всех комплектаций
+    benefit: .web_block_media-flow-icon__title          # «Выгода по трейд-ин до 200 000 руб.»
 
 pages:
+  # Меню моделей на главной: цена «от» каждой модели. Нужна для A8 и T9,
+  # у которых на странице модели нет списка комплектаций (только прайс-лист).
+  - url: https://tenet.ru/
+    card: .menu-models__left-item
+    model: .menu-models__left-item-title
+    price: .menu-models__left-item-price
+
   # «Акции и спецпредложения»: карточки «TENET T8 - от 2 899 000 ₽» с выгодами.
   - url: https://tenet.ru/customers/offers/
     card: .web_block_popup__content

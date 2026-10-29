@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parseRubles, cleanModel, mergeModels, validateModels, diffModels, decideChange, historyToDelete, formatRub, CHANGE,
+  parseRubles, parseBenefits, cleanModel, mergeModels, validateModels, diffModels, decideChange, historyToDelete, formatRub, CHANGE,
 } from './lib.mjs';
 
 test('разбор цен в разных записях', () => {
@@ -72,4 +72,15 @@ test('чистка названия модели', () => {
   assert.equal(cleanModel('Tiggo 8 Pro Max', 'Chery'), 'Tiggo 8 Pro Max');
   assert.equal(cleanModel('Chery Tiggo 4 2 199 000 ₽', 'Chery'), 'Tiggo 4');
   assert.equal(cleanModel(' T4L ', 'Tenet'), 'T4L');
+});
+
+test('выгоды: только то, что названо выгодой', () => {
+  assert.deepEqual(parseBenefits('ВЫГОДА ПО ТРЕЙД-ИН ДО 100 000 РУБ.'), [100000]);
+  assert.deepEqual(parseBenefits('TENET T4L С ЕЖЕМЕСЯЧНЫМ ПЛАТЕЖОМ ОТ 16 000,0 ₽**'), []);
+  assert.deepEqual(parseBenefits('Выгода в лизинг до 500 000 ₽'), []);
+  assert.deepEqual(
+    parseBenefits('Ваши уникальные преимущества:\nВыгода по трейд-ин - 200 000 ₽**\nПрограмма выгодный кредит - 50 000 ₽***'),
+    [200000, 50000],
+  );
+  assert.deepEqual(parseBenefits('Цена 2 199 000 ₽'), []);
 });

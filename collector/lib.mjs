@@ -39,6 +39,18 @@ export function parseRubles(text) {
   return out.filter((v) => v >= 1000);
 }
 
+// Выгоды из текста. Считаем только строки, где сайт прямо пишет «выгода», «скидка»
+// или «преимущество», и пропускаем лизинг, ежемесячные платежи и маркетплейсы.
+const BENEFIT_WORDS = /выгод|скидк|преимуществ/i;
+const NOT_BENEFIT = /лизинг|платеж|платёж|маркетплейс|в месяц|%/i;
+
+export function parseBenefits(text) {
+  return String(text || '')
+    .split(/\n|(?<=₽\*{0,3})\s+(?=[А-ЯA-Z])/)
+    .filter((line) => BENEFIT_WORDS.test(line) && !NOT_BENEFIT.test(line))
+    .flatMap(parseRubles);
+}
+
 // Чистит название модели: убирает марку в начале и хвост с ценой.
 // «TENET T8 - от 2 899 000 ₽*» → «T8».
 export function cleanModel(name, brand = '') {
