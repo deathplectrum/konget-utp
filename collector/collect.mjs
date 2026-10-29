@@ -50,17 +50,37 @@ function loadPrevious(today) {
   return dates.length ? readJson(path.join(HISTORY, `${dates.at(-1)}.json`)) : null;
 }
 
-// Одна страница сайта: открыть, выполнить шаги сценария, собрать карточки моделей.
-async function collectPage(context, site, pageCfg, index) {
+// Открывает страницу и выполняет шаги сценария: нажать кнопки, подождать, прокрутить.
+async function openPage(context, site, url, cfg = {}) {
   const page = await context.newPage();
   try {
-    await page.goto(pageCfg.url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT });
-    await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
-    for (const sel of pageCfg.click || []) {
-      await page.click(sel, { timeout: 5_000 }).catch(() => log(`  [${site.id}] не нашёл кнопку ${sel}`));
-    }
-    if (pageCfg.wait_for) await page.waitForSelector(pageCfg.wait_for, { timeout: 15_000 }).catch(() => {});
-    if (pageCfg.scroll) await autoScroll(page);
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT });
+  } catch (e) {
+    await page.close();
+    throw e;
+  }
+  await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
+  for (const sel of cfg.click || []) {
+    await page.click(sel, { timeout: 5_000 }).catch(() => log(`  [${site.id}] не нашёл кнопку ${sel}`));
+  }
+  if (cfg.wait_for) await page.waitForSelector(cfg.wait_for, { timeout: 15_000 }).catch(() => {});
+  if (cfg.scroll) await autoScroll(page);
+  return page;
+}
+
+// Снимок и код страницы: по ним видно, где на сайте цены, и можно дописать сценарий.
+async function snapshot(page, site, name) {
+  fs.mkdirSync(path.join(SCREENS, String(site.id)), { recursive: true });
+  const screen = `data/screens/${site.id}/${name}.jpg`;
+  await page.screenshot({ path: path.join(ROOT, screen), fullPage: true, type: 'jpeg', quality: 50 });
+  fs.writeFileSync(path.join(SCREENS, String(site.id), `${name}.html`), await page.content());
+  return screen;
+}
+
+// Одна страница сайта: открыть, выполнить шаги сценария, собрать карточки моделей.
+async function collectPage(context, site, pageCfg, index) {
+  const page = await openPage(context, site, pageCfg.url, pageCfg);
+  try {
 
     const hasSelectors = pageCfg.card && pageCfg.model;
     let rows = [];
@@ -78,14 +98,7 @@ async function collectPage(context, site, pageCfg, index) {
 
     // Снимок страницы нужен, если сценарий ещё не заполнен или ничего не нашлось:
     // по нему видно, где на сайте цены, и можно дописать сценарий.
-    let screen = null;
-    if (!hasSelectors || rows.length === 0) {
-      fs.mkdirSync(path.join(SCREENS, String(site.id)), { recursive: true });
-      screen = `data/screens/${site.id}/${index}.jpg`;
-      await page.screenshot({ path: path.join(ROOT, screen), fullPage: true, type: 'jpeg', quality: 50 });
-      // Код страницы рядом со снимком: по нему пишут селекторы для сценария.
-      fs.writeFileSync(path.join(SCREENS, String(site.id), `${index}.html`), await page.content());
-    }
+    const screen = !hasSelectors || rows.length === 0 ? await snapshot(page, site, index) : null;
 
     const models = rows.map((r) => {
       const prices = parseRubles(r.price);
@@ -103,6 +116,63 @@ async function collectPage(context, site, pageCfg, index) {
   }
 }
 
+// Обход по моделям: со страницы-списка берём ссылки на все модели,
+// заходим на страницу каждой и берём все цены и выгоды (по всем комплектациям).
+// Цена модели — самая маленькая, выгода — самая большая.
+async function collectModelPages(context, site, cfg) {
+  const list = await openPage(context, site, cfg.list_url, cfg);
+  let links;
+  try {
+    links = await list.$$eval(cfg.link, (els, nameSel) => els.map((a) => {
+      const nameEl = nameSel ? a.querySelector(nameSel) : null;
+      return { href: a.href, name: ((nameEl || a).innerText || (nameEl || a).textContent || '').trim() };
+    }), cfg.name);
+  } finally {
+    await list.close();
+  }
+  const seen = new Set();
+  links = links.filter((l) => l.href && !seen.has(l.href) && seen.add(l.href));
+  if (!links.length) throw new Error(`На ${cfg.list_url} не нашлось ссылок на модели`);
+  log(`  [${site.id}] моделей в списке: ${links.length}`);
+
+  const page = cfg.page || {};
+  const hasSelectors = Boolean(page.price || page.benefit);
+  const models = [];
+  const screens = [];
+  const notes = [];
+  for (const [i, link] of links.entries()) {
+    let p;
+    try {
+      p = await openPage(context, site, link.href, page);
+      const found = await p.evaluate(({ price, benefit, title, trim }) => {
+        const texts = (root, sel) => (sel ? [...root.querySelectorAll(sel)].map((e) => e.innerText || e.textContent) : []);
+        const roots = trim ? [...document.querySelectorAll(trim)] : [document];
+        return {
+          title: texts(document, title)[0] || '',
+          prices: roots.flatMap((r) => texts(r, price)),
+          benefits: roots.flatMap((r) => texts(r, benefit)),
+        };
+      }, page);
+      const prices = found.prices.flatMap(parseRubles);
+      const benefits = found.benefits.flatMap(parseRubles);
+      const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
+      if (!hasSelectors || !prices.length) screens.push(await snapshot(p, site, `model-${i}`));
+      if (hasSelectors && !prices.length) notes.push(`${name}: на странице модели не нашлась цена`);
+      models.push({
+        model: name,
+        price: prices.length ? Math.min(...prices) : '-',
+        max_benefit: benefits.length ? Math.max(...benefits) : '-',
+        source_url: link.href,
+      });
+    } catch (e) {
+      notes.push(`Не открылась ${link.href}: ${e.message.split('\n')[0]}`);
+    } finally {
+      await p?.close();
+    }
+  }
+  return { models, screens, notes, hasSelectors };
+}
+
 async function autoScroll(page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 600) {
@@ -117,7 +187,7 @@ async function collectSite(browser, site) {
     id: site.id, company: site.company || '', site: site.site, brand: site.brand || '', file: site.file,
     models: [], screens: [], comment: '',
   };
-  if (!site.pages?.length) {
+  if (!site.pages?.length && !site.models) {
     return { ...base, status: 'no_scenario', comment: 'Для сайта ещё не написан сценарий' };
   }
   const context = await browser.newContext({ locale: 'ru-RU', viewport: { width: 1366, height: 900 } });
@@ -126,7 +196,19 @@ async function collectSite(browser, site) {
     const notes = [];
     let anyOpened = false;
     let unfinished = false;
-    for (const [i, pageCfg] of site.pages.entries()) {
+    if (site.models) {
+      try {
+        const res = await collectModelPages(context, site, site.models);
+        anyOpened = true;
+        rows.push(...res.models);
+        base.screens.push(...res.screens);
+        notes.push(...res.notes);
+        if (!res.hasSelectors) unfinished = true;
+      } catch (e) {
+        notes.push(`Обход моделей: ${e.message.split('\n')[0]}`);
+      }
+    }
+    for (const [i, pageCfg] of (site.pages || []).entries()) {
       try {
         const res = await collectPage(context, site, pageCfg, i);
         anyOpened = true;
