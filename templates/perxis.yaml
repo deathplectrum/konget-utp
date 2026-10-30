@@ -1,0 +1,20 @@
+# Общий шаблон сверки УТП для сайтов на движке Perxis (tenet.ru, tank.ru, belgee.ru и дилерские сайты на нём).
+# Подходит к любому сайту, у которого нет своего сценария и проверка «Работа сайтов» определила движок Perxis.
+# Адреса — от корня сайта. Селекторы через запятую: у разных версий движка классы немного отличаются.
+engine: Perxis
+
+# Меню моделей → страница каждой модели: цены всех комплектаций и выгоды.
+models:
+  list_url: /
+  link: .menu-models__left-item-link, .js-menu-models-link
+  name: .menu-models__left-item-title, .menu-models__item-title
+  page:
+    price: .web_block_grades__card-content .main-caps, .web_block_packages-single__card-price, .web_block_media-model__text h2
+    benefit: .web_block_media-flow-icon__title, .web_block_media-model__text .tooltip__content
+
+# Меню моделей на главной: цена «от» каждой модели (на случай, если на странице модели цены нет).
+pages:
+  - url: /
+    card: .menu-models__left-item, .menu-models__item
+    model: .menu-models__left-item-title, .menu-models__item-title
+    price: .menu-models__left-item-price, .menu-models__item-price
