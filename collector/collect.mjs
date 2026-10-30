@@ -287,6 +287,10 @@ async function collectSiteWith(browser, site) {
         notes.push(`Не открылась ${pageCfg.url}: ${e.message.split('\n')[0]}`);
       }
     }
+    if (!anyOpened && site.template === '*') {
+      // Запасной шаблон не нашёл на главной ссылок на модели: для этого движка нужен свой шаблон.
+      return { ...base, status: 'no_scenario', comment: `Для движка «${site.engine || 'не определён'}» ещё нет шаблона, запасной не нашёл модели` };
+    }
     if (!anyOpened) return { ...base, status: 'access_error', comment: notes.join('; ') };
 
     const models = mergeModels(rows.filter((r) => r.model));
