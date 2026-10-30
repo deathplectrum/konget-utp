@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "collect": "node collector/collect.mjs",
-    "test": "node --test collector/lib.test.mjs"
+    "test": "node --test collector/*.test.mjs",
+    "health": "node collector/health.mjs",
+    "konget": "node collector/konget.mjs",
+    "export": "node collector/export.mjs"
   },
   "dependencies": {
     "@ionic/react": "^8.8.19",

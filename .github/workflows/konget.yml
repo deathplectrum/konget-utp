@@ -1,0 +1,61 @@
+# Скрипт Конгет. Запускается сам раз в неделю (понедельник, 07:00 по Москве)
+# и кнопкой «Наличие скрипта Конгет» в приложении.
+name: Скрипт Конгет
+
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'ID одного сайта (пусто — все сайты)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 4 * * 1' # понедельник, 07:00 по Москве
+
+permissions:
+  contents: write
+
+concurrency:
+  group: konget
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # максимум GitHub для одного запуска — 6 часов
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Найти скрипт Конгет на сайтах
+        env:
+          SITE: ${{ inputs.site }}
+        run: |
+          if [ -n "$SITE" ]; then
+            exec node collector/konget.mjs --site "$SITE"
+          else
+            exec node collector/konget.mjs
+          fi
+
+      # Сохраняем и тогда, когда проверку остановили кнопкой: то, что успели, не пропадёт.
+      - name: Сохранить результат в репозиторий
+        if: success() || cancelled()
+        run: |
+          git config user.name "konget-collector"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A data
+          git diff --cached --quiet && exit 0
+          git commit -m "Скрипт Конгет $(date +%F)"
+          # Другая проверка могла сохраниться одновременно: подтягиваем и пробуем ещё раз.
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin ${{ github.ref_name }} && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

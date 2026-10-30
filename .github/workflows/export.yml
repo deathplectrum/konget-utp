@@ -1,0 +1,28 @@
+# Выгрузка в Google-таблицу. Запускается кнопкой «Выгрузить данные в таблицу» в приложении.
+# Нужны секреты GOOGLE_SERVICE_ACCOUNT и SHEET_ID (Settings → Secrets and variables → Actions).
+name: Выгрузка в таблицу
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: export
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Записать результаты в таблицу
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: node collector/export.mjs

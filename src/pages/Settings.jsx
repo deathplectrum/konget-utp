@@ -12,18 +12,29 @@ const STEPS = [
   <>Нажми <b>Generate token</b>, скопируй ключ и вставь ниже</>,
 ];
 
+// Выгрузка в Google-таблицу: один раз завести бесплатный служебный аккаунт Google.
+const SHEET_STEPS = (repo) => [
+  <>Открой <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noreferrer">Google Cloud <IonIcon icon={openOutline} /></a> и создай проект, например «konget» (бесплатно, карта не нужна)</>,
+  <>Включи в нём <a href="https://console.cloud.google.com/apis/library/sheets.googleapis.com" target="_blank" rel="noreferrer">Google Sheets API <IonIcon icon={openOutline} /></a></>,
+  <>Открой <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noreferrer">Service accounts <IonIcon icon={openOutline} /></a> → Create service account → имя «konget» → Done</>,
+  <>В созданном аккаунте: Keys → Add key → JSON. Скачается файл с ключом</>,
+  <>В Google-таблице нажми «Настройки доступа» и добавь адрес аккаунта (…@….iam.gserviceaccount.com) как <b>редактора</b></>,
+  <>В <a href={`https://github.com/${repo}/settings/secrets/actions`} target="_blank" rel="noreferrer">секретах репозитория <IonIcon icon={openOutline} /></a> создай два: <b>GOOGLE_SERVICE_ACCOUNT</b> — всё содержимое файла с ключом, <b>SHEET_ID</b> — ссылка на таблицу</>,
+];
+
 export default function Settings() {
   const { settings, setSettings, refresh } = useApp();
   const [repo, setRepo] = useState(settings.repo);
   const [token, setToken] = useState(settings.token);
+  const [sheet, setSheet] = useState(settings.sheet);
   const [busy, setBusy] = useState(false);
   const [toast] = useIonToast();
 
   const save = async () => {
     setBusy(true);
-    const next = { repo: repo.trim(), token: token.trim() };
+    const next = { repo: repo.trim(), token: token.trim(), sheet: sheet.trim() };
     setSettings(next);
-    const res = next.token ? await checkToken(next) : { ok: true, text: 'Сохранено. Без ключа можно только смотреть.' };
+    const res = next.token ? await checkToken(next) : { ok: true, text: 'Сохранено. Без ключа можно только смотреть результаты.' };
     setBusy(false);
     toast({ message: res.text, duration: 3500, color: res.ok ? 'success' : 'danger', position: 'top' });
     refresh();
@@ -43,19 +54,23 @@ export default function Settings() {
             <div>
               <b>{settings.token ? 'Ключ подключён' : 'Ключа пока нет'}</b>
               <small className="muted">
-                {settings.token ? 'Кнопка «Собрать УТП» работает на этом устройстве' : 'Без ключа можно смотреть, но не запускать сбор'}
+                {settings.token ? 'Все четыре кнопки работают на этом устройстве' : 'Без ключа можно смотреть результаты, но не запускать проверки'}
               </small>
             </div>
           </div>
 
           <div className="card">
             <label className="field">
-              <span>Ключ GitHub</span>
+              <span>Ключ доступа</span>
               <IonInput type="password" placeholder="github_pat_…" value={token} onIonInput={(e) => setToken(e.detail.value || '')} />
             </label>
             <label className="field">
               <span>Репозиторий</span>
               <IonInput placeholder="логин/konget-utp" value={repo} onIonInput={(e) => setRepo(e.detail.value || '')} />
+            </label>
+            <label className="field">
+              <span>Ссылка на Google-таблицу (для кнопки «Таблица»)</span>
+              <IonInput placeholder="https://docs.google.com/spreadsheets/d/…" value={sheet} onIonInput={(e) => setSheet(e.detail.value || '')} />
             </label>
             <button className="wide-btn" onClick={save} disabled={busy}>
               {busy ? <IonSpinner name="crescent" /> : <IonIcon icon={checkmarkCircle} />} Сохранить и проверить
@@ -68,7 +83,22 @@ export default function Settings() {
             {STEPS.map((s, i) => (
               <div key={i} className="step"><span className="step-num">{i + 1}</span><span>{s}</span></div>
             ))}
-            <div className="muted small">Это нужно сделать один раз на каждом устройстве: на компьютере и на телефоне.</div>
+            <div className="muted small">
+              Ключ — это пропуск к кнопкам: у кого его нет, тот может только смотреть результаты.
+              Можно сделать один ключ и раздать его узкому кругу людей, а если кто-то уйдёт — удалить ключ на GitHub и выпустить новый.
+              Вставить ключ нужно один раз на каждом устройстве.
+            </div>
+          </div>
+
+          <h2 className="section-title">Как подключить Google-таблицу</h2>
+          <div className="card steps">
+            {SHEET_STEPS(settings.repo).map((s, i) => (
+              <div key={i} className="step"><span className="step-num">{i + 1}</span><span>{s}</span></div>
+            ))}
+            <div className="muted small">
+              Кнопка «Выгрузить данные в таблицу» переписывает листы «Сводка», «Работа сайтов», «Скрипт Конгет» и «УТП».
+              Остальные листы таблицы она не трогает.
+            </div>
           </div>
         </div>
       </IonContent>

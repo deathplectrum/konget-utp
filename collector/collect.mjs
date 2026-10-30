@@ -1,10 +1,10 @@
-// Сборщик УТП. Запускается на GitHub (Actions) по кнопке в приложении
+// Кнопка 3 «Сверить УТП». Запускается на GitHub (Actions) по кнопке в приложении
 // или у себя командой: npm run collect   (один сайт: npm run collect -- --site 1)
 //
 // Что делает:
 // 1. Читает сценарии сайтов из папки scenarios/ (один файл — один сайт).
 // 2. Открывает страницы сайта в браузере и берёт модели, цены и выгоды по сценарию.
-// 3. Сравнивает с прошлым сбором и пишет итог в data/latest.json и data/history/<дата>.json.
+// 3. Сравнивает с прошлым сбором и пишет итог в data/utp/latest.json и data/utp/history/<дата>.json.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +17,8 @@ import {
 const ROOT = path.resolve(import.meta.dirname, '..');
 const SCENARIOS = path.join(ROOT, 'scenarios');
 const DATA = path.join(ROOT, 'data');
-const HISTORY = path.join(DATA, 'history');
+const UTP = path.join(DATA, 'utp');
+const HISTORY = path.join(UTP, 'history');
 const SCREENS = path.join(DATA, 'screens');
 const PAGE_TIMEOUT = 45_000;
 const PARALLEL = Number(process.env.PARALLEL) || 3; // сколько сайтов проверять одновременно
@@ -271,7 +272,7 @@ async function main() {
     const done = new Set(results.map((r) => String(r.id)));
     let sites = results;
     if (onlyId || stopped) {
-      const latest = readJson(path.join(DATA, 'latest.json'));
+      const latest = readJson(path.join(UTP, 'latest.json'));
       // У непроверенных сайтов оставляем только снимки, которые ещё лежат на месте.
       const kept = (latest?.sites || []).filter((s) => !done.has(String(s.id)))
         .map((s) => ({ ...s, screens: (s.screens || []).filter((f) => fs.existsSync(path.join(ROOT, f))) }));
@@ -295,7 +296,7 @@ async function main() {
     };
 
     fs.mkdirSync(HISTORY, { recursive: true });
-    fs.writeFileSync(path.join(DATA, 'latest.json'), JSON.stringify(report, null, 2));
+    fs.writeFileSync(path.join(UTP, 'latest.json'), JSON.stringify(report, null, 2));
     fs.writeFileSync(path.join(HISTORY, `${today}.json`), JSON.stringify(report, null, 2));
 
     const dates = fs.readdirSync(HISTORY).map((f) => f.replace('.json', ''));
