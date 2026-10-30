@@ -73,7 +73,7 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
       },
     });
     if (col.kind === 'id') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '0' } }, 'horizontalAlignment,numberFormat', data));
-    if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0.#' } }, 'horizontalAlignment,numberFormat', data));
+    if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: 'General' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'money') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '#,##0" ₽"' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'wrap') req.push(cell({ wrapStrategy: 'WRAP' }, 'wrapStrategy', data));
     if (col.list) {
