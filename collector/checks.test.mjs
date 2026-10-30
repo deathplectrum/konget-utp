@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
-import { buildSheets } from './sheet.mjs';
+import { buildSheets, sheetValues } from './sheet.mjs';
 import { sheetIdFrom } from './export.mjs';
 
 const LIVE = 'Официальный дилер. Модели, цены, тест-драйв, кредит, трейд-ин, сервис и запчасти. '.repeat(3);
@@ -72,10 +72,17 @@ test('листы таблицы: сводка по сайтам, проблем�
     },
   });
   assert.deepEqual(Object.keys(sheets), ['Сводка', 'Работа сайтов', 'Скрипт Конгет', 'УТП']);
-  assert.equal(sheets['Сводка'][1][2], 'b.ru');
-  assert.deepEqual(sheets['Сводка'][2].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
-  assert.deepEqual(sheets['УТП'][2].slice(3, 6), ['T8', 2899000, '']);
-  assert.equal(sheets['Скрипт Конгет'][0][0], 'Проверка от 2026-10-27');
+  const rows = (name) => sheetValues(sheets[name]);
+  assert.equal(rows('Сводка')[0][0], 'САЙТ');
+  assert.equal(rows('Сводка')[0].length, rows('Сводка')[1].length);
+  assert.equal(rows('Сводка')[2][2], 'b.ru');
+  assert.deepEqual(rows('Сводка')[3].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
+  assert.deepEqual(rows('УТП')[2].slice(3, 6), ['T8', 2899000, '']);
+  assert.equal(rows('Скрипт Конгет')[0][2], 'ПРОВЕРКА ОТ 2026-10-27');
+  for (const spec of Object.values(sheets)) {
+    assert.equal(spec.groups.reduce((a, g) => a + g[1], 0), spec.columns.length);
+    assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
+  }
 });
 
 test('id таблицы из ссылки', () => {

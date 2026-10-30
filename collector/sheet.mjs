@@ -1,10 +1,32 @@
-// Раскладка результатов по листам Google-таблицы (кнопка 4). Здесь только данные,
-// без обращения к Google, поэтому это легко проверить тестами.
+// Раскладка результатов по листам Google-таблицы (кнопка 4): что в каких колонках,
+// какая ширина, где выпадающие списки и каким цветом статусы. Здесь нет обращения к Google,
+// поэтому это легко проверить тестами. Как это рисуется в таблице — в export.mjs.
+
+import { CHANGE } from './lib.mjs';
+import { HEALTH, KONGET } from './checks.mjs';
 
 const day = (iso) => (iso ? iso.slice(0, 10) : '');
 const num = (v) => (typeof v === 'number' ? v : '');
 
-// Что выгружаем: имя листа → строки (первая — заголовки).
+// Цвета статусов: зелёный — всё хорошо, жёлтый — посмотреть, красный — плохо.
+export const TONE_OF = {
+  [HEALTH.ok]: 'green', [HEALTH.slow]: 'blue', [HEALTH.stub]: 'amber', [HEALTH.down]: 'red',
+  [KONGET.ok]: 'green', [KONGET.wrong]: 'red', [KONGET.noToken]: 'amber', [KONGET.manual]: 'violet',
+  [KONGET.missing]: 'red', [KONGET.down]: 'gray',
+  [CHANGE.same]: 'green', [CHANGE.changed]: 'blue', [CHANGE.check]: 'amber', [CHANGE.error]: 'red',
+  [CHANGE.first]: 'violet', [CHANGE.noScenario]: 'gray',
+  обычный: 'green', отложенный: 'blue', 'через контейнер': 'violet',
+};
+
+const HEALTH_LIST = Object.values(HEALTH);
+const KONGET_LIST = Object.values(KONGET);
+const CHANGE_LIST = Object.values(CHANGE);
+const KIND_LIST = ['обычный', 'отложенный', 'через контейнер'];
+
+// Колонка: заголовок, ширина в точках, вид (id, status, text, wrap, money, link, center) и список для выпадающего меню.
+const col = (title, width, kind = 'text', list = null) => ({ title, width, kind, list });
+
+// Что выгружаем: имя листа → { groups (подписи над колонками: текст, сколько колонок, цвет), columns, rows }.
 export function buildSheets({ health, konget, utp }) {
   const byId = (report) => new Map((report?.sites || []).map((s) => [String(s.id), s]));
   const h = byId(health);
@@ -18,8 +40,8 @@ export function buildSheets({ health, konget, utp }) {
     const hs = h.get(id);
     const ks = k.get(id);
     const us = u.get(id);
-    const problems = [hs?.health && hs.health !== 'Работает', ks?.konget && ks.konget !== 'Скрипт есть',
-      us?.change && ['Ошибка доступа', 'Требует проверки'].includes(us.change)].filter(Boolean).length;
+    const problems = [hs?.health && hs.health !== HEALTH.ok, ks?.konget && ks.konget !== KONGET.ok,
+      us?.change && [CHANGE.error, CHANGE.check].includes(us.change)].filter(Boolean).length;
     return {
       problems,
       row: [
@@ -32,27 +54,58 @@ export function buildSheets({ health, konget, utp }) {
   }).sort((a, b) => b.problems - a.problems || a.row[0] - b.row[0]).map((x) => x.row);
 
   const sites = (report) => report?.sites || [];
+  const checked = (label, report) => (report?.checked_at ? `${label} ${day(report.checked_at)}` : `${label}: ещё не было`);
+
   return {
-    'Сводка': [
-      ['ID', 'Компания', 'Сайт', 'Бренд', 'Ответственный', 'Сайт работает', 'Скрипт Конгет', 'Токен', 'УТП', 'Что изменилось', 'Комментарий'],
-      ...summary,
-    ],
-    'Работа сайтов': [
-      [`Проверка от ${day(health?.checked_at)}`],
-      ['ID', 'Сайт', 'Статус', 'Код ответа', 'Открывался, с', 'Причина', 'Было'],
-      ...sites(health).map((s) => [s.id, s.site, s.health, s.code ?? '', s.load_seconds ?? '', s.reason || '', s.was || '']),
-    ],
-    'Скрипт Конгет': [
-      [`Проверка от ${day(konget?.checked_at)}`],
-      ['ID', 'Сайт', 'Статус', 'Токен на сайте', 'Ожидаемый токен', 'Откуда скрипт', 'Причина', 'Было'],
-      ...sites(konget).map((s) => [s.id, s.site, s.konget, (s.tokens || []).join(', '), s.expected || '', s.where || '', s.reason || '', s.was || '']),
-    ],
-    'УТП': [
-      [`Сбор от ${day(utp?.checked_at)}`, utp?.previous_date ? `сравнение с ${utp.previous_date}` : ''],
-      ['ID', 'Сайт', 'Бренд', 'Модель', 'Цена от, ₽', 'Выгода до, ₽', 'Статус сайта', 'Страница'],
-      ...sites(utp).flatMap((s) => (s.models?.length
+    'Сводка': {
+      groups: [['Сайт', 5, 'indigo'], ['Работа сайта', 1, 'teal'], ['Скрипт Конгет', 2, 'violet'], ['УТП', 2, 'orange'], ['Примечания', 1, 'gray']],
+      columns: [
+        col('ID', 52, 'id'), col('Компания', 190), col('Сайт', 170, 'link'), col('Бренд', 100), col('Ответственный', 150),
+        col('Статус', 160, 'status', HEALTH_LIST),
+        col('Статус', 160, 'status', KONGET_LIST), col('Токен', 270),
+        col('Статус', 160, 'status', CHANGE_LIST), col('Что изменилось', 340, 'wrap'),
+        col('Комментарий', 340, 'wrap'),
+      ],
+      rows: summary,
+    },
+    'Работа сайтов': {
+      groups: [['Сайт', 2, 'indigo'], [checked('Проверка от', health), 5, 'teal']],
+      columns: [
+        col('ID', 52, 'id'), col('Сайт', 170, 'link'),
+        col('Статус', 170, 'status', HEALTH_LIST), col('Код ответа', 90, 'center'), col('Открывался, с', 110, 'center'),
+        col('Причина', 340, 'wrap'), col('Было', 150),
+      ],
+      rows: sites(health).map((s) => [s.id, s.site, s.health, s.code ?? '', s.load_seconds ?? '', s.reason || '', (s.was || '').replace('Было: ', '')]),
+    },
+    'Скрипт Конгет': {
+      groups: [['Сайт', 2, 'indigo'], [checked('Проверка от', konget), 7, 'violet']],
+      columns: [
+        col('ID', 52, 'id'), col('Сайт', 170, 'link'),
+        col('Статус', 170, 'status', KONGET_LIST), col('Как стоит', 140, 'status', KIND_LIST), col('Токен на сайте', 270),
+        col('Ожидаемый токен', 200), col('Откуда скрипт', 260, 'wrap'), col('Пояснение', 340, 'wrap'), col('Было', 150),
+      ],
+      rows: sites(konget).map((s) => [
+        s.id, s.site, s.konget, s.kind || '', (s.tokens || []).join(', '), s.expected || '', s.where || '', s.reason || '',
+        (s.was || '').replace('Было: ', ''),
+      ]),
+    },
+    'УТП': {
+      groups: [['Сайт', 3, 'indigo'], [`${checked('Сбор от', utp)}${utp?.previous_date ? `, сравнение с ${utp.previous_date}` : ''}`, 5, 'orange']],
+      columns: [
+        col('ID', 52, 'id'), col('Сайт', 170, 'link'), col('Бренд', 100),
+        col('Модель', 150), col('Цена от', 120, 'money'), col('Выгода до', 120, 'money'),
+        col('Статус сайта', 170, 'status', CHANGE_LIST), col('Страница', 280, 'wrap'),
+      ],
+      rows: sites(utp).flatMap((s) => (s.models?.length
         ? s.models.map((m) => [s.id, s.site, s.brand || '', m.model, num(m.price), num(m.max_benefit), s.change, m.source_url || ''])
         : [[s.id, s.site, s.brand || '', '', '', '', s.change, '']])),
-    ],
+    },
   };
+}
+
+// Значения листа: строка 1 — подписи групп, строка 2 — заголовки колонок, дальше данные.
+export function sheetValues({ groups, columns, rows }) {
+  const top = [];
+  for (const [label, span] of groups) top.push(label.toUpperCase(), ...Array(span - 1).fill(''));
+  return [top, columns.map((c) => c.title.toUpperCase()), ...rows];
 }
