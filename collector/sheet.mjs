@@ -133,24 +133,34 @@ export function placeColumns({ columns, rows }, headers, lists = []) {
 // Лист «Сайты» — список сайтов, по которому работают все проверки. Его заполняет человек, программа только читает.
 export const SITES_SHEET = 'Сайты';
 
-// Строки листа «Сайты» (со второй, под заголовками) → список сайтов для проверок.
+// Лист «Сайты» целиком (строка 1 — заголовки) → список сайтов для проверок.
+// Колонки ищем по заголовкам, поэтому их можно переставлять и удалять ненужные.
 // Пустые строки и строки без ID или адреса пропускаем; «Проверять: Нет» — сайт временно не проверяем.
-export function parseSites(values) {
+export function parseSites([header = [], ...rows]) {
+  const at = (title) => header.findIndex((h) => norm(h) === norm(title));
+  const idx = {
+    id: at('ID'), company: at('Компания'), site: at('Сайт'), brand: at('Бренд'), responsible: at('Ответственный'),
+    active: at('Проверять'), token: at('Токен Конгет'),
+  };
+  const get = (r, i) => {
+    const v = i < 0 ? '' : String(r[i] ?? '').trim();
+    return v === 'None' ? '' : v;
+  };
   const out = [];
   const seen = new Set();
-  for (const r of values) {
-    const id = Number(String(r[0] ?? '').trim());
-    const site = String(r[2] ?? '').trim().replace(/\/+$/, '');
+  for (const r of rows) {
+    const id = Number(get(r, idx.id));
+    const site = get(r, idx.site).replace(/\/+$/, '');
     if (!id || !site || seen.has(id)) continue;
     seen.add(id);
     out.push({
       id,
-      company: String(r[1] ?? '').trim(),
+      company: get(r, idx.company),
       site,
-      brand: String(r[3] ?? '').trim(),
-      responsible: String(r[4] ?? '').trim(),
-      active: String(r[5] ?? '').trim().toLowerCase() !== 'нет',
-      konget_token: String(r[6] ?? '').trim(),
+      brand: get(r, idx.brand),
+      responsible: get(r, idx.responsible),
+      active: get(r, idx.active).toLowerCase() !== 'нет',
+      konget_token: get(r, idx.token),
     });
   }
   return out;
