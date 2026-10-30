@@ -1,22 +1,22 @@
 {
-  "date": "2026-10-29",
-  "checked_at": "2026-10-29T19:06:31.594Z",
-  "previous_date": null,
-  "total_seconds": 216,
+  "date": "2026-10-30",
+  "checked_at": "2026-10-30T14:19:13.393Z",
+  "previous_date": "2026-10-29",
+  "total_seconds": 258,
   "parallel": 3,
   "summary": {
-    "Не изменилось": 0,
+    "Не изменилось": 5,
     "Изменилось": 0,
     "Требует проверки": 0,
     "Ошибка доступа": 0,
-    "Первая проверка": 5,
+    "Первая проверка": 0,
     "Нет сценария": 0
   },
   "sites": [
     {
       "id": 1,
       "company": "Tenet (тест)",
-      "responsible": "",
+      "responsible": "None",
       "site": "tenet.ru",
       "brand": "Tenet",
       "file": "001-tenet.yaml",
@@ -63,17 +63,16 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 77,
+      "seconds": 142,
       "pages_opened": 9,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 6"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 2,
       "company": "TANK (тест)",
-      "responsible": "",
+      "responsible": "None",
       "site": "tank.ru",
       "brand": "TANK",
       "file": "002-tank.yaml",
@@ -132,17 +131,16 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 147,
+      "seconds": 143,
       "pages_opened": 10,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 8"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 3,
       "company": "Geely (тест)",
-      "responsible": "",
+      "responsible": "None",
       "site": "geely-motors.com",
       "brand": "Geely",
       "file": "003-geely.yaml",
@@ -199,17 +197,16 @@
       "screens": [],
       "comment": "",
       "status": "ok",
-      "seconds": 177,
+      "seconds": 176,
       "pages_opened": 11,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 8"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 4,
       "company": "Li Auto (тест)",
-      "responsible": "",
+      "responsible": "None",
       "site": "liautoofficial.ru",
       "brand": "Li",
       "file": "004-liauto.yaml",
@@ -250,17 +247,16 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 24,
+      "seconds": 23,
       "pages_opened": 8,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 5"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     },
     {
       "id": 5,
       "company": "Belgee (тест)",
-      "responsible": "",
+      "responsible": "None",
       "site": "belgee.ru",
       "brand": "Belgee",
       "file": "005-belgee.yaml",
@@ -295,12 +291,11 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 115,
+      "seconds": 114,
       "pages_opened": 7,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 4"
-      ]
+      "change": "Не изменилось",
+      "changes": [],
+      "diff": []
     }
   ]
 }
