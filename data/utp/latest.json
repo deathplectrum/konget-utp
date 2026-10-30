@@ -1,78 +1,18 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T15:24:20.433Z",
+  "checked_at": "2026-10-30T15:31:26.433Z",
   "previous_date": "2026-10-29",
-  "total_seconds": 317,
+  "total_seconds": 333,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
     "Изменилось": 0,
-    "Требует проверки": 3,
-    "Ошибка доступа": 4,
-    "Первая проверка": 3,
-    "Нет сценария": 0
+    "Требует проверки": 4,
+    "Ошибка доступа": 0,
+    "Первая проверка": 2,
+    "Нет сценария": 4
   },
   "sites": [
-    {
-      "id": 1,
-      "company": "",
-      "responsible": "",
-      "site": "srt.agat.lada.ru",
-      "brand": "LADA",
-      "models": [],
-      "screens": [],
-      "comment": "Обход моделей: На https://srt.agat.lada.ru/ не нашлось ссылок на модели",
-      "status": "access_error",
-      "seconds": 3,
-      "pages_opened": 2,
-      "change": "Ошибка доступа",
-      "changes": []
-    },
-    {
-      "id": 3,
-      "company": "",
-      "responsible": "",
-      "site": "avtoban-moskvich.ru",
-      "brand": "Москвич",
-      "models": [],
-      "screens": [],
-      "comment": "Обход моделей: На https://avtoban-moskvich.ru/ не нашлось ссылок на модели",
-      "status": "access_error",
-      "seconds": 40,
-      "pages_opened": 2,
-      "change": "Ошибка доступа",
-      "changes": []
-    },
-    {
-      "id": 5,
-      "company": "",
-      "responsible": "",
-      "site": "lixiang-avangard.ru",
-      "brand": "Li Auto",
-      "models": [],
-      "screens": [],
-      "comment": "Обход моделей: На https://lixiang-avangard.ru/ не нашлось ссылок на модели",
-      "status": "access_error",
-      "seconds": 36,
-      "pages_opened": 2,
-      "change": "Ошибка доступа",
-      "changes": []
-    },
-    {
-      "id": 9,
-      "company": "",
-      "responsible": "",
-      "site": "jacsm.rqch.ru",
-      "brand": "JAC",
-      "models": [],
-      "screens": [],
-      "comment": "Обход моделей: На https://jacsm.rqch.ru/ не нашлось ссылок на модели",
-      "status": "access_error",
-      "seconds": 36,
-      "pages_opened": 2,
-      "change": "Ошибка доступа",
-      "changes": []
-    },
     {
       "id": 4,
       "company": "",
@@ -115,6 +55,79 @@
       "changes": []
     },
     {
+      "id": 6,
+      "company": "",
+      "responsible": "",
+      "site": "gac-autoimport.ru",
+      "brand": "GAC",
+      "models": [
+        {
+          "model": "GS4",
+          "price": 2999000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/gs4?mobile"
+        },
+        {
+          "model": "GS8",
+          "price": 4030000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/new-gs8?mobile"
+        },
+        {
+          "model": "НОВЫЙ AION V",
+          "price": "-",
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/aion-v?mobile"
+        },
+        {
+          "model": "S7",
+          "price": "-",
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/s7?mobile"
+        },
+        {
+          "model": "НОВЫЙ GAC HYPTEC HT",
+          "price": "-",
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/hyptec-ht?mobile"
+        },
+        {
+          "model": "НОВЫЙ GAC S9",
+          "price": 6799000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/s9?mobile"
+        },
+        {
+          "model": "Empow",
+          "price": "-",
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/empow?mobile"
+        },
+        {
+          "model": "M8",
+          "price": 6049999,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/m8?mobile"
+        },
+        {
+          "model": "GS3",
+          "price": 2799000,
+          "max_benefit": "-",
+          "source_url": "https://gac-autoimport.ru/models/gs3?main_menu"
+        }
+      ],
+      "screens": [
+        "data/screens/6/model-2.jpg"
+      ],
+      "comment": "Не нашлась цена: НОВЫЙ AION V, S7, НОВЫЙ GAC HYPTEC HT, Empow; Собрано по общему шаблону движка TradeDealer",
+      "template": "TradeDealer",
+      "status": "needs_check",
+      "seconds": 174,
+      "pages_opened": 11,
+      "change": "Требует проверки",
+      "changes": []
+    },
+    {
       "id": 7,
       "company": "",
       "responsible": "",
@@ -146,7 +159,7 @@
       "comment": "Не нашлась цена: Универсальный среднеразмерный кроссовер VOLGA K40, Комфортный и технологичный седан бизнес-класса VOLGA С50; Собрано по общему шаблону движка TradeDealer",
       "template": "TradeDealer",
       "status": "needs_check",
-      "seconds": 43,
+      "seconds": 40,
       "pages_opened": 4,
       "change": "Требует проверки",
       "changes": []
@@ -242,84 +255,11 @@
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 130,
+      "seconds": 132,
       "pages_opened": 8,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 6"
-      ]
-    },
-    {
-      "id": 6,
-      "company": "",
-      "responsible": "",
-      "site": "gac-autoimport.ru",
-      "brand": "GAC",
-      "models": [
-        {
-          "model": "GS4",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/gs4?mobile"
-        },
-        {
-          "model": "GS8",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/new-gs8?mobile"
-        },
-        {
-          "model": "НОВЫЙ AION V",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/aion-v?mobile"
-        },
-        {
-          "model": "S7",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/s7?mobile"
-        },
-        {
-          "model": "НОВЫЙ GAC HYPTEC HT",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/hyptec-ht?mobile"
-        },
-        {
-          "model": "НОВЫЙ GAC S9",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/s9?mobile"
-        },
-        {
-          "model": "Empow",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/empow?mobile"
-        },
-        {
-          "model": "M8",
-          "price": 2449000,
-          "max_benefit": 300000,
-          "source_url": "https://gac-autoimport.ru/models/m8?mobile"
-        },
-        {
-          "model": "GS3",
-          "price": 2449000,
-          "max_benefit": "-",
-          "source_url": "https://gac-autoimport.ru/models/gs3?main_menu"
-        }
-      ],
-      "screens": [],
-      "comment": "Собрано по общему шаблону движка TradeDealer",
-      "template": "TradeDealer",
-      "status": "ok",
-      "seconds": 171,
-      "pages_opened": 11,
-      "change": "Первая проверка",
-      "changes": [
-        "Записано моделей: 9"
       ]
     },
     {
@@ -384,12 +324,72 @@
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 154,
+      "seconds": 168,
       "pages_opened": 10,
       "change": "Первая проверка",
       "changes": [
         "Записано моделей: 8"
       ]
+    },
+    {
+      "id": 1,
+      "company": "",
+      "responsible": "",
+      "site": "srt.agat.lada.ru",
+      "brand": "LADA",
+      "models": [],
+      "screens": [],
+      "comment": "Для движка «Сайты LADA» ещё нет шаблона, запасной не нашёл модели",
+      "status": "no_scenario",
+      "seconds": 3,
+      "pages_opened": 2,
+      "change": "Нет сценария",
+      "changes": []
+    },
+    {
+      "id": 3,
+      "company": "",
+      "responsible": "",
+      "site": "avtoban-moskvich.ru",
+      "brand": "Москвич",
+      "models": [],
+      "screens": [],
+      "comment": "Для движка «Tilda» ещё нет шаблона, запасной не нашёл модели",
+      "status": "no_scenario",
+      "seconds": 39,
+      "pages_opened": 2,
+      "change": "Нет сценария",
+      "changes": []
+    },
+    {
+      "id": 5,
+      "company": "",
+      "responsible": "",
+      "site": "lixiang-avangard.ru",
+      "brand": "Li Auto",
+      "models": [],
+      "screens": [],
+      "comment": "Для движка «Nuxt» ещё нет шаблона, запасной не нашёл модели",
+      "status": "no_scenario",
+      "seconds": 34,
+      "pages_opened": 2,
+      "change": "Нет сценария",
+      "changes": []
+    },
+    {
+      "id": 9,
+      "company": "",
+      "responsible": "",
+      "site": "jacsm.rqch.ru",
+      "brand": "JAC",
+      "models": [],
+      "screens": [],
+      "comment": "Для движка «Платформа rqch.ru» ещё нет шаблона, запасной не нашёл модели",
+      "status": "no_scenario",
+      "seconds": 34,
+      "pages_opened": 2,
+      "change": "Нет сценария",
+      "changes": []
     }
   ]
 }
