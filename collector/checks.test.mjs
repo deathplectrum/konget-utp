@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
+import {
+  HEALTH, KONGET, detectEngine, findTokens, healthVerdict, kongetVerdict,
+} from './checks.mjs';
 import { buildSheets, parseSites, placeColumns, sheetValues } from './sheet.mjs';
 import { letter } from './export.mjs';
 import { sheetIdFrom } from './google.mjs';
@@ -14,6 +16,7 @@ test('сайт работает, медленный, сломан или заг�
   assert.equal(healthVerdict({ status: 503, seconds: 1, text: LIVE }).health, HEALTH.down);
   assert.equal(healthVerdict({ error: 'net::ERR_NAME_NOT_RESOLVED' }).health, HEALTH.down);
   assert.equal(healthVerdict({ status: 200, seconds: 1, text: '' }).health, HEALTH.stub);
+  assert.equal(healthVerdict({ status: 200, seconds: 1, text: `Web Page Blocked! The page cannot be displayed. ${LIVE}` }).health, HEALTH.down);
   assert.equal(healthVerdict({ status: 200, seconds: 1, text: `Сайт находится в разработке. ${LIVE}` }).health, HEALTH.stub);
   assert.equal(healthVerdict({ status: 200, seconds: 1, title: 'Домен example.ru продаётся', text: LIVE }).health, HEALTH.stub);
 });
@@ -101,6 +104,17 @@ test('выгрузка пишет в колонки человека по заг
   assert.deepEqual([0, 25, 26, 27].map(letter), ['A', 'Z', 'AA', 'AB']);
 });
 
+test('движок сайта', () => {
+  assert.equal(detectEngine('<div class="perxis-auto-1_27_0-col">'), 'Perxis');
+  assert.equal(detectEngine('<script src="/bitrix/js/main/core.js">'), '1С-Битрикс');
+  assert.equal(detectEngine('<link href="https://static.tildacdn.com/css/tilda-grid.css">'), 'Tilda');
+  assert.equal(detectEngine('<meta name="generator" content="UMI.CMS">'), 'UMI.CMS');
+  assert.equal(detectEngine('<html>просто сайт</html>'), 'Не определён');
+  assert.equal(detectEngine('<script src="//script.tradedealer.ru/a.js">'), 'TradeDealer');
+  assert.equal(detectEngine('', 'https://srt.agat.lada.ru/'), 'Сайты LADA');
+  assert.equal(detectEngine('<img src="https://img.perxis.ru/unsafe/1920x0/filters">'), 'Perxis');
+});
+
 test('id таблицы из ссылки', () => {
   assert.equal(sheetIdFrom('https://docs.google.com/spreadsheets/d/1AbC-dEf_123/edit#gid=0'), '1AbC-dEf_123');
   assert.equal(sheetIdFrom(' 1AbC-dEf_123 '), '1AbC-dEf_123');
@@ -108,6 +122,7 @@ test('id таблицы из ссылки', () => {
 
 test('лист «Сайты»: читаем строки, пропускаем пустые и выключенные помечаем', () => {
   const sites = parseSites([
+    ['ID', 'Компания', 'Сайт', 'Бренд', 'Ответственный', 'Проверять', 'Токен Конгет'],
     ['101', 'ООО Авто', 'https://dealer.ru/', 'Tenet', 'Иван', 'Да', '538e1215043c412b9cfcff11319094a9'],
     ['', 'без id', 'x.ru'],
     ['102', 'Без адреса', ''],
@@ -120,6 +135,9 @@ test('лист «Сайты»: читаем строки, пропускаем �
   assert.equal(sites[0].konget_token, '538e1215043c412b9cfcff11319094a9');
   assert.equal(sites[1].active, false);
   assert.equal(sites[2].active, true);
+  // Колонку «Токен Конгет» удалили, «None» — то же, что пусто.
+  const [short] = parseSites([['ID', 'Компания', 'Сайт', 'Проверять', 'Заметки'], ['7', 'None', 'x.ru', 'Да', 'заметка']]);
+  assert.deepEqual([short.company, short.konget_token, short.active], ['', '', true]);
 });
 
 test('сценарий подходит к сайту из таблицы, только если адрес тот же', () => {

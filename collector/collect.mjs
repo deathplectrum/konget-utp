@@ -9,7 +9,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { loadSites } from './common.mjs';
+import {
+  host, loadSites, previousOf, siteUrl,
+} from './common.mjs';
+import { detectEngine } from './checks.mjs';
+import { load as loadYaml } from 'js-yaml';
 import {
   parsePrices, parseBenefits, parseAmounts, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
 } from './lib.mjs';
@@ -133,9 +137,12 @@ async function collectModelPages(context, site, cfg) {
   } finally {
     await list.close();
   }
+  // Одна и та же страница бывает в меню с разными хвостами: …/gs4?mobile, …/gs4?main_menu, …/gs4/.
   const seen = new Set();
-  links = links.filter((l) => l.href && !seen.has(l.href) && seen.add(l.href));
+  const key = (href) => href.split(/[?#]/)[0].replace(/\/+$/, '');
+  links = links.filter((l) => l.href && !seen.has(key(l.href)) && seen.add(key(l.href)));
   if (!links.length) throw new Error(`На ${cfg.list_url} не нашлось ссылок на модели`);
+  if (cfg.max_links) links = links.slice(0, cfg.max_links);
   log(`  [${site.id}] моделей в списке: ${links.length}`);
 
   const page = cfg.page || {};
@@ -159,7 +166,11 @@ async function collectModelPages(context, site, cfg) {
       }, page);
       const prices = found.prices.flatMap(parsePrices);
       const benefits = found.benefits.flatMap(page.benefit_all ? parseAmounts : parseBenefits);
-      const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
+      // Текст ссылки «О модели» — не название: тогда берём его из адреса страницы (/models/gs3 → GS3).
+      const generic = /^(о модели|подробнее|узнать больше|смотреть)$/i;
+      const fromUrl = () => decodeURIComponent(new URL(link.href).pathname.split('/').filter(Boolean).at(-1) || '').replace(/[-_]+/g, ' ').toUpperCase();
+      const raw = (found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean) || '';
+      const name = cleanModel(generic.test(raw) ? fromUrl() : raw, site.brand);
       // Снимок: если сценарий не дописан, или на странице модели не нашлось цены (один на сайт).
       if (!hasSelectors || (!prices.length && !screens.length)) screens.push(await snapshot(p, site, `model-${i}`));
       models.push({
@@ -186,13 +197,65 @@ async function autoScroll(page) {
   });
 }
 
+// Общие шаблоны по движкам (templates/*.yaml): для сайтов без своего сценария.
+const TEMPLATES = path.join(ROOT, 'templates');
+const templates = new Map(fs.existsSync(TEMPLATES)
+  ? fs.readdirSync(TEMPLATES).filter((f) => /\.ya?ml$/.test(f)).map((f) => {
+    const t = loadYaml(fs.readFileSync(path.join(TEMPLATES, f), 'utf8'));
+    return [t.engine, t];
+  })
+  : []);
+// Движок сайта из последней проверки «Работа сайтов» (тот же ID и тот же адрес).
+const healthById = new Map((readJson(path.join(DATA, 'health', 'latest.json'))?.sites || []).map((s) => [String(s.id), s]));
+
+// Шаблон движка с адресами этого сайта: «/» → https://сайт/.
+function fromTemplate(site, t) {
+  const abs = (u) => new URL(u, `${siteUrl(site)}/`).href;
+  return {
+    models: t.models && { ...t.models, list_url: abs(t.models.list_url) },
+    pages: (t.pages || []).map((p) => ({ ...p, url: abs(p.url) })),
+  };
+}
+
 async function collectSite(browser, site) {
+  if (!site.pages?.length && !site.models) {
+    const known = healthById.get(String(site.id));
+    let engine = known && host(known.site) === host(site.site) ? known.engine : '';
+    if (!engine || !templates.has(engine)) {
+      // Движок неизвестен или для него ещё нет шаблона: открываем главную, определяем движок
+      // и сохраняем снимок — по нему можно сделать шаблон.
+      const context = await browser.newContext({ locale: 'ru-RU', viewport: { width: 1366, height: 900 } });
+      try {
+        const page = await openPage(context, site, siteUrl(site));
+        engine = detectEngine(await page.content(), page.url());
+        if (!templates.has(engine)) await snapshot(page, site, 'home');
+      } catch {
+        // Главная не открылась — ниже вернём «Нет сценария».
+      } finally {
+        await context.close();
+      }
+    }
+    if (templates.has(engine)) {
+      log(`  [${site.id}] своего сценария нет, беру шаблон движка ${engine}`);
+      Object.assign(site, fromTemplate(site, templates.get(engine)), { template: engine });
+    } else if (templates.has('*')) {
+      log(`  [${site.id}] своего сценария и шаблона движка нет (${engine || 'движок неизвестен'}), беру запасной шаблон`);
+      Object.assign(site, fromTemplate(site, templates.get('*')), { template: '*', engine });
+    } else {
+      site.engine = engine;
+    }
+  }
+  return collectSiteWith(browser, site);
+}
+
+async function collectSiteWith(browser, site) {
   const base = {
     id: site.id, company: site.company || '', responsible: site.responsible || '', site: site.site, brand: site.brand || '', file: site.file,
     models: [], screens: [], comment: '',
   };
   if (!site.pages?.length && !site.models) {
-    return { ...base, status: 'no_scenario', comment: 'Для сайта ещё не написан сценарий' };
+    const engine = site.engine ? ` (движок: ${site.engine})` : '';
+    return { ...base, status: 'no_scenario', comment: `Для сайта ещё нет ни сценария, ни шаблона движка${engine}` };
   }
   const context = await browser.newContext({ locale: 'ru-RU', viewport: { width: 1366, height: 900 } });
   try {
@@ -224,6 +287,10 @@ async function collectSite(browser, site) {
         notes.push(`Не открылась ${pageCfg.url}: ${e.message.split('\n')[0]}`);
       }
     }
+    if (!anyOpened && site.template === '*') {
+      // Запасной шаблон не нашёл на главной ссылок на модели: для этого движка нужен свой шаблон.
+      return { ...base, status: 'no_scenario', comment: `Для движка «${site.engine || 'не определён'}» ещё нет шаблона, запасной не нашёл модели` };
+    }
     if (!anyOpened) return { ...base, status: 'access_error', comment: notes.join('; ') };
 
     const models = mergeModels(rows.filter((r) => r.model));
@@ -233,7 +300,15 @@ async function collectSite(browser, site) {
     if (unfinished) problems.unshift('Сценарий не заполнен до конца, сделан снимок страницы');
     if (!models.length && !unfinished) problems.push('Модели не найдены');
     const all = [...problems, ...notes];
-    return { ...base, models, status: all.length ? 'needs_check' : 'ok', comment: all.join('; ') };
+    if (site.template === '*') {
+      base.template = '*';
+      all.push(`Собрано запасным шаблоном (движок: ${site.engine || 'не определён'}), цифры надо проверить`);
+    } else if (site.template) {
+      base.template = site.template;
+      all.push(`Собрано по общему шаблону движка ${site.template}`);
+    }
+    const ok = site.template !== '*' && all.length === (site.template ? 1 : 0);
+    return { ...base, models, status: ok ? 'ok' : 'needs_check', comment: all.join('; ') };
   } finally {
     await context.close();
   }
@@ -314,7 +389,7 @@ async function main() {
       // Сколько времени и страниц ушло на сайт: по этому считаем, сколько сайтов успеем за один сбор.
       res.seconds = Math.round((Date.now() - started) / 1000);
       res.pages_opened = site.pagesOpened || 0;
-      Object.assign(res, decideChange(res, prevById.get(String(site.id))));
+      Object.assign(res, decideChange(res, previousOf(prevById, site)));
       log(`  [${site.id}] ${res.change}. Моделей: ${res.models.length}. ${res.seconds} с, страниц: ${res.pages_opened}${res.comment ? `. ${res.comment}` : ''}`);
       results.push(res);
     }

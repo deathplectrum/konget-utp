@@ -5,8 +5,12 @@
 // У себя: npm run health   (один сайт: npm run health -- --site 1)
 
 import { chromium } from 'playwright';
-import { HEALTH_ORDER, changedSince, countBy, healthVerdict, sortBy } from './checks.mjs';
-import { argValue, keepUnchecked, loadSites, log, runQueue, siteBase, siteUrl, store } from './common.mjs';
+import {
+  HEALTH_ORDER, changedSince, countBy, detectEngine, healthVerdict, sortBy,
+} from './checks.mjs';
+import {
+  argValue, keepUnchecked, loadSites, log, previousOf, runQueue, siteBase, siteUrl, store,
+} from './common.mjs';
 
 const PARALLEL = Number(process.env.PARALLEL) || 6;
 const TIMEOUT = 30_000;
@@ -20,8 +24,9 @@ async function checkSite(browser, site) {
     const seconds = (Date.now() - started) / 1000;
     await page.waitForLoadState('load', { timeout: 10_000 }).catch(() => {});
     const text = await page.evaluate(() => document.body?.innerText || '').catch(() => '');
+    const html = await page.content().catch(() => '');
     return {
-      status: res?.status() || 0, seconds, text, title: await page.title().catch(() => ''), final_url: page.url(),
+      status: res?.status() || 0, seconds, text, title: await page.title().catch(() => ''), final_url: page.url(), html,
     };
   } catch (e) {
     return { error: e.message.split('\n')[0], seconds: (Date.now() - started) / 1000 };
@@ -68,11 +73,12 @@ async function main() {
       code: raw.status || null,
       load_seconds: Math.round(raw.seconds * 10) / 10,
       final_url: raw.final_url || '',
+      engine: raw.error ? '' : detectEngine(raw.html, raw.final_url || siteUrl(site)),
       title: (raw.title || '').slice(0, 120),
       seconds: Math.round((Date.now() - started) / 1000),
     };
-    res.was = changedSince(prevById.get(String(site.id)), res, 'health');
-    log(`[${site.id}] ${site.site}: ${res.health}${res.reason ? ` (${res.reason})` : ''}`);
+    res.was = changedSince(previousOf(prevById, site), res, 'health');
+    log(`[${site.id}] ${site.site}: ${res.health}${res.reason ? ` (${res.reason})` : ''}${res.engine ? `, движок ${res.engine}` : ''}`);
     results.push(res);
   }, () => save(true));
   await browser.close();

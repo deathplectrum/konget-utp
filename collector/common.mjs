@@ -30,7 +30,7 @@ export async function loadSites(onlyId) {
   const byId = new Map(scenarios.map((s) => [String(s.id), s]));
   let sites = [];
   if (hasGoogle()) {
-    const rows = parseSites(await readRange(await connect(), `'${SITES_SHEET}'!A2:H`));
+    const rows = parseSites(await readRange(await connect(), `'${SITES_SHEET}'`));
     log(`Лист «${SITES_SHEET}»: сайтов ${rows.length}`);
     sites = rows.map((r) => {
       // Сценарий подходит, только если в нём тот же сайт: ID в таблице могут не совпасть с тестовыми сценариями.
@@ -52,6 +52,12 @@ export async function loadSites(onlyId) {
 // «https://www.Tenet.ru/» → «tenet.ru».
 export function host(site) {
   return String(site || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+}
+
+// Прошлый результат сайта: тот же ID и тот же адрес. Если под этим ID теперь другой сайт, прошлого нет.
+export function previousOf(prevById, site) {
+  const prev = prevById.get(String(site.id));
+  return prev && host(prev.site) === host(site.site) ? prev : undefined;
 }
 
 export function readJson(file) {
