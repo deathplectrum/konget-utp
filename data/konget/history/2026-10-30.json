@@ -1,7 +1,7 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T14:18:55.410Z",
-  "total_seconds": 38,
+  "checked_at": "2026-10-30T14:31:51.002Z",
+  "total_seconds": 61,
   "parallel": 6,
   "summary": {
     "Скрипта нет": 3,
@@ -9,7 +9,7 @@
     "Скрипт без токена": 0,
     "Проверить вручную": 2,
     "Сайт не открылся": 0,
-    "Скрипт есть": 0
+    "Скрипт есть": 3
   },
   "sites": [
     {
@@ -22,7 +22,7 @@
       "tokens": [],
       "reason": "В коде сайта и в загруженных файлах нет app.konget",
       "expected": "",
-      "seconds": 26,
+      "seconds": 32,
       "was": ""
     },
     {
@@ -35,7 +35,7 @@
       "tokens": [],
       "reason": "В коде сайта и в загруженных файлах нет app.konget",
       "expected": "",
-      "seconds": 37,
+      "seconds": 31,
       "was": ""
     },
     {
@@ -48,7 +48,7 @@
       "tokens": [],
       "reason": "В коде сайта и в загруженных файлах нет app.konget",
       "expected": "",
-      "seconds": 17,
+      "seconds": 18,
       "was": ""
     },
     {
@@ -61,7 +61,7 @@
       "tokens": [],
       "reason": "Скрипт не найден, но на сайте есть контейнер тегов (например, Google Tag Manager). Скрипт может лежать в нём, проверьте сами",
       "expected": "",
-      "seconds": 25,
+      "seconds": 31,
       "was": ""
     },
     {
@@ -74,7 +74,58 @@
       "tokens": [],
       "reason": "Скрипт не найден, но на сайте есть контейнер тегов (например, Google Tag Manager). Скрипт может лежать в нём, проверьте сами",
       "expected": "",
-      "seconds": 37,
+      "seconds": 32,
+      "was": ""
+    },
+    {
+      "id": 6,
+      "company": "АВАНГАРД",
+      "responsible": "None",
+      "site": "hongqi-avangard.ru",
+      "brand": "Хончи",
+      "konget": "Скрипт есть",
+      "tokens": [
+        "e65cb9d66e9e4eac8b4314d4b520201e"
+      ],
+      "kind": "обычный",
+      "where": "https://app.konget.ru/inject?token=e65cb9d66e9e4eac8b4314d4b520201e",
+      "reason": "",
+      "expected": "",
+      "seconds": 33,
+      "was": ""
+    },
+    {
+      "id": 7,
+      "company": "АМР",
+      "responsible": "None",
+      "site": "jetour-amr.ru",
+      "brand": "Jetour",
+      "konget": "Скрипт есть",
+      "tokens": [
+        "28fe2fec3b4a4994ac52017734c26444"
+      ],
+      "kind": "обычный",
+      "where": "https://app.konget.ru/inject?token=28fe2fec3b4a4994ac52017734c26444",
+      "reason": "",
+      "expected": "",
+      "seconds": 27,
+      "was": ""
+    },
+    {
+      "id": 8,
+      "company": "АКСИОМА",
+      "responsible": "None",
+      "site": "cherypulkovo.ru",
+      "brand": "Chery",
+      "konget": "Скрипт есть",
+      "tokens": [
+        "01f7c1297f6542d1a09184121c63a612"
+      ],
+      "kind": "обычный",
+      "where": "https://app.konget.ru/inject?token=01f7c1297f6542d1a09184121c63a612",
+      "reason": "",
+      "expected": "",
+      "seconds": 29,
       "was": ""
     }
   ]
