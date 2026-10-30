@@ -32,7 +32,7 @@ const FONT = 'Arial';
 const MIN_ROWS = 200;
 
 // Запросы оформления одного листа.
-export function formatRequests(sheetId, spec, index, oldRules = 0, { input = false } = {}) {
+export function formatRequests(sheetId, spec, index, oldRules = 0, { input = false, keep = new Set() } = {}) {
   const n = spec.columns.length;
   const rowCount = Math.max(MIN_ROWS, spec.rows.length + 50);
   const range = (r0, r1, c0, c1) => ({ sheetId, startRowIndex: r0, endRowIndex: r1, startColumnIndex: c0, endColumnIndex: c1 });
@@ -77,7 +77,11 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
     if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: 'General' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'money') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '#,##0" ₽"' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'wrap') req.push(cell({ wrapStrategy: 'WRAP' }, 'wrapStrategy', data));
-    if (col.list) {
+    if (col.list && keep.has(i)) {
+      // Список уже стоит (возможно, в виде «чипа», который Google даёт включить только вручную):
+      // не пересоздаём его, а растягиваем со второй строки на всю колонку — так вид чипа сохраняется.
+      req.push({ copyPaste: { source: range(1, 2, i, i + 1), destination: data, pasteType: 'PASTE_DATA_VALIDATION' } });
+    } else if (col.list) {
       // Выпадающий список: можно выбрать значение вручную. strict: false — программа может писать и другие значения.
       req.push({
         setDataValidation: {
@@ -85,6 +89,8 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
           rule: { condition: { type: 'ONE_OF_LIST', values: col.list.map((v) => ({ userEnteredValue: v })) }, showCustomUi: true, strict: false },
         },
       });
+    }
+    if (col.list) {
       for (const value of col.list) {
         const style = STATUS_STYLE[(col.tones || TONE_OF)[value] || 'muted'];
         if (!style) continue;
@@ -111,6 +117,26 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
   req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: rowCount }, properties: { pixelSize: 24 }, fields: 'pixelSize' } });
   req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 32 }, fields: 'pixelSize' } });
   return req;
+}
+
+// Какие выпадающие списки уже стоят с тем же набором значений (смотрим вторую строку каждой колонки со списком).
+// Их не пересоздаём: если человек включил для них вид «чип», он сохранится.
+async function existingLists({ token, id }, specs) {
+  const ranges = Object.keys(specs).map((t) => `'${t}'!2:2`);
+  const fields = 'sheets(properties.title,data(rowData.values.dataValidation.condition.values))';
+  const res = await api(token, `${SHEETS_API}/${id}?${ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join('&')}&fields=${encodeURIComponent(fields)}`);
+  const out = new Map();
+  for (const sheet of res.sheets || []) {
+    const title = sheet.properties.title;
+    const cells = sheet.data?.[0]?.rowData?.[0]?.values || [];
+    const set = new Set();
+    (specs[title]?.columns || []).forEach((col, i) => {
+      const have = (cells[i]?.dataValidation?.condition?.values || []).map((v) => v.userEnteredValue);
+      if (col.list && have.join('|') === col.list.join('|')) set.add(i);
+    });
+    out.set(title, set);
+  }
+  return out;
 }
 
 // Старый лист из первой версии таблицы, его заменили «Сводка» и остальные листы.
@@ -155,14 +181,15 @@ async function main() {
   }
   const sitesSpec = sitesSheet(siteRows);
 
+  const keep = await existingLists(conn, { [SITES_SHEET]: sitesSpec, ...sheets });
   await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: Object.keys(sheets).map((t) => `'${t}'`) });
   const sitesInfo = byTitle.get(SITES_SHEET);
   await api(token, `${SHEETS_API}/${id}:batchUpdate`, {
     requests: [
-      ...formatRequests(sitesInfo.properties.sheetId, sitesSpec, 0, sitesInfo.conditionalFormats?.length || 0, { input: true }),
+      ...formatRequests(sitesInfo.properties.sheetId, sitesSpec, 0, sitesInfo.conditionalFormats?.length || 0, { input: true, keep: keep.get(SITES_SHEET) }),
       ...Object.entries(sheets).flatMap(([title, spec], i) => {
         const sheet = byTitle.get(title);
-        return formatRequests(sheet.properties.sheetId, spec, i + 1, sheet.conditionalFormats?.length || 0);
+        return formatRequests(sheet.properties.sheetId, spec, i + 1, sheet.conditionalFormats?.length || 0, { keep: keep.get(title) });
       }),
     ],
   });
