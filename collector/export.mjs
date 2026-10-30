@@ -20,13 +20,13 @@ import {
 const hex = (h) => ({ red: parseInt(h.slice(1, 3), 16) / 255, green: parseInt(h.slice(3, 5), 16) / 255, blue: parseInt(h.slice(5, 7), 16) / 255 });
 
 // Один спокойный сине-бирюзовый стиль, без ярких цветов: голубая строка заголовков с фильтрами,
-// статусы — плашками. Всё хорошо — бирюзовая, нужно посмотреть — голубая, нет данных — серая.
+// всё хорошо — обычный текст, нужно посмотреть — голубая плашка, нет данных — серый текст.
 const HEAD = ['#cfe2f3', '#0b3b60'];
 const HEAD_LINE = '#9fc5e8';
 const STATUS_STYLE = {
-  calm: ['#d5eeec', '#0e5e58'],
+  calm: null, // всё хорошо — обычный текст на белом, без выделения
   attention: ['#dbe7f7', '#1c4587'],
-  muted: ['#eef1f4', '#6b7785'],
+  muted: ['#ffffff', '#80868b'],
 };
 const FONT = 'Arial';
 const MIN_ROWS = 200;
@@ -41,8 +41,9 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
 
   req.push({
     updateSheetProperties: {
-      // Лист «Сайты» заполняет человек: лишние колонки там не удаляем.
-      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: n }), frozenRowCount: 1, hideGridlines: false } },
+      // Пустые колонки справа оставляем, как в обычной таблице (не меньше 26, до буквы Z).
+      // Лист «Сайты» заполняет человек: число колонок там не трогаем совсем.
+      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: Math.max(26, n) }), frozenRowCount: 1, hideGridlines: false } },
       fields: `index,gridProperties(rowCount,${input ? '' : 'columnCount,'}frozenRowCount,hideGridlines)`,
     },
   });
@@ -85,7 +86,9 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
         },
       });
       for (const value of col.list) {
-        const [bg, fg] = STATUS_STYLE[(col.tones || TONE_OF)[value] || 'muted'];
+        const style = STATUS_STYLE[(col.tones || TONE_OF)[value] || 'muted'];
+        if (!style) continue;
+        const [bg, fg] = style;
         req.push({
           addConditionalFormatRule: {
             rule: {
