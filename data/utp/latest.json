@@ -16,7 +16,7 @@
     {
       "id": 1,
       "company": "Tenet (тест)",
-      "responsible": "None",
+      "responsible": "",
       "site": "tenet.ru",
       "brand": "Tenet",
       "file": "001-tenet.yaml",
@@ -73,7 +73,7 @@
     {
       "id": 2,
       "company": "TANK (тест)",
-      "responsible": "None",
+      "responsible": "",
       "site": "tank.ru",
       "brand": "TANK",
       "file": "002-tank.yaml",
@@ -142,7 +142,7 @@
     {
       "id": 3,
       "company": "Geely (тест)",
-      "responsible": "None",
+      "responsible": "",
       "site": "geely-motors.com",
       "brand": "Geely",
       "file": "003-geely.yaml",
@@ -209,7 +209,7 @@
     {
       "id": 4,
       "company": "Li Auto (тест)",
-      "responsible": "None",
+      "responsible": "",
       "site": "liautoofficial.ru",
       "brand": "Li",
       "file": "004-liauto.yaml",
@@ -260,7 +260,7 @@
     {
       "id": 5,
       "company": "Belgee (тест)",
-      "responsible": "None",
+      "responsible": "",
       "site": "belgee.ru",
       "brand": "Belgee",
       "file": "005-belgee.yaml",

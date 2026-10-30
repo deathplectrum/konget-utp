@@ -1,206 +1,73 @@
 // Кнопка 4 «Выгрузить данные в таблицу».
-// Берёт последние результаты трёх проверок и переписывает листы Google-таблицы:
-// «Сводка», «Работа сайтов», «Скрипт Конгет», «УТП». Лист «Сайты» (список сайтов для проверок)
-// заполняет человек: здесь он только оформляется, а создаётся, если его ещё нет.
+// Берёт последние результаты трёх проверок и пишет их в листы Google-таблицы:
+// «Сводка», «Работа сайтов», «Скрипт Конгет», «УТП».
 //
-// Оформление (цвета групп, узкая колонка ID, выпадающие списки, цвета статусов, фильтр)
-// ставится заново при каждой выгрузке, поэтому таблица всегда выглядит одинаково.
+// Таблицу оформляет человек: листы, заголовки, ширину колонок, выпадающие списки, цвета,
+// условное форматирование. Программа ничего из этого не меняет. Она находит свои колонки
+// по заголовкам в строке 1, стирает в них старые значения со второй строки и пишет новые,
+// выбирая статусы из выпадающего списка колонки. Лист «Сайты» только читается (в common.mjs).
 //
 // Нужны два секрета репозитория (Settings → Secrets and variables → Actions):
 //   GOOGLE_SERVICE_ACCOUNT — JSON-ключ служебного аккаунта Google целиком;
 //   SHEET_ID — ссылка на таблицу или её id. Таблицу надо открыть служебному аккаунту как редактору.
 
 import path from 'node:path';
-import { DATA, loadScenarios, log, readJson } from './common.mjs';
-import { SHEETS_API, api, connect, readRange } from './google.mjs';
-import {
-  SITES_HEADER, SITES_SHEET, TONE_OF, buildSheets, sheetValues, sitesSheet,
-} from './sheet.mjs';
+import { DATA, log, readJson } from './common.mjs';
+import { SHEETS_API, api, connect } from './google.mjs';
+import { buildSheets, placeColumns } from './sheet.mjs';
 
-const hex = (h) => ({ red: parseInt(h.slice(1, 3), 16) / 255, green: parseInt(h.slice(3, 5), 16) / 255, blue: parseInt(h.slice(5, 7), 16) / 255 });
-
-// Один спокойный сине-бирюзовый стиль, без ярких цветов: голубая строка заголовков с фильтрами,
-// всё хорошо — обычный текст, нужно посмотреть — голубая плашка, нет данных — серый текст.
-const HEAD = ['#cfe2f3', '#0b3b60'];
-const HEAD_LINE = '#9fc5e8';
-const STATUS_STYLE = {
-  calm: null, // всё хорошо — обычный текст на белом, без выделения
-  attention: ['#dbe7f7', '#1c4587'],
-  muted: ['#ffffff', '#80868b'],
-};
-const FONT = 'Arial';
-const MIN_ROWS = 200;
-
-// Запросы оформления одного листа.
-export function formatRequests(sheetId, spec, index, oldRules = 0, { input = false, keep = new Set() } = {}) {
-  const n = spec.columns.length;
-  const rowCount = Math.max(MIN_ROWS, spec.rows.length + 50);
-  const range = (r0, r1, c0, c1) => ({ sheetId, startRowIndex: r0, endRowIndex: r1, startColumnIndex: c0, endColumnIndex: c1 });
-  const cell = (fmt, fields, r) => ({ repeatCell: { range: r, cell: { userEnteredFormat: fmt }, fields: `userEnteredFormat(${fields})` } });
-  const req = [];
-
-  req.push({
-    updateSheetProperties: {
-      // Пустые колонки справа оставляем, как в обычной таблице (не меньше 26, до буквы Z).
-      // Лист «Сайты» заполняет человек: число колонок там не трогаем совсем.
-      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: Math.max(26, n) }), frozenRowCount: 1, hideGridlines: false } },
-      fields: `index,gridProperties(rowCount,${input ? '' : 'columnCount,'}frozenRowCount,hideGridlines)`,
-    },
-  });
-  // Убираем следы прошлого оформления: объединённые ячейки, рамки, старые цвета статусов.
-  req.push({ unmergeCells: { range: range(0, rowCount, 0, n) } });
-  req.push({ updateBorders: { range: range(0, rowCount, 0, n), top: { style: 'NONE' }, bottom: { style: 'NONE' }, left: { style: 'NONE' }, right: { style: 'NONE' }, innerHorizontal: { style: 'NONE' }, innerVertical: { style: 'NONE' } } });
-  for (let i = 0; i < oldRules; i += 1) req.push({ deleteConditionalFormatRule: { sheetId, index: 0 } });
-  req.push({ setBasicFilter: { filter: { range: range(0, rowCount, 0, n) } } });
-
-  // Заголовки.
-  req.push(cell({
-    backgroundColor: hex(HEAD[0]), verticalAlignment: 'MIDDLE', horizontalAlignment: 'LEFT', wrapStrategy: 'CLIP',
-    textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex(HEAD[1]) },
-  }, 'backgroundColor,verticalAlignment,horizontalAlignment,wrapStrategy,textFormat', range(0, 1, 0, n)));
-  req.push({ updateBorders: { range: range(0, 1, 0, n), bottom: { style: 'SOLID_MEDIUM', color: hex(HEAD_LINE) } } });
-
-  // Данные.
-  req.push(cell({
-    backgroundColor: hex('#ffffff'), verticalAlignment: 'MIDDLE', wrapStrategy: 'CLIP', horizontalAlignment: 'LEFT',
-    textFormat: { fontFamily: FONT, fontSize: 10, bold: false, foregroundColor: hex('#1e1e1e') }, numberFormat: { type: 'TEXT' },
-  }, 'backgroundColor,verticalAlignment,wrapStrategy,horizontalAlignment,textFormat,numberFormat', range(1, rowCount, 0, n)));
-
-  spec.columns.forEach((col, i) => {
-    const data = range(1, rowCount, i, i + 1);
-    req.push({
-      updateDimensionProperties: {
-        range: { sheetId, dimension: 'COLUMNS', startIndex: i, endIndex: i + 1 }, properties: { pixelSize: col.width }, fields: 'pixelSize',
-      },
-    });
-    if (col.kind === 'id') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '0' } }, 'horizontalAlignment,numberFormat', data));
-    if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: 'General' } }, 'horizontalAlignment,numberFormat', data));
-    if (col.kind === 'money') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '#,##0" ₽"' } }, 'horizontalAlignment,numberFormat', data));
-    if (col.kind === 'wrap') req.push(cell({ wrapStrategy: 'WRAP' }, 'wrapStrategy', data));
-    if (col.list && keep.has(i)) {
-      // Список уже стоит (возможно, в виде «чипа», который Google даёт включить только вручную):
-      // не пересоздаём его, а растягиваем со второй строки на всю колонку — так вид чипа сохраняется.
-      req.push({ copyPaste: { source: range(1, 2, i, i + 1), destination: data, pasteType: 'PASTE_DATA_VALIDATION' } });
-    } else if (col.list) {
-      // Выпадающий список: можно выбрать значение вручную. strict: false — программа может писать и другие значения.
-      req.push({
-        setDataValidation: {
-          range: data,
-          rule: { condition: { type: 'ONE_OF_LIST', values: col.list.map((v) => ({ userEnteredValue: v })) }, showCustomUi: true, strict: false },
-        },
-      });
-    }
-    if (col.list) {
-      for (const value of col.list) {
-        const style = STATUS_STYLE[(col.tones || TONE_OF)[value] || 'muted'];
-        if (!style) continue;
-        const [bg, fg] = style;
-        req.push({
-          addConditionalFormatRule: {
-            rule: {
-              ranges: [data],
-              booleanRule: {
-                condition: { type: 'TEXT_EQ', values: [{ userEnteredValue: value }] },
-                format: { backgroundColor: hex(bg), textFormat: { foregroundColor: hex(fg), bold: true } },
-              },
-            },
-            index: 0,
-          },
-        });
-      }
-    } else {
-      // Раньше тут мог быть выпадающий список: снимаем его.
-      req.push({ setDataValidation: { range: data } });
-    }
-  });
-
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: rowCount }, properties: { pixelSize: 24 }, fields: 'pixelSize' } });
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 32 }, fields: 'pixelSize' } });
-  return req;
+// 0 → A, 25 → Z, 26 → AA.
+export function letter(i) {
+  let s = '';
+  for (let n = i + 1; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+  return s;
 }
-
-// Какие выпадающие списки уже стоят с тем же набором значений (смотрим вторую строку каждой колонки со списком).
-// Их не пересоздаём: если человек включил для них вид «чип», он сохранится.
-async function existingLists({ token, id }, specs) {
-  const ranges = Object.keys(specs).map((t) => `'${t}'!2:2`);
-  const fields = 'sheets(properties.title,data(rowData.values.dataValidation.condition.values))';
-  const res = await api(token, `${SHEETS_API}/${id}?${ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join('&')}&fields=${encodeURIComponent(fields)}`);
-  const out = new Map();
-  for (const sheet of res.sheets || []) {
-    const title = sheet.properties.title;
-    const cells = sheet.data?.[0]?.rowData?.[0]?.values || [];
-    const set = new Set();
-    (specs[title]?.columns || []).forEach((col, i) => {
-      const have = (cells[i]?.dataValidation?.condition?.values || []).map((v) => v.userEnteredValue);
-      if (col.list && have.join('|') === col.list.join('|')) set.add(i);
-    });
-    out.set(title, set);
-  }
-  return out;
-}
-
-// Старый лист из первой версии таблицы, его заменили «Сводка» и остальные листы.
-const LEGACY = ['Проверка'];
 
 async function main() {
-  const conn = await connect();
-  const { token, id } = conn;
+  const { token, id } = await connect();
   const sheets = buildSheets({
     health: readJson(path.join(DATA, 'health', 'latest.json')),
     konget: readJson(path.join(DATA, 'konget', 'latest.json')),
     utp: readJson(path.join(DATA, 'utp', 'latest.json')),
   });
 
-  const fields = 'properties.title,sheets(properties(sheetId,title),conditionalFormats(ranges))';
-  const load = () => api(token, `${SHEETS_API}/${id}?fields=${encodeURIComponent(fields)}`);
-  let info = await load();
-  const have = new Set(info.sheets.map((s) => s.properties.title));
-  const missing = [SITES_SHEET, ...Object.keys(sheets)].filter((t) => !have.has(t));
-  const legacy = info.sheets.filter((s) => LEGACY.includes(s.properties.title));
-  if (missing.length || legacy.length) {
-    await api(token, `${SHEETS_API}/${id}:batchUpdate`, {
-      requests: [
-        ...missing.map((title) => ({ addSheet: { properties: { title } } })),
-        ...legacy.map((s) => ({ deleteSheet: { sheetId: s.properties.sheetId } })),
-      ],
-    });
-    info = await load();
-  }
-  const byTitle = new Map(info.sheets.map((s) => [s.properties.title, s]));
-
-  // Лист «Сайты»: если он новый или старого вида, ставим заголовки и переносим сайты из сценариев.
-  // Если он уже нашего вида — данные не трогаем, только оформление.
-  const current = await readRange(conn, `'${SITES_SHEET}'!A1:H`);
-  const ours = SITES_HEADER.every((h, i) => String(current[0]?.[i] ?? '').trim() === h);
-  let siteRows = current.slice(1);
-  if (!ours) {
-    siteRows = loadScenarios().filter((sc) => sc.site).sort((a, b) => a.id - b.id)
-      .map((sc) => [sc.id, sc.company || '', sc.site, sc.brand || '', sc.responsible || '', sc.active === false ? 'Нет' : 'Да', sc.konget_token || '', '']);
-    await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: [`'${SITES_SHEET}'`] });
-    log(`Лист «${SITES_SHEET}» создан заново: сайтов ${siteRows.length}`);
-  }
-  const sitesSpec = sitesSheet(siteRows);
-
-  const keep = await existingLists(conn, { [SITES_SHEET]: sitesSpec, ...sheets });
-  await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: Object.keys(sheets).map((t) => `'${t}'`) });
-  const sitesInfo = byTitle.get(SITES_SHEET);
-  await api(token, `${SHEETS_API}/${id}:batchUpdate`, {
-    requests: [
-      ...formatRequests(sitesInfo.properties.sheetId, sitesSpec, 0, sitesInfo.conditionalFormats?.length || 0, { input: true, keep: keep.get(SITES_SHEET) }),
-      ...Object.entries(sheets).flatMap(([title, spec], i) => {
-        const sheet = byTitle.get(title);
-        return formatRequests(sheet.properties.sheetId, spec, i + 1, sheet.conditionalFormats?.length || 0, { keep: keep.get(title) });
-      }),
-    ],
+  // Только читаем: какие листы есть, заголовки (строка 1) и выпадающие списки (строка 2).
+  const info = await api(token, `${SHEETS_API}/${id}?fields=${encodeURIComponent('properties.title,sheets.properties(title,gridProperties.rowCount)')}`);
+  const rowCount = new Map(info.sheets.map((s) => [s.properties.title, s.properties.gridProperties?.rowCount || 0]));
+  const titles = Object.keys(sheets).filter((t) => {
+    if (!rowCount.has(t)) log(`Листа «${t}» в таблице нет, пропускаю`);
+    return rowCount.has(t);
   });
-  await api(token, `${SHEETS_API}/${id}/values:batchUpdate`, {
-    valueInputOption: 'RAW',
-    data: [
-      ...(ours ? [{ range: `'${SITES_SHEET}'!A1`, values: sheetValues({ ...sitesSpec, rows: [] }) }] : [{ range: `'${SITES_SHEET}'!A1`, values: sheetValues(sitesSpec) }]),
-      ...Object.entries(sheets).map(([title, spec]) => ({ range: `'${title}'!A1`, values: sheetValues(spec) })),
-    ],
-  });
-  for (const [title, spec] of Object.entries(sheets)) log(`«${title}»: строк ${spec.rows.length}`);
+  if (!titles.length) throw new Error('В таблице нет ни одного листа для выгрузки');
+
+  const ranges = titles.map((t) => `'${t}'!1:2`);
+  const fields = 'sheets(properties.title,data(rowData.values(formattedValue,dataValidation.condition.values)))';
+  const grid = await api(token, `${SHEETS_API}/${id}?${ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join('&')}&fields=${encodeURIComponent(fields)}`);
+
+  const clear = [];
+  const data = [];
+  for (const sheet of grid.sheets || []) {
+    const title = sheet.properties.title;
+    const rows = sheet.data?.[0]?.rowData || [];
+    const headers = (rows[0]?.values || []).map((c) => c.formattedValue || '');
+    const lists = (rows[1]?.values || []).map((c) => (c.dataValidation?.condition?.values || []).map((v) => v.userEnteredValue));
+    const spec = sheets[title];
+    const { placed, missing, unknown } = placeColumns(spec, headers, lists);
+    if (missing.length) log(`«${title}»: нет колонок ${missing.map((m) => `«${m}»`).join(', ')}, их пропускаю`);
+    if (unknown.length) log(`«${title}»: значений нет в выпадающем списке: ${unknown.join('; ')}`);
+    const fit = Math.max(0, rowCount.get(title) - 1);
+    if (spec.rows.length > fit) log(`«${title}»: строк ${spec.rows.length}, а в листе места на ${fit}. Добавьте строки в таблице`);
+    for (const { index, values } of placed) {
+      const c = letter(index);
+      clear.push(`'${title}'!${c}2:${c}`);
+      if (values.length && fit) data.push({ range: `'${title}'!${c}2:${c}${Math.min(values.length, fit) + 1}`, majorDimension: 'COLUMNS', values: [values.slice(0, fit)] });
+    }
+    log(`«${title}»: строк ${spec.rows.length}, колонок ${placed.length}`);
+  }
+
+  // Меняются только значения ячеек: оформление, списки и правила цветов остаются как были.
+  if (clear.length) await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: clear });
+  if (data.length) await api(token, `${SHEETS_API}/${id}/values:batchUpdate`, { valueInputOption: 'RAW', data });
   log(`Готово: таблица «${info.properties.title}» обновлена`);
 }
 

@@ -5,7 +5,7 @@ company: Geely (тест)
 site: geely-motors.com
 brand: Geely
 active: true
-responsible: None  # ответственный за сайт, например: Иван Петров
+responsible: ''    # ответственный за сайт, например: Иван Петров
 
 # Обход по моделям: ссылки на все модели из меню «Модели».
 models:
