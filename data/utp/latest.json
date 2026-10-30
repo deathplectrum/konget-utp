@@ -1,8 +1,8 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T15:31:26.433Z",
+  "checked_at": "2026-10-30T16:02:34.217Z",
   "previous_date": "2026-10-29",
-  "total_seconds": 333,
+  "total_seconds": 323,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
@@ -49,7 +49,7 @@
       "comment": "Собрано запасным шаблоном (движок: Nuxt), цифры надо проверить",
       "template": "*",
       "status": "needs_check",
-      "seconds": 97,
+      "seconds": 98,
       "pages_opened": 6,
       "change": "Требует проверки",
       "changes": []
@@ -122,7 +122,7 @@
       "comment": "Не нашлась цена: НОВЫЙ AION V, S7, НОВЫЙ GAC HYPTEC HT, Empow; Собрано по общему шаблону движка TradeDealer",
       "template": "TradeDealer",
       "status": "needs_check",
-      "seconds": 174,
+      "seconds": 173,
       "pages_opened": 11,
       "change": "Требует проверки",
       "changes": []
@@ -159,7 +159,7 @@
       "comment": "Не нашлась цена: Универсальный среднеразмерный кроссовер VOLGA K40, Комфортный и технологичный седан бизнес-класса VOLGA С50; Собрано по общему шаблону движка TradeDealer",
       "template": "TradeDealer",
       "status": "needs_check",
-      "seconds": 40,
+      "seconds": 46,
       "pages_opened": 4,
       "change": "Требует проверки",
       "changes": []
@@ -250,12 +250,12 @@
         }
       ],
       "screens": [
-        "data/screens/2/model-4.jpg"
+        "data/screens/2/model-0.jpg"
       ],
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 132,
+      "seconds": 133,
       "pages_opened": 8,
       "change": "Первая проверка",
       "changes": [
@@ -324,7 +324,7 @@
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 168,
+      "seconds": 155,
       "pages_opened": 10,
       "change": "Первая проверка",
       "changes": [
@@ -356,7 +356,7 @@
       "screens": [],
       "comment": "Для движка «Tilda» ещё нет шаблона, запасной не нашёл модели",
       "status": "no_scenario",
-      "seconds": 39,
+      "seconds": 41,
       "pages_opened": 2,
       "change": "Нет сценария",
       "changes": []
@@ -371,7 +371,7 @@
       "screens": [],
       "comment": "Для движка «Nuxt» ещё нет шаблона, запасной не нашёл модели",
       "status": "no_scenario",
-      "seconds": 34,
+      "seconds": 35,
       "pages_opened": 2,
       "change": "Нет сценария",
       "changes": []
@@ -386,7 +386,7 @@
       "screens": [],
       "comment": "Для движка «Платформа rqch.ru» ещё нет шаблона, запасной не нашёл модели",
       "status": "no_scenario",
-      "seconds": 34,
+      "seconds": 35,
       "pages_opened": 2,
       "change": "Нет сценария",
       "changes": []
