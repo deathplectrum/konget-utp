@@ -1,7 +1,7 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T15:13:27.339Z",
-  "total_seconds": 14,
+  "checked_at": "2026-10-30T16:02:29.291Z",
+  "total_seconds": 29,
   "parallel": 6,
   "summary": {
     "Не работает": 1,
@@ -19,11 +19,11 @@
       "health": "Не работает",
       "reason": "Защита сайта не пустила проверку. Людям сайт может открываться, проверьте вручную",
       "code": 200,
-      "load_seconds": 1.1,
+      "load_seconds": 3.6,
       "final_url": "https://srt.agat.lada.ru/",
       "engine": "Сайты LADA",
       "title": "The URL you requested has been blocked",
-      "seconds": 1,
+      "seconds": 4,
       "was": ""
     },
     {
@@ -35,11 +35,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 3.2,
+      "load_seconds": 7.4,
       "final_url": "https://tenet-avtoruss.ru/",
       "engine": "Perxis",
       "title": "TENET – официальный дилер бренда в Москве – купить новый автомобиль ТЕНЕТ 2026 в автосалоне АВТОРУСЬ",
-      "seconds": 6,
+      "seconds": 18,
       "was": ""
     },
     {
@@ -51,11 +51,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 3.6,
+      "load_seconds": 5.5,
       "final_url": "https://avtoban-moskvich.ru/",
       "engine": "Tilda",
       "title": "Новый Москвич в Екатеринбурге у официального дилера Автобан",
-      "seconds": 8,
+      "seconds": 16,
       "was": ""
     },
     {
@@ -67,11 +67,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2,
+      "load_seconds": 6.9,
       "final_url": "https://avangard-tank.ru/",
       "engine": "Nuxt",
       "title": "Tank | Купить Танк в Санкт-Петербурге у официального дилера",
-      "seconds": 6,
+      "seconds": 17,
       "was": ""
     },
     {
@@ -83,11 +83,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2.5,
+      "load_seconds": 3.5,
       "final_url": "https://lixiang-avangard.ru/",
       "engine": "Nuxt",
       "title": "Электромобили Li Auto | Купить Li Auto в СПб - Автосалон АВАНГАРД",
-      "seconds": 7,
+      "seconds": 14,
       "was": ""
     },
     {
@@ -99,11 +99,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 3.7,
+      "load_seconds": 4,
       "final_url": "https://gac-autoimport.ru/",
       "engine": "TradeDealer",
       "title": "GAC Автоимпорт- официальный дилер GAC в Рязани.",
-      "seconds": 9,
+      "seconds": 19,
       "was": ""
     },
     {
@@ -115,11 +115,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2.3,
+      "load_seconds": 3.1,
       "final_url": "https://volga-avtomarket.ru/",
       "engine": "TradeDealer",
       "title": "Volga в Мурманске, купить автомобили Волга у официального дилера «Автомаркет»",
-      "seconds": 12,
+      "seconds": 8,
       "was": ""
     },
     {
@@ -131,11 +131,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 1.7,
+      "load_seconds": 1.8,
       "final_url": "https://belgee-aem.ru/",
       "engine": "Perxis",
       "title": "Купить новый автомобиль BELGEE 2026 в Барнауле - Цена и комплектации BELGEE у официального дилера",
-      "seconds": 5,
+      "seconds": 12,
       "was": ""
     },
     {
@@ -147,11 +147,11 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2.5,
+      "load_seconds": 3.4,
       "final_url": "https://jacsm.rqch.ru/",
       "engine": "Платформа rqch.ru",
       "title": "JAC Северная Марка",
-      "seconds": 5,
+      "seconds": 14,
       "was": ""
     },
     {
@@ -167,7 +167,7 @@
       "final_url": "https://geely-vsk.ru/",
       "engine": "Perxis",
       "title": "Официальный дилер автомобилей марки Geely в Красноярске | Автоцентр ВСК",
-      "seconds": 4,
+      "seconds": 12,
       "was": ""
     }
   ]
