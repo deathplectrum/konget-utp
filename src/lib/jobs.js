@@ -21,7 +21,7 @@ export const JOBS = [
     key: 'konget',
     title: 'Наличие скрипта Конгет',
     short: 'Скрипт Конгет',
-    about: 'Ищем на сайте app.konget.ru/inject?token=…. Сама запускается каждый понедельник',
+    about: 'Ищем на сайте app.konget.ru/inject?token=…: обычный и отложенный скрипт',
     workflow: 'konget.yml',
     file: 'data/konget/latest.json',
     field: 'konget',
