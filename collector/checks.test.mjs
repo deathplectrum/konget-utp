@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
-import { buildSheets, parseSites, sheetValues, sitesSheet, SITES_HEADER } from './sheet.mjs';
+import { buildSheets, parseSites, placeColumns, sheetValues } from './sheet.mjs';
+import { letter } from './export.mjs';
 import { sheetIdFrom } from './google.mjs';
 import { host } from './common.mjs';
 
@@ -80,8 +81,24 @@ test('листы таблицы: сводка по сайтам, проблем�
   assert.ok(!JSON.stringify(sheets).includes('123456'), 'сам токен в таблицу не пишем');
   assert.deepEqual(rows('УТП')[1].slice(1, 7), ['a.ru', 'Tenet', 'Изменилось', 'Да', 'T8: цена', 1]);
   assert.equal(rows('УТП').length, 2, 'одна строка — один сайт');
-  assert.equal(rows('Скрипт Конгет')[0][2], 'Статус на 2026-10-27');
+  assert.equal(rows('Скрипт Конгет')[0][2], 'Статус');
   for (const spec of Object.values(sheets)) assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
+});
+
+test('выгрузка пишет в колонки человека по заголовкам и выбирает значения из его списков', () => {
+  const spec = {
+    columns: [{ title: 'ID' }, { title: 'Сайт' }, { title: 'Статус' }, { title: 'Изменения' }, { title: 'Пояснение' }],
+    rows: [[1, 'a.ru', 'Токен не тот', 'Да', 'x'], [2, 'b.ru', 'Скрипт есть', 'Нет', '']],
+  };
+  const headers = ['ID', 'Сайт', 'Своя колонка', 'Статус на 2026-10-29', 'Изменения есть'];
+  const lists = [[], [], [], ['Скрипт есть', 'Проверить вручную', 'Скрипта нет'], ['Да', 'Нет']];
+  const { placed, missing, unknown } = placeColumns(spec, headers, lists);
+  assert.deepEqual(placed.map((p) => p.index), [0, 1, 3, 4]);
+  assert.deepEqual(placed[2].values, ['Проверить вручную', 'Скрипт есть']);
+  assert.deepEqual(missing, ['Пояснение']);
+  assert.deepEqual(unknown, []);
+  assert.deepEqual(placeColumns({ columns: [{ title: 'Статус' }], rows: [['Новое']] }, ['Статус'], [['А']]).unknown, ['Статус: Новое']);
+  assert.deepEqual([0, 25, 26, 27].map(letter), ['A', 'Z', 'AA', 'AB']);
 });
 
 test('id таблицы из ссылки', () => {
@@ -103,7 +120,6 @@ test('лист «Сайты»: читаем строки, пропускаем �
   assert.equal(sites[0].konget_token, '538e1215043c412b9cfcff11319094a9');
   assert.equal(sites[1].active, false);
   assert.equal(sites[2].active, true);
-  assert.deepEqual(sheetValues(sitesSheet([]))[0], SITES_HEADER);
 });
 
 test('сценарий подходит к сайту из таблицы, только если адрес тот же', () => {
