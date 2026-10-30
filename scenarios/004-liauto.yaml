@@ -4,7 +4,7 @@ company: Li Auto (тест)
 site: liautoofficial.ru
 brand: Li
 active: true
-responsible: None  # ответственный за сайт, например: Иван Петров
+responsible: ''    # ответственный за сайт, например: Иван Петров
 
 models:
   list_url: https://liautoofficial.ru/

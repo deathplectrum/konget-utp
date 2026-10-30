@@ -4,7 +4,7 @@ company: Belgee (тест)
 site: belgee.ru
 brand: Belgee
 active: true
-responsible: None  # ответственный за сайт, например: Иван Петров
+responsible: ''    # ответственный за сайт, например: Иван Петров
 
 models:
   list_url: https://belgee.ru/
