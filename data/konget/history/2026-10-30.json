@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-30",
+  "checked_at": "2026-10-30T14:18:55.410Z",
+  "total_seconds": 38,
+  "parallel": 6,
+  "summary": {
+    "Скрипта нет": 3,
+    "Токен не тот": 0,
+    "Скрипт без токена": 0,
+    "Проверить вручную": 2,
+    "Сайт не открылся": 0,
+    "Скрипт есть": 0
+  },
+  "sites": [
+    {
+      "id": 2,
+      "company": "TANK (тест)",
+      "responsible": "None",
+      "site": "tank.ru",
+      "brand": "TANK",
+      "konget": "Скрипта нет",
+      "tokens": [],
+      "reason": "В коде сайта и в загруженных файлах нет app.konget",
+      "expected": "",
+      "seconds": 26,
+      "was": ""
+    },
+    {
+      "id": 3,
+      "company": "Geely (тест)",
+      "responsible": "None",
+      "site": "geely-motors.com",
+      "brand": "Geely",
+      "konget": "Скрипта нет",
+      "tokens": [],
+      "reason": "В коде сайта и в загруженных файлах нет app.konget",
+      "expected": "",
+      "seconds": 37,
+      "was": ""
+    },
+    {
+      "id": 4,
+      "company": "Li Auto (тест)",
+      "responsible": "None",
+      "site": "liautoofficial.ru",
+      "brand": "Li",
+      "konget": "Скрипта нет",
+      "tokens": [],
+      "reason": "В коде сайта и в загруженных файлах нет app.konget",
+      "expected": "",
+      "seconds": 17,
+      "was": ""
+    },
+    {
+      "id": 1,
+      "company": "Tenet (тест)",
+      "responsible": "None",
+      "site": "tenet.ru",
+      "brand": "Tenet",
+      "konget": "Проверить вручную",
+      "tokens": [],
+      "reason": "Скрипт не найден, но на сайте есть контейнер тегов (например, Google Tag Manager). Скрипт может лежать в нём, проверьте сами",
+      "expected": "",
+      "seconds": 25,
+      "was": ""
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "responsible": "None",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "konget": "Проверить вручную",
+      "tokens": [],
+      "reason": "Скрипт не найден, но на сайте есть контейнер тегов (например, Google Tag Manager). Скрипт может лежать в нём, проверьте сами",
+      "expected": "",
+      "seconds": 37,
+      "was": ""
+    }
+  ]
+}
