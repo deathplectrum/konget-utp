@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-30",
+  "checked_at": "2026-10-30T14:17:45.233Z",
+  "total_seconds": 13,
+  "parallel": 6,
+  "summary": {
+    "Не работает": 0,
+    "Заглушка": 0,
+    "Работает медленно": 0,
+    "Работает": 5
+  },
+  "sites": [
+    {
+      "id": 1,
+      "company": "Tenet (тест)",
+      "responsible": "None",
+      "site": "tenet.ru",
+      "brand": "Tenet",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 3.3,
+      "final_url": "https://tenet.ru/",
+      "title": "TENET — Официальный сайт автомобильного бренда",
+      "seconds": 5,
+      "was": ""
+    },
+    {
+      "id": 2,
+      "company": "TANK (тест)",
+      "responsible": "None",
+      "site": "tank.ru",
+      "brand": "TANK",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 2.1,
+      "final_url": "https://tank.ru/",
+      "title": "Автомобиль TANK на официальном сайте TANK - цена, фото, комплектации и технические характеристики",
+      "seconds": 6,
+      "was": ""
+    },
+    {
+      "id": 3,
+      "company": "Geely (тест)",
+      "responsible": "None",
+      "site": "geely-motors.com",
+      "brand": "Geely",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 1.9,
+      "final_url": "https://www.geely-motors.com/",
+      "title": "Geely (Джили) Motors в России – официальный сайт, цены и модельный ряд китайских автомобилей",
+      "seconds": 12,
+      "was": ""
+    },
+    {
+      "id": 4,
+      "company": "Li Auto (тест)",
+      "responsible": "None",
+      "site": "liautoofficial.ru",
+      "brand": "Li",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 1.2,
+      "final_url": "https://liautoofficial.ru/",
+      "title": "Li Auto | Официальный сайт Lixiang (Лисян) в России",
+      "seconds": 4,
+      "was": ""
+    },
+    {
+      "id": 5,
+      "company": "Belgee (тест)",
+      "responsible": "None",
+      "site": "belgee.ru",
+      "brand": "Belgee",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 2.1,
+      "final_url": "https://belgee.ru/",
+      "title": "Belgee в России — официальный сайт, цены и модельный ряд",
+      "seconds": 12,
+      "was": ""
+    }
+  ]
+}
