@@ -3,13 +3,10 @@ import {
   IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact,
 } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
-import { sparkles, pricetags, globe, settings } from 'ionicons/icons';
+import { sparkles, settings } from 'ionicons/icons';
 
 import { AppProvider } from './lib/AppContext';
 import Home from './pages/Home';
-import Utp from './pages/Utp';
-import SiteDetail from './pages/SiteDetail';
-import Sites from './pages/Sites';
 import Settings from './pages/Settings';
 
 import '@ionic/react/css/core.css';
@@ -33,9 +30,6 @@ export default function App() {
           <IonTabs>
             <IonRouterOutlet>
               <Route exact path="/home" component={Home} />
-              <Route exact path="/utp" component={Utp} />
-              <Route exact path="/utp/:id" component={SiteDetail} />
-              <Route exact path="/sites" component={Sites} />
               <Route exact path="/settings" component={Settings} />
               <Route exact path="/">
                 <Redirect to="/home" />
@@ -45,14 +39,6 @@ export default function App() {
               <IonTabButton tab="home" href="/home">
                 <IonIcon icon={sparkles} />
                 <IonLabel>Главная</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="utp" href="/utp">
-                <IonIcon icon={pricetags} />
-                <IonLabel>УТП</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="sites" href="/sites">
-                <IonIcon icon={globe} />
-                <IonLabel>Сайты</IonLabel>
               </IonTabButton>
               <IonTabButton tab="settings" href="/settings">
                 <IonIcon icon={settings} />

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import {
   IonContent, IonIcon, IonPage, IonRefresher, IonRefresherContent, IonSpinner, useIonAlert, useIonToast,
 } from '@ionic/react';
-import { play, keyOutline, alertCircle, partlySunny, chevronForward, lockClosed } from 'ionicons/icons';
+import { play, keyOutline, alertCircle, partlySunny, lockClosed, gridOutline, openOutline } from 'ionicons/icons';
 import { useApp } from '../lib/AppContext';
 import { ATTENTION, greeting, timeAgo } from '../lib/status';
 import { HEALTH_PROBLEMS, JOBS, KONGET_PROBLEMS } from '../lib/jobs';
@@ -19,7 +19,7 @@ function resultOf(job, report, run) {
     if (!run || run.status !== 'completed') return { main: 'Ещё не выгружали' };
     return run.conclusion === 'success'
       ? { main: `Выгружено ${timeAgo(run.updated_at)}` }
-      : { main: 'Последняя выгрузка не удалась', bad: 'Нажми «Подробнее», чтобы увидеть причину' };
+      : { main: 'Последняя выгрузка не удалась', bad: 'Попробуйте ещё раз или напишите разработчику' };
   }
   const sites = report?.sites || [];
   if (!report) return { main: 'Проверок ещё не было' };
@@ -101,15 +101,6 @@ function JobCard({ job, index }) {
     }
   };
 
-  const details = () => {
-    if (job.key === 'export') {
-      if (failed) window.open(run.html_url, '_blank');
-      else if (settings.sheet) window.open(settings.sheet, '_blank');
-      else history.push('/settings');
-    } else if (job.key === 'utp') history.push('/utp');
-    else history.push(`/sites?show=${job.key}`);
-  };
-
   return (
     <section className={`job-card ${running ? 'is-running' : ''}`}
       style={{ background: `linear-gradient(135deg, ${job.gradient[0]}, ${job.gradient[1]})` }}>
@@ -121,15 +112,14 @@ function JobCard({ job, index }) {
       <h2 className="job-title">{job.title}</h2>
       <div className="job-about">{job.about}</div>
 
-      <button className="job-result" onClick={details}>
+      <div className="job-result">
         <span>
           <b>{running ? `Идёт ${minutesSince(run.created_at)} мин · ${progress?.text || ''}` : res.main}</b>
           {!running && res.when && <small>{timeAgo(res.when)}</small>}
           {!running && res.bad && <small className="job-bad"><IonIcon icon={alertCircle} /> {res.bad}</small>}
           {failed && job.key !== 'export' && <small className="job-bad"><IonIcon icon={alertCircle} /> Последний запуск сломался</small>}
         </span>
-        <span className="job-more">{job.key === 'export' && !failed ? 'Таблица' : 'Подробнее'} <IonIcon icon={chevronForward} /></span>
-      </button>
+      </div>
 
       <button className={`big-btn ${running ? 'is-stop' : ''}`} onClick={onPress} disabled={isStopping}
         style={{ color: job.gradient[0] }}>
@@ -172,6 +162,14 @@ export default function Home() {
             </a>
           )}
           {error && <div className="notice notice-amber"><IonIcon icon={alertCircle} /><span>{error}</span></div>}
+
+          {settings.sheet && (
+            <a className="sheet-link" href={settings.sheet} target="_blank" rel="noreferrer">
+              <IonIcon icon={gridOutline} />
+              <span><b>Google-таблица</b><small>Список сайтов и результаты проверок</small></span>
+              <IonIcon icon={openOutline} />
+            </a>
+          )}
 
           <div className="job-grid">
             {JOBS.map((job, i) => <JobCard key={job.key} job={job} index={i} />)}

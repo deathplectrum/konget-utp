@@ -340,3 +340,10 @@ ion-alert.nice-alert .alert-button.alert-button-role-destructive { background: v
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14.5px; }
 .kv dt { color: var(--muted); font-weight: 600; }
 .kv dd { margin: 0; font-weight: 700; word-break: break-all; }
+.sheet-link {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding: 14px 16px; border-radius: 20px;
+  background: var(--card); box-shadow: var(--shadow); color: var(--text);
+}
+.sheet-link > ion-icon:first-child { font-size: 26px; color: #1e8e3e; }
+.sheet-link span { display: flex; flex-direction: column; flex: 1; }
+.sheet-link small { color: var(--muted); font-size: 13px; }

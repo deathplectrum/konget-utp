@@ -1,8 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
-import { buildSheets } from './sheet.mjs';
-import { sheetIdFrom } from './export.mjs';
+import { buildSheets, parseSites, sheetValues, sitesSheet, SITES_HEADER } from './sheet.mjs';
+import { sheetIdFrom } from './google.mjs';
+import { host } from './common.mjs';
 
 const LIVE = 'Официальный дилер. Модели, цены, тест-драйв, кредит, трейд-ин, сервис и запчасти. '.repeat(3);
 
@@ -72,13 +73,41 @@ test('листы таблицы: сводка по сайтам, проблем�
     },
   });
   assert.deepEqual(Object.keys(sheets), ['Сводка', 'Работа сайтов', 'Скрипт Конгет', 'УТП']);
-  assert.equal(sheets['Сводка'][1][2], 'b.ru');
-  assert.deepEqual(sheets['Сводка'][2].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
-  assert.deepEqual(sheets['УТП'][2].slice(3, 6), ['T8', 2899000, '']);
-  assert.equal(sheets['Скрипт Конгет'][0][0], 'Проверка от 2026-10-27');
+  const rows = (name) => sheetValues(sheets[name]);
+  assert.equal(rows('Сводка')[0][0], 'ID');
+  assert.equal(rows('Сводка')[1][2], 'b.ru');
+  assert.deepEqual(rows('Сводка')[2].slice(5, 10), ['Работает', 'Скрипт есть', 'Да', 'Изменилось', 'T8: цена']);
+  assert.ok(!JSON.stringify(sheets).includes('123456'), 'сам токен в таблицу не пишем');
+  assert.deepEqual(rows('УТП')[1].slice(1, 7), ['a.ru', 'Tenet', 'Изменилось', 'Да', 'T8: цена', 1]);
+  assert.equal(rows('УТП').length, 2, 'одна строка — один сайт');
+  assert.equal(rows('Скрипт Конгет')[0][2], 'Статус на 2026-10-27');
+  for (const spec of Object.values(sheets)) assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
 });
 
 test('id таблицы из ссылки', () => {
   assert.equal(sheetIdFrom('https://docs.google.com/spreadsheets/d/1AbC-dEf_123/edit#gid=0'), '1AbC-dEf_123');
   assert.equal(sheetIdFrom(' 1AbC-dEf_123 '), '1AbC-dEf_123');
+});
+
+test('лист «Сайты»: читаем строки, пропускаем пустые и выключенные помечаем', () => {
+  const sites = parseSites([
+    ['101', 'ООО Авто', 'https://dealer.ru/', 'Tenet', 'Иван', 'Да', '538e1215043c412b9cfcff11319094a9'],
+    ['', 'без id', 'x.ru'],
+    ['102', 'Без адреса', ''],
+    ['103', 'Выкл', 'off.ru', 'KGM', '', 'Нет'],
+    ['104', 'Коротко', 'short.ru'],
+    ['101', 'Дубль', 'dup.ru'],
+  ]);
+  assert.deepEqual(sites.map((s) => s.id), [101, 103, 104]);
+  assert.equal(sites[0].site, 'https://dealer.ru');
+  assert.equal(sites[0].konget_token, '538e1215043c412b9cfcff11319094a9');
+  assert.equal(sites[1].active, false);
+  assert.equal(sites[2].active, true);
+  assert.deepEqual(sheetValues(sitesSheet([]))[0], SITES_HEADER);
+});
+
+test('сценарий подходит к сайту из таблицы, только если адрес тот же', () => {
+  assert.equal(host('https://www.Tenet.ru/models/'), 'tenet.ru');
+  assert.equal(host('tenet.ru'), host('http://tenet.ru'));
+  assert.notEqual(host('tenet.ru'), host('tenet-avtoruss.ru'));
 });
