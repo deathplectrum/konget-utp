@@ -1,6 +1,9 @@
+import fs from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
+import {
+  HEALTH, KONGET, detectEngine, findTokens, healthVerdict, kongetVerdict,
+} from './checks.mjs';
 import { buildSheets, parseSites, placeColumns, sheetValues } from './sheet.mjs';
 import { letter } from './export.mjs';
 import { sheetIdFrom } from './google.mjs';
@@ -99,6 +102,19 @@ test('выгрузка пишет в колонки человека по заг
   assert.deepEqual(unknown, []);
   assert.deepEqual(placeColumns({ columns: [{ title: 'Статус' }], rows: [['Новое']] }, ['Статус'], [['А']]).unknown, ['Статус: Новое']);
   assert.deepEqual([0, 25, 26, 27].map(letter), ['A', 'Z', 'AA', 'AB']);
+});
+
+test('движок сайта', () => {
+  assert.equal(detectEngine('<div class="perxis-auto-1_27_0-col">'), 'Perxis');
+  assert.equal(detectEngine('<script src="/bitrix/js/main/core.js">'), '1С-Битрикс');
+  assert.equal(detectEngine('<link href="https://static.tildacdn.com/css/tilda-grid.css">'), 'Tilda');
+  assert.equal(detectEngine('<meta name="generator" content="UMI.CMS">'), 'UMI.CMS');
+  assert.equal(detectEngine('<html>просто сайт</html>'), 'Не определён');
+  for (const id of [1, 2, 4, 5]) {
+    const file = new URL(`../data/screens/${id}/`, import.meta.url);
+    const html = fs.readdirSync(file).filter((f) => f.endsWith('.html')).map((f) => fs.readFileSync(new URL(f, file), 'utf8')).join('');
+    assert.equal(detectEngine(html), 'Perxis', `сайт ${id}`);
+  }
 });
 
 test('id таблицы из ссылки', () => {

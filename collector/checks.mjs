@@ -45,6 +45,30 @@ export function healthVerdict({ error, status, seconds, text = '', title = '' })
   return { health: HEALTH.ok, reason: '' };
 }
 
+// Движок сайта: по нему подбираем общий шаблон для сверки УТП (у сайтов на одном движке
+// одинаковая разметка). Ищем характерные следы в коде страницы, иначе берём <meta name="generator">.
+const ENGINES = [
+  ['Perxis', /perxis/i],
+  ['1С-Битрикс', /\/bitrix\/(?:js|templates|cache|components|tools)\//i],
+  ['Tilda', /tildacdn|data-tilda-/i],
+  ['WordPress', /\/wp-content\/|\/wp-includes\//i],
+  ['Joomla', /\/media\/jui\/|content=["']Joomla/i],
+  ['Drupal', /drupal-settings-json|\/sites\/default\/files\//i],
+  ['MODX', /content=["']MODX|\/assets\/components\/minishop/i],
+  ['OpenCart', /catalog\/view\/theme\//i],
+  ['Wix', /wixstatic\.com|static\.parastorage\.com/i],
+  ['Nuxt', /window\.__NUXT__|\/_nuxt\//],
+  ['Next.js', /__NEXT_DATA__|\/_next\/static\//],
+];
+
+export function detectEngine(html = '') {
+  const found = ENGINES.find(([, re]) => re.test(html));
+  if (found) return found[0];
+  const generator = html.match(/<meta[^>]+name=["']generator["'][^>]*content=["']([^"']+)/i)
+    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*name=["']generator["']/i);
+  return generator ? generator[1].trim().slice(0, 40) : 'Не определён';
+}
+
 // Токен Конгет: //app.konget.ru/inject?token=538e1215043c412b9cfcff11319094a9.
 // На всякий случай понимает и другие записи: injectToken=…, inject_token: "…".
 const TOKEN = /inject(?:\?|[\s_-])?token["']?\s*[:=]\s*["']?([A-Za-z0-9_-]{6,})/gi;

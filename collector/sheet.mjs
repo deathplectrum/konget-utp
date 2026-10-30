@@ -50,9 +50,11 @@ export function buildSheets({ health, konget, utp }) {
     },
     'Работа сайтов': {
       columns: [
-        col('ID'), col('Сайт'), col('Статус'), col('Код ответа'), col('Открывался, с'), col('Причина'), col('Было'),
+        col('ID'), col('Сайт'), col('Статус'), col('Код ответа'), col('Открывался, с'), col('Причина'), col('Было'), col('Движок'),
       ],
-      rows: sites(health).map((s) => [s.id, s.site, s.health, s.code ?? '', s.load_seconds ?? '', s.reason || '', (s.was || '').replace('Было: ', '')]),
+      rows: sites(health).map((s) => [
+        s.id, s.site, s.health, s.code ?? '', s.load_seconds ?? '', s.reason || '', (s.was || '').replace('Было: ', ''), s.engine || '',
+      ]),
     },
     'Скрипт Конгет': {
       columns: [
