@@ -1,18 +1,126 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T15:09:29.245Z",
+  "checked_at": "2026-10-30T15:15:20.734Z",
   "previous_date": "2026-10-29",
-  "total_seconds": 103,
+  "total_seconds": 426,
   "parallel": 3,
   "summary": {
     "Не изменилось": 0,
-    "Изменилось": 1,
-    "Требует проверки": 1,
+    "Изменилось": 0,
+    "Требует проверки": 3,
     "Ошибка доступа": 0,
-    "Первая проверка": 1,
-    "Нет сценария": 7
+    "Первая проверка": 2,
+    "Нет сценария": 5
   },
   "sites": [
+    {
+      "id": 6,
+      "company": "",
+      "responsible": "",
+      "site": "gac-autoimport.ru",
+      "brand": "GAC",
+      "models": [
+        {
+          "model": "GS4",
+          "price": 14770,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/gs4?mobile"
+        },
+        {
+          "model": "GS8",
+          "price": 27410,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/new-gs8?mobile"
+        },
+        {
+          "model": "НОВЫЙ AION V",
+          "price": 2449000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/aion-v?mobile"
+        },
+        {
+          "model": "S7",
+          "price": 2449000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/s7?mobile"
+        },
+        {
+          "model": "НОВЫЙ GAC HYPTEC HT",
+          "price": 2449000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/hyptec-ht?mobile"
+        },
+        {
+          "model": "НОВЫЙ GAC S9",
+          "price": 37886,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/s9?mobile"
+        },
+        {
+          "model": "Empow",
+          "price": 2449000,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/empow?mobile"
+        },
+        {
+          "model": "M8",
+          "price": 38248,
+          "max_benefit": 300000,
+          "source_url": "https://gac-autoimport.ru/models/m8?mobile"
+        },
+        {
+          "model": "О модели",
+          "price": 2449000,
+          "max_benefit": "-",
+          "source_url": "https://gac-autoimport.ru/models/gs3?main_menu"
+        }
+      ],
+      "screens": [],
+      "comment": "GS4: странная цена 14 770 ₽; GS4: выгода больше цены; GS8: странная цена 27 410 ₽; GS8: выгода больше цены; НОВЫЙ GAC S9: странная цена 37 886 ₽; НОВЫЙ GAC S9: выгода больше цены; M8: странная цена 38 248 ₽; M8: выгода больше цены; Собрано по общему шаблону движка TradeDealer",
+      "template": "TradeDealer",
+      "status": "needs_check",
+      "seconds": 412,
+      "pages_opened": 35,
+      "change": "Требует проверки",
+      "changes": []
+    },
+    {
+      "id": 7,
+      "company": "",
+      "responsible": "",
+      "site": "volga-avtomarket.ru",
+      "brand": "Volga",
+      "models": [
+        {
+          "model": "Флагманский кроссовер VOLGA K50",
+          "price": 36247,
+          "max_benefit": "-",
+          "source_url": "https://volga-avtomarket.ru/models/volga-k50"
+        },
+        {
+          "model": "Универсальный среднеразмерный кроссовер VOLGA K40",
+          "price": "-",
+          "max_benefit": "-",
+          "source_url": "https://volga-avtomarket.ru/models/volga-k40-new/"
+        },
+        {
+          "model": "Комфортный и технологичный седан бизнес-класса VOLGA С50",
+          "price": "-",
+          "max_benefit": "-",
+          "source_url": "https://volga-avtomarket.ru/models/volga-c50-new/"
+        }
+      ],
+      "screens": [
+        "data/screens/7/model-1.jpg"
+      ],
+      "comment": "Флагманский кроссовер VOLGA K50: странная цена 36 247 ₽; Не нашлась цена: Универсальный среднеразмерный кроссовер VOLGA K40, Комфортный и технологичный седан бизнес-класса VOLGA С50; Собрано по общему шаблону движка TradeDealer",
+      "template": "TradeDealer",
+      "status": "needs_check",
+      "seconds": 60,
+      "pages_opened": 6,
+      "change": "Требует проверки",
+      "changes": []
+    },
     {
       "id": 8,
       "company": "",
@@ -49,7 +157,7 @@
       "comment": "Обход моделей: На https://belgee-aem.ru/ не нашлось ссылок на модели; Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "needs_check",
-      "seconds": 14,
+      "seconds": 15,
       "pages_opened": 2,
       "change": "Требует проверки",
       "changes": []
@@ -104,138 +212,11 @@
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 62,
+      "seconds": 48,
       "pages_opened": 8,
-      "change": "Изменилось",
+      "change": "Первая проверка",
       "changes": [
-        "Новая модель: T4L 2 199 000 ₽/-",
-        "Новая модель: T4 2 089 000 ₽/100 000 ₽",
-        "Новая модель: T7 2 625 000 ₽/200 000 ₽",
-        "Новая модель: T8 2 899 000 ₽/200 000 ₽",
-        "Новая модель: A8 2 899 000 ₽/100 000 ₽",
-        "Новая модель: T9 3 749 000 ₽/200 000 ₽",
-        "Модель пропала: 300",
-        "Модель пропала: 400",
-        "Модель пропала: 500",
-        "Модель пропала: 700",
-        "Модель пропала: WEY 07",
-        "Модель пропала: WEY 80",
-        "Модель пропала: WEY 80 Лаундж",
-        "Модель пропала: WEY V9X"
-      ],
-      "diff": [
-        {
-          "type": "new",
-          "model": "T4L",
-          "now": {
-            "price": 2199000,
-            "max_benefit": "-"
-          }
-        },
-        {
-          "type": "new",
-          "model": "T4",
-          "now": {
-            "price": 2089000,
-            "max_benefit": 100000
-          }
-        },
-        {
-          "type": "new",
-          "model": "T7",
-          "now": {
-            "price": 2625000,
-            "max_benefit": 200000
-          }
-        },
-        {
-          "type": "new",
-          "model": "T8",
-          "now": {
-            "price": 2899000,
-            "max_benefit": 200000
-          }
-        },
-        {
-          "type": "new",
-          "model": "A8",
-          "now": {
-            "price": 2899000,
-            "max_benefit": 100000
-          }
-        },
-        {
-          "type": "new",
-          "model": "T9",
-          "now": {
-            "price": 3749000,
-            "max_benefit": 200000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "300",
-          "was": {
-            "price": 4099000,
-            "max_benefit": 200000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "400",
-          "was": {
-            "price": 5599000,
-            "max_benefit": 250000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "500",
-          "was": {
-            "price": 6399000,
-            "max_benefit": 300000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "700",
-          "was": {
-            "price": 10199000,
-            "max_benefit": 300000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "WEY 07",
-          "was": {
-            "price": 6149000,
-            "max_benefit": 300000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "WEY 80",
-          "was": {
-            "price": 6449000,
-            "max_benefit": 300000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "WEY 80 Лаундж",
-          "was": {
-            "price": 8099000,
-            "max_benefit": 300000
-          }
-        },
-        {
-          "type": "gone",
-          "model": "WEY V9X",
-          "was": {
-            "price": 9349000,
-            "max_benefit": 350000
-          }
-        }
+        "Записано моделей: 6"
       ]
     },
     {
@@ -300,7 +281,7 @@
       "comment": "Собрано по общему шаблону движка Perxis",
       "template": "Perxis",
       "status": "ok",
-      "seconds": 62,
+      "seconds": 49,
       "pages_opened": 10,
       "change": "Первая проверка",
       "changes": [
@@ -315,7 +296,7 @@
       "brand": "LADA",
       "models": [],
       "screens": [],
-      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Не определён)",
+      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Сайты LADA)",
       "status": "no_scenario",
       "seconds": 2,
       "pages_opened": 1,
@@ -347,7 +328,7 @@
       "screens": [],
       "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Nuxt)",
       "status": "no_scenario",
-      "seconds": 7,
+      "seconds": 8,
       "pages_opened": 1,
       "change": "Нет сценария",
       "changes": []
@@ -362,37 +343,7 @@
       "screens": [],
       "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Nuxt)",
       "status": "no_scenario",
-      "seconds": 18,
-      "pages_opened": 1,
-      "change": "Нет сценария",
-      "changes": []
-    },
-    {
-      "id": 6,
-      "company": "",
-      "responsible": "",
-      "site": "gac-autoimport.ru",
-      "brand": "GAC",
-      "models": [],
-      "screens": [],
-      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Не определён)",
-      "status": "no_scenario",
-      "seconds": 14,
-      "pages_opened": 1,
-      "change": "Нет сценария",
-      "changes": []
-    },
-    {
-      "id": 7,
-      "company": "",
-      "responsible": "",
-      "site": "volga-avtomarket.ru",
-      "brand": "Volga",
-      "models": [],
-      "screens": [],
-      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Не определён)",
-      "status": "no_scenario",
-      "seconds": 11,
+      "seconds": 12,
       "pages_opened": 1,
       "change": "Нет сценария",
       "changes": []
@@ -405,9 +356,9 @@
       "brand": "JAC",
       "models": [],
       "screens": [],
-      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Не определён)",
+      "comment": "Для сайта ещё нет ни сценария, ни шаблона движка (движок: Платформа rqch.ru)",
       "status": "no_scenario",
-      "seconds": 12,
+      "seconds": 13,
       "pages_opened": 1,
       "change": "Нет сценария",
       "changes": []
