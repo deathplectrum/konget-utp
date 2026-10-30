@@ -1,13 +1,13 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T14:17:45.233Z",
-  "total_seconds": 13,
+  "checked_at": "2026-10-30T14:30:31.711Z",
+  "total_seconds": 21,
   "parallel": 6,
   "summary": {
     "Не работает": 0,
     "Заглушка": 0,
     "Работает медленно": 0,
-    "Работает": 5
+    "Работает": 8
   },
   "sites": [
     {
@@ -19,10 +19,10 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 3.3,
+      "load_seconds": 3.2,
       "final_url": "https://tenet.ru/",
       "title": "TENET — Официальный сайт автомобильного бренда",
-      "seconds": 5,
+      "seconds": 7,
       "was": ""
     },
     {
@@ -34,10 +34,10 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2.1,
+      "load_seconds": 1.5,
       "final_url": "https://tank.ru/",
       "title": "Автомобиль TANK на официальном сайте TANK - цена, фото, комплектации и технические характеристики",
-      "seconds": 6,
+      "seconds": 12,
       "was": ""
     },
     {
@@ -49,10 +49,10 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 1.9,
+      "load_seconds": 2.5,
       "final_url": "https://www.geely-motors.com/",
       "title": "Geely (Джили) Motors в России – официальный сайт, цены и модельный ряд китайских автомобилей",
-      "seconds": 12,
+      "seconds": 7,
       "was": ""
     },
     {
@@ -64,10 +64,10 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 1.2,
+      "load_seconds": 1.6,
       "final_url": "https://liautoofficial.ru/",
       "title": "Li Auto | Официальный сайт Lixiang (Лисян) в России",
-      "seconds": 4,
+      "seconds": 6,
       "was": ""
     },
     {
@@ -79,10 +79,55 @@
       "health": "Работает",
       "reason": "",
       "code": 200,
-      "load_seconds": 2.1,
+      "load_seconds": 2.5,
       "final_url": "https://belgee.ru/",
       "title": "Belgee в России — официальный сайт, цены и модельный ряд",
+      "seconds": 13,
+      "was": ""
+    },
+    {
+      "id": 6,
+      "company": "АВАНГАРД",
+      "responsible": "None",
+      "site": "hongqi-avangard.ru",
+      "brand": "Хончи",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 1.6,
+      "final_url": "https://hongqi-avangard.ru/",
+      "title": "HONGQI | Купить Хончи в Санкт-Петербурге - Официальный дилер в России АВАНГАРД",
       "seconds": 12,
+      "was": ""
+    },
+    {
+      "id": 7,
+      "company": "АМР",
+      "responsible": "None",
+      "site": "jetour-amr.ru",
+      "brand": "Jetour",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 3.7,
+      "final_url": "https://jetour-amr.ru/",
+      "title": "Jetour AMR - официальный дилер JETOUR (Джетур) в городе Саратов",
+      "seconds": 9,
+      "was": ""
+    },
+    {
+      "id": 8,
+      "company": "АКСИОМА",
+      "responsible": "None",
+      "site": "cherypulkovo.ru",
+      "brand": "Chery",
+      "health": "Работает",
+      "reason": "",
+      "code": 200,
+      "load_seconds": 3,
+      "final_url": "https://cherypulkovo.ru/",
+      "title": "CHERY в наличии | купить Чери / Тенет 2026 в СПб – официальный дилер Чери Центр Пулково",
+      "seconds": 13,
       "was": ""
     }
   ]
