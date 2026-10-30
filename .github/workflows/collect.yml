@@ -1,4 +1,4 @@
-# Сбор УТП. Запускается кнопкой «Собрать УТП» в приложении,
+# Сбор УТП. Запускается кнопкой «Сверить УТП» в приложении,
 # вручную на вкладке Actions или сам 1-го числа каждого месяца.
 name: Сбор УТП
 
@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  collect:
+  run:
     runs-on: ubuntu-latest
     timeout-minutes: 360 # максимум GitHub для одного запуска — 6 часов
     steps:
@@ -35,14 +35,16 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
       - name: Собрать цены и выгоды
+        env:
+          SITE: ${{ inputs.site }}
         run: |
-          if [ -n "${{ inputs.site }}" ]; then
-            exec node collector/collect.mjs --site "${{ inputs.site }}"
+          if [ -n "$SITE" ]; then
+            exec node collector/collect.mjs --site "$SITE"
           else
             exec node collector/collect.mjs
           fi
 
-      # Сохраняем и тогда, когда сбор остановили кнопкой: то, что успели собрать, не пропадёт.
+      # Сохраняем и тогда, когда проверку остановили кнопкой: то, что успели, не пропадёт.
       - name: Сохранить результат в репозиторий
         if: success() || cancelled()
         run: |
@@ -51,5 +53,9 @@ jobs:
           git add -A data
           git diff --cached --quiet && exit 0
           git commit -m "Сбор УТП $(date +%F)"
-          git pull --rebase origin ${{ github.ref_name }}
-          git push
+          # Другая проверка могла сохраниться одновременно: подтягиваем и пробуем ещё раз.
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin ${{ github.ref_name }} && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

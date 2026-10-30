@@ -1,20 +1,21 @@
-// Общее состояние приложения: настройки, последний сбор и идёт ли сбор сейчас.
+// Общее состояние приложения: настройки, последние итоги проверок и какие проверки идут сейчас.
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { loadSettings, saveSettings } from './settings';
-import { cancelRun, lastRun, loadLatest, startCollect } from './github';
+import { cancelRun, lastRun, loadData, startWorkflow } from './github';
+import { JOB, JOBS } from './jobs';
 
 const Ctx = createContext(null);
 const POLL_MS = 10_000;
 
 export function AppProvider({ children }) {
   const [settings, setSettingsState] = useState(loadSettings);
-  const [report, setReport] = useState(null);
+  const [reports, setReports] = useState({}); // { health, konget, utp }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [run, setRun] = useState(null); // последний запуск сборщика на GitHub
-  const [runSite, setRunSite] = useState(''); // какой сайт перепроверяем ('' — все)
-  const [stopping, setStopping] = useState(false); // нажали «Остановить», ждём, пока GitHub остановит
-  const timer = useRef(null);
+  const [runs, setRuns] = useState({}); // последний запуск каждой проверки на GitHub
+  const [runSite, setRunSite] = useState({}); // какой сайт перепроверяем ('' — все)
+  const [stopping, setStopping] = useState({}); // нажали «Остановить», ждём, пока GitHub остановит
+  const timers = useRef({});
 
   const setSettings = (s) => {
     saveSettings(s);
@@ -26,7 +27,8 @@ export function AppProvider({ children }) {
     setLoading(true);
     setError('');
     try {
-      setReport(await loadLatest(settings));
+      const list = await Promise.all(JOBS.filter((j) => j.file).map(async (j) => [j.key, await loadData(settings, j.file)]));
+      setReports(Object.fromEntries(list));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -34,50 +36,58 @@ export function AppProvider({ children }) {
     }
   }, [settings]);
 
-  // Пока сбор идёт, раз в 10 секунд спрашиваем GitHub, не закончился ли он.
-  const pollRun = useCallback(async () => {
+  // Пока проверка идёт, раз в 10 секунд спрашиваем GitHub, не закончилась ли она.
+  const pollRun = useCallback(async (key) => {
     if (!settings.token || !settings.repo) return;
-    const r = await lastRun(settings).catch(() => null);
-    setRun(r);
-    if (r?.status === 'completed') setStopping(false);
-    clearTimeout(timer.current);
+    const r = await lastRun(settings, JOB[key].workflow).catch(() => null);
+    setRuns((all) => ({ ...all, [key]: r }));
+    if (r?.status === 'completed') setStopping((all) => ({ ...all, [key]: false }));
+    clearTimeout(timers.current[key]);
     if (r && r.status !== 'completed') {
-      timer.current = setTimeout(pollRun, POLL_MS);
+      timers.current[key] = setTimeout(() => pollRun(key), POLL_MS);
     } else if (r) {
       refresh();
     }
   }, [settings, refresh]);
 
-  const collect = async (siteId = '') => {
+  const start = async (key, siteId = '') => {
     setError('');
-    const startedAt = Date.now();
-    await startCollect(settings, siteId);
-    setRunSite(siteId);
-    setRun({ status: 'queued', created_at: new Date(startedAt).toISOString() });
+    const job = JOB[key];
+    await startWorkflow(settings, job.workflow, job.noSite ? null : { site: String(siteId) });
+    setRunSite((all) => ({ ...all, [key]: siteId }));
+    setRuns((all) => ({ ...all, [key]: { status: 'queued', created_at: new Date().toISOString() } }));
     // GitHub не сразу показывает новый запуск: ждём немного, потом начинаем следить.
-    clearTimeout(timer.current);
-    timer.current = setTimeout(pollRun, 5_000);
+    clearTimeout(timers.current[key]);
+    timers.current[key] = setTimeout(() => pollRun(key), 5_000);
   };
 
-  const stop = async () => {
-    const r = run?.id ? run : await lastRun(settings);
+  const stop = async (key) => {
+    const run = runs[key];
+    const r = run?.id ? run : await lastRun(settings, JOB[key].workflow);
     if (!r?.id || r.status === 'completed') return;
     await cancelRun(settings, r.id);
-    setStopping(true);
-    clearTimeout(timer.current);
-    timer.current = setTimeout(pollRun, 3_000);
+    setStopping((all) => ({ ...all, [key]: true }));
+    clearTimeout(timers.current[key]);
+    timers.current[key] = setTimeout(() => pollRun(key), 3_000);
   };
 
   useEffect(() => {
     refresh();
-    pollRun();
-    return () => clearTimeout(timer.current);
+    JOBS.forEach((j) => pollRun(j.key));
+    const all = timers.current;
+    return () => Object.values(all).forEach(clearTimeout);
   }, [refresh, pollRun]);
 
-  const running = run && run.status !== 'completed';
+  const isRunning = (key) => Boolean(runs[key] && runs[key].status !== 'completed');
 
   return (
-    <Ctx.Provider value={{ settings, setSettings, report, loading, error, refresh, run, runSite, running, stopping, collect, stop }}>
+    <Ctx.Provider value={{
+      settings, setSettings, reports, loading, error, refresh, runs, runSite, stopping, isRunning, start, stop,
+      // Для страниц УТП: итог и запуск сверки УТП.
+      report: reports.utp || null,
+      running: isRunning('utp'),
+      collect: (siteId) => start('utp', siteId),
+    }}>
       {children}
     </Ctx.Provider>
   );

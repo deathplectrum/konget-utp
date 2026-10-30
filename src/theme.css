@@ -307,3 +307,36 @@ ion-alert.nice-alert .alert-button-group { gap: 8px; padding: 0 16px 16px; flex-
 ion-alert.nice-alert .alert-button { height: 52px; border-radius: 16px; border: 0 !important; font-size: 17px; font-weight: 800; margin: 0; flex: none; width: 100%; }
 ion-alert.nice-alert .alert-button.alert-button-role-cancel { background: linear-gradient(135deg, var(--accent-a), var(--accent-c)); color: #fff; }
 ion-alert.nice-alert .alert-button.alert-button-role-destructive { background: var(--red-bg); color: var(--red); }
+
+/* Главная: четыре кнопки-карточки */
+.page.wide { max-width: 1000px; }
+.job-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 760px) { .job-grid { grid-template-columns: repeat(2, 1fr); } }
+.job-card {
+  position: relative; overflow: hidden; border-radius: 28px; padding: 18px 18px 18px; color: #fff;
+  display: flex; flex-direction: column; box-shadow: 0 16px 34px rgba(40, 30, 110, 0.22);
+}
+.job-head { position: relative; display: flex; align-items: center; justify-content: space-between; }
+.job-num {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.25); font-weight: 800; font-size: 15px;
+}
+.job-icon { font-size: 30px; opacity: 0.95; display: flex; }
+.job-title { position: relative; margin: 12px 0 4px; font-size: 22px; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }
+.job-about { position: relative; font-size: 14px; opacity: 0.9; line-height: 1.35; flex: 1; }
+.job-result {
+  position: relative; display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 14px;
+  padding: 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.18); color: #fff;
+}
+.job-result > span:first-child { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.job-result b { font-size: 16px; }
+.job-result small { font-size: 13px; opacity: 0.9; display: flex; align-items: center; gap: 4px; }
+.job-result .job-bad { opacity: 1; font-weight: 700; }
+.job-more { display: flex; align-items: center; gap: 2px; font-size: 13px; font-weight: 700; white-space: nowrap; opacity: 0.95; }
+.job-card .big-btn { margin-top: 12px; height: 56px; }
+.job-card:not(.is-running) .big-btn-icon { animation: pulse 2.4s ease-in-out infinite; }
+.job-card .big-btn-icon { color: #fff; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14.5px; }
+.kv dt { color: var(--muted); font-weight: 600; }
+.kv dd { margin: 0; font-weight: 700; word-break: break-all; }

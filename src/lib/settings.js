@@ -6,9 +6,9 @@ export const DEFAULT_REPO = typeof __DEFAULT_REPO__ !== 'undefined' ? __DEFAULT_
 export function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY) || '{}');
-    return { repo: s.repo || DEFAULT_REPO, token: s.token || '' };
+    return { repo: s.repo || DEFAULT_REPO, token: s.token || '', sheet: s.sheet || '' };
   } catch {
-    return { repo: DEFAULT_REPO, token: '' };
+    return { repo: DEFAULT_REPO, token: '', sheet: '' };
   }
 }
 
