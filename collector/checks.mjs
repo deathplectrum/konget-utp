@@ -33,9 +33,16 @@ const STUB = [
   /index\s+of\s+\//i,
 ];
 
+// Защита сайта не пускает проверку (часто закрыт доступ из-за рубежа, откуда работает GitHub).
+// Людям сайт может открываться, но проверить его программа не может.
+const BLOCKED = /web\s+page\s+blocked|access\s+denied|403\s+forbidden|доступ\s+(запрещ[её]н|ограничен)|подтвердите,?\s+что\s+вы\s+не\s+робот|checking\s+your\s+browser/i;
+
 // Итог проверки сайта по тому, что вернул браузер.
 export function healthVerdict({ error, status, seconds, text = '', title = '' }) {
   if (error) return { health: HEALTH.down, reason: error };
+  if (BLOCKED.test(`${title}\n${text.slice(0, 2000)}`)) {
+    return { health: HEALTH.down, reason: 'Защита сайта не пустила проверку. Людям сайт может открываться, проверьте вручную' };
+  }
   if (status >= 400) return { health: HEALTH.down, reason: `Сайт ответил ошибкой ${status}` };
   const all = `${title}\n${text}`;
   const stub = STUB.find((re) => re.test(all));
@@ -49,6 +56,7 @@ export function healthVerdict({ error, status, seconds, text = '', title = '' })
 // одинаковая разметка). Ищем характерные следы в коде страницы, иначе берём <meta name="generator">.
 const ENGINES = [
   ['Perxis', /perxis/i],
+  ['TradeDealer', /tradedealer\.ru|\/dws_builds\//i],
   ['1С-Битрикс', /\/bitrix\/(?:js|templates|cache|components|tools)\//i],
   ['Tilda', /tildacdn|data-tilda-/i],
   ['WordPress', /\/wp-content\/|\/wp-includes\//i],
@@ -61,7 +69,18 @@ const ENGINES = [
   ['Next.js', /__NEXT_DATA__|\/_next\/static\//],
 ];
 
-export function detectEngine(html = '') {
+// Платформы, где у дилеров адреса вида дилер.платформа.ru: движок видно по адресу.
+const HOSTS = [
+  ['Сайты LADA', /\.lada\.ru$/i],
+  ['Платформа rqch.ru', /\.rqch\.ru$/i],
+];
+
+export function detectEngine(html = '', url = '') {
+  const hostname = (() => {
+    try { return new URL(url).hostname; } catch { return ''; }
+  })();
+  const byHost = HOSTS.find(([, re]) => re.test(hostname));
+  if (byHost) return byHost[0];
   const found = ENGINES.find(([, re]) => re.test(html));
   if (found) return found[0];
   const generator = html.match(/<meta[^>]+name=["']generator["'][^>]*content=["']([^"']+)/i)

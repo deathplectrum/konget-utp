@@ -220,7 +220,7 @@ async function collectSite(browser, site) {
       const context = await browser.newContext({ locale: 'ru-RU', viewport: { width: 1366, height: 900 } });
       try {
         const page = await openPage(context, site, siteUrl(site));
-        engine = detectEngine(await page.content());
+        engine = detectEngine(await page.content(), page.url());
         if (!templates.has(engine)) await snapshot(page, site, 'home');
       } catch {
         // Главная не открылась — ниже вернём «Нет сценария».

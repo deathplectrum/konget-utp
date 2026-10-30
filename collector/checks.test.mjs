@@ -16,6 +16,7 @@ test('сайт работает, медленный, сломан или заг�
   assert.equal(healthVerdict({ status: 503, seconds: 1, text: LIVE }).health, HEALTH.down);
   assert.equal(healthVerdict({ error: 'net::ERR_NAME_NOT_RESOLVED' }).health, HEALTH.down);
   assert.equal(healthVerdict({ status: 200, seconds: 1, text: '' }).health, HEALTH.stub);
+  assert.equal(healthVerdict({ status: 200, seconds: 1, text: `Web Page Blocked! The page cannot be displayed. ${LIVE}` }).health, HEALTH.down);
   assert.equal(healthVerdict({ status: 200, seconds: 1, text: `Сайт находится в разработке. ${LIVE}` }).health, HEALTH.stub);
   assert.equal(healthVerdict({ status: 200, seconds: 1, title: 'Домен example.ru продаётся', text: LIVE }).health, HEALTH.stub);
 });
@@ -109,6 +110,8 @@ test('движок сайта', () => {
   assert.equal(detectEngine('<link href="https://static.tildacdn.com/css/tilda-grid.css">'), 'Tilda');
   assert.equal(detectEngine('<meta name="generator" content="UMI.CMS">'), 'UMI.CMS');
   assert.equal(detectEngine('<html>просто сайт</html>'), 'Не определён');
+  assert.equal(detectEngine('<script src="//script.tradedealer.ru/a.js">'), 'TradeDealer');
+  assert.equal(detectEngine('', 'https://srt.agat.lada.ru/'), 'Сайты LADA');
   assert.equal(detectEngine('<img src="https://img.perxis.ru/unsafe/1920x0/filters">'), 'Perxis');
 });
 

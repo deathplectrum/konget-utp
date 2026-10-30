@@ -73,7 +73,7 @@ async function main() {
       code: raw.status || null,
       load_seconds: Math.round(raw.seconds * 10) / 10,
       final_url: raw.final_url || '',
-      engine: raw.error ? '' : detectEngine(raw.html),
+      engine: raw.error ? '' : detectEngine(raw.html, raw.final_url || siteUrl(site)),
       title: (raw.title || '').slice(0, 120),
       seconds: Math.round((Date.now() - started) / 1000),
     };
