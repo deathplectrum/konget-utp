@@ -30,10 +30,12 @@ export async function loadSites(onlyId) {
   const byId = new Map(scenarios.map((s) => [String(s.id), s]));
   let sites = [];
   if (hasGoogle()) {
-    const rows = parseSites(await readRange(await connect(), `'${SITES_SHEET}'!A3:H`));
+    const rows = parseSites(await readRange(await connect(), `'${SITES_SHEET}'!A2:H`));
     log(`Лист «${SITES_SHEET}»: сайтов ${rows.length}`);
     sites = rows.map((r) => {
-      const sc = byId.get(String(r.id)) || {};
+      // Сценарий подходит, только если в нём тот же сайт: ID в таблице могут не совпасть с тестовыми сценариями.
+      const found = byId.get(String(r.id));
+      const sc = found && host(found.site) === host(r.site) ? found : {};
       return { ...sc, ...r, konget_token: r.konget_token || sc.konget_token || '' };
     });
   }
@@ -45,6 +47,11 @@ export async function loadSites(onlyId) {
     .filter((s) => s.active !== false)
     .filter((s) => !onlyId || String(s.id) === String(onlyId))
     .sort((a, b) => a.id - b.id);
+}
+
+// «https://www.Tenet.ru/» → «tenet.ru».
+export function host(site) {
+  return String(site || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
 }
 
 export function readJson(file) {

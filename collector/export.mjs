@@ -19,18 +19,16 @@ import {
 
 const hex = (h) => ({ red: parseInt(h.slice(1, 3), 16) / 255, green: parseInt(h.slice(3, 5), 16) / 255, blue: parseInt(h.slice(5, 7), 16) / 255 });
 
-// Всё в одном мягком синем стиле. Статусы различаются насыщенностью:
-// спокойные (всё хорошо) — светлые, требующие внимания — темнее, «нет данных» — серые.
-const BAND = ['#dce8f8', '#1e4e8c'];
-const HEAD = ['#eef4fc', '#1e3a5f'];
+// Один спокойный стиль: светло-зелёная строка заголовков с фильтрами, обычная сетка,
+// статусы — плашками. Всё хорошо — зелёная плашка, нужно посмотреть — тёплая жёлтая, нет данных — серая.
+const HEAD = ['#d9ead3', '#1e1e1e'];
 const STATUS_STYLE = {
-  calm: ['#eef4fc', '#2b5c9e'],
-  attention: ['#c9dcf5', '#0f3a73'],
-  muted: ['#f1f4f8', '#6b7c93'],
+  calm: ['#d9ead3', '#274e13'],
+  attention: ['#fce8b2', '#7f6000'],
+  muted: ['#efefef', '#666666'],
 };
 const STYLE_OF_TONE = { green: 'calm', blue: 'calm', red: 'attention', amber: 'attention', violet: 'attention', gray: 'muted' };
-const LINE = '#e3ebf6';
-const FONT = 'Roboto';
+const FONT = 'Arial';
 const MIN_ROWS = 200;
 
 // Запросы оформления одного листа.
@@ -44,60 +42,41 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
   req.push({
     updateSheetProperties: {
       // Лист «Сайты» заполняет человек: лишние колонки там не удаляем.
-      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: n }), frozenRowCount: 2, hideGridlines: true } },
+      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: n }), frozenRowCount: 1, hideGridlines: false } },
       fields: `index,gridProperties(rowCount,${input ? '' : 'columnCount,'}frozenRowCount,hideGridlines)`,
     },
   });
+  // Убираем следы прошлого оформления: объединённые ячейки, рамки, старые цвета статусов.
   req.push({ unmergeCells: { range: range(0, rowCount, 0, n) } });
+  req.push({ updateBorders: { range: range(0, rowCount, 0, n), top: { style: 'NONE' }, bottom: { style: 'NONE' }, left: { style: 'NONE' }, right: { style: 'NONE' }, innerHorizontal: { style: 'NONE' }, innerVertical: { style: 'NONE' } } });
   for (let i = 0; i < oldRules; i += 1) req.push({ deleteConditionalFormatRule: { sheetId, index: 0 } });
-  req.push({ setBasicFilter: { filter: { range: range(1, rowCount, 0, n) } } });
+  req.push({ setBasicFilter: { filter: { range: range(0, rowCount, 0, n) } } });
 
-  // Строка 1: цветные подписи групп колонок.
-  let c = 0;
-  for (const [, span] of spec.groups) {
-    const [bg, fg] = BAND;
-    if (span > 1) req.push({ mergeCells: { range: range(0, 1, c, c + span), mergeType: 'MERGE_ALL' } });
-    req.push(cell({
-      backgroundColor: hex(bg), verticalAlignment: 'MIDDLE', horizontalAlignment: 'LEFT', padding: { left: 8 },
-      textFormat: { fontFamily: FONT, fontSize: 9, bold: true, foregroundColor: hex(fg) },
-    }, 'backgroundColor,verticalAlignment,horizontalAlignment,padding,textFormat', range(0, 1, c, c + span)));
-    // Белая полоса между группами, чтобы было видно, где кончается одна и начинается другая.
-    if (c > 0) req.push({ updateBorders: { range: range(0, 2, c, c + 1), left: { style: 'SOLID_THICK', color: hex('#ffffff') } } });
-    c += span;
-  }
-
-  // Строка 2: заголовки колонок.
+  // Заголовки.
   req.push(cell({
-    backgroundColor: hex(HEAD[0]), verticalAlignment: 'MIDDLE', wrapStrategy: 'WRAP',
+    backgroundColor: hex(HEAD[0]), verticalAlignment: 'MIDDLE', horizontalAlignment: 'LEFT', wrapStrategy: 'CLIP',
     textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex(HEAD[1]) },
-  }, 'backgroundColor,verticalAlignment,wrapStrategy,textFormat', range(1, 2, 0, n)));
-  req.push({ updateBorders: { range: range(1, 2, 0, n), bottom: { style: 'SOLID_MEDIUM', color: hex('#9db8dd') } } });
+  }, 'backgroundColor,verticalAlignment,horizontalAlignment,wrapStrategy,textFormat', range(0, 1, 0, n)));
 
-  // Данные: тонкие линии между строками, выравнивание по виду колонки.
+  // Данные.
   req.push(cell({
     backgroundColor: hex('#ffffff'), verticalAlignment: 'MIDDLE', wrapStrategy: 'CLIP', horizontalAlignment: 'LEFT',
-    textFormat: { fontFamily: FONT, fontSize: 10, bold: false, foregroundColor: hex('#1f2933') }, numberFormat: { type: 'TEXT' },
-  }, 'backgroundColor,verticalAlignment,wrapStrategy,horizontalAlignment,textFormat,numberFormat', range(2, rowCount, 0, n)));
-  req.push({ updateBorders: { range: range(2, rowCount, 0, n), innerHorizontal: { style: 'SOLID', color: hex(LINE) } } });
+    textFormat: { fontFamily: FONT, fontSize: 10, bold: false, foregroundColor: hex('#1e1e1e') }, numberFormat: { type: 'TEXT' },
+  }, 'backgroundColor,verticalAlignment,wrapStrategy,horizontalAlignment,textFormat,numberFormat', range(1, rowCount, 0, n)));
 
   spec.columns.forEach((col, i) => {
-    const data = range(2, rowCount, i, i + 1);
+    const data = range(1, rowCount, i, i + 1);
     req.push({
       updateDimensionProperties: {
         range: { sheetId, dimension: 'COLUMNS', startIndex: i, endIndex: i + 1 }, properties: { pixelSize: col.width }, fields: 'pixelSize',
       },
     });
-    if (col.kind === 'id') {
-      req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0' }, textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex('#5b7290') } },
-        'horizontalAlignment,numberFormat,textFormat', data));
-    }
+    if (col.kind === 'id') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '0' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0.#' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'money') req.push(cell({ horizontalAlignment: 'RIGHT', numberFormat: { type: 'NUMBER', pattern: '#,##0" ₽"' } }, 'horizontalAlignment,numberFormat', data));
     if (col.kind === 'wrap') req.push(cell({ wrapStrategy: 'WRAP' }, 'wrapStrategy', data));
-    if (col.kind === 'link') req.push(cell({ textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex('#1f2933') } }, 'textFormat', data));
     if (col.list) {
-      req.push(cell({ horizontalAlignment: 'CENTER' }, 'horizontalAlignment', data));
-      // Выпадающий список: можно выбрать статус вручную. strict: false — программа может писать и другие значения.
+      // Выпадающий список: можно выбрать значение вручную. strict: false — программа может писать и другие значения.
       req.push({
         setDataValidation: {
           range: data,
@@ -119,12 +98,13 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
           },
         });
       }
+    } else {
+      // Раньше тут мог быть выпадающий список: снимаем его.
+      req.push({ setDataValidation: { range: data } });
     }
   });
 
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 26 }, fields: 'pixelSize' } });
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 1, endIndex: 2 }, properties: { pixelSize: 36 }, fields: 'pixelSize' } });
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 2, endIndex: rowCount }, properties: { pixelSize: 30 }, fields: 'pixelSize' } });
+  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: rowCount }, properties: { pixelSize: 21 }, fields: 'pixelSize' } });
   return req;
 }
 
@@ -160,8 +140,8 @@ async function main() {
   // Лист «Сайты»: если он новый или старого вида, ставим заголовки и переносим сайты из сценариев.
   // Если он уже нашего вида — данные не трогаем, только оформление.
   const current = await readRange(conn, `'${SITES_SHEET}'!A1:H`);
-  const ours = SITES_HEADER.every((h, i) => String(current[1]?.[i] ?? '').trim().toUpperCase() === h);
-  let siteRows = current.slice(2);
+  const ours = SITES_HEADER.every((h, i) => String(current[0]?.[i] ?? '').trim() === h);
+  let siteRows = current.slice(1);
   if (!ours) {
     siteRows = loadScenarios().filter((sc) => sc.site).sort((a, b) => a.id - b.id)
       .map((sc) => [sc.id, sc.company || '', sc.site, sc.brand || '', sc.responsible || '', sc.active === false ? 'Нет' : 'Да', sc.konget_token || '', '']);

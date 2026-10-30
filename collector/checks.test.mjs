@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
 import { buildSheets, parseSites, sheetValues, sitesSheet, SITES_HEADER } from './sheet.mjs';
 import { sheetIdFrom } from './google.mjs';
+import { host } from './common.mjs';
 
 const LIVE = 'Официальный дилер. Модели, цены, тест-драйв, кредит, трейд-ин, сервис и запчасти. '.repeat(3);
 
@@ -73,16 +74,12 @@ test('листы таблицы: сводка по сайтам, проблем�
   });
   assert.deepEqual(Object.keys(sheets), ['Сводка', 'Работа сайтов', 'Скрипт Конгет', 'УТП']);
   const rows = (name) => sheetValues(sheets[name]);
-  assert.equal(rows('Сводка')[0][0], 'САЙТ');
-  assert.equal(rows('Сводка')[0].length, rows('Сводка')[1].length);
-  assert.equal(rows('Сводка')[2][2], 'b.ru');
-  assert.deepEqual(rows('Сводка')[3].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
-  assert.deepEqual(rows('УТП')[2].slice(3, 6), ['T8', 2899000, '']);
-  assert.equal(rows('Скрипт Конгет')[0][2], 'ПРОВЕРКА ОТ 2026-10-27');
-  for (const spec of Object.values(sheets)) {
-    assert.equal(spec.groups.reduce((a, g) => a + g[1], 0), spec.columns.length);
-    assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
-  }
+  assert.equal(rows('Сводка')[0][0], 'ID');
+  assert.equal(rows('Сводка')[1][2], 'b.ru');
+  assert.deepEqual(rows('Сводка')[2].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
+  assert.deepEqual(rows('УТП')[1].slice(3, 6), ['T8', 2899000, '']);
+  assert.equal(rows('Скрипт Конгет')[0][2], 'Статус на 2026-10-27');
+  for (const spec of Object.values(sheets)) assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
 });
 
 test('id таблицы из ссылки', () => {
@@ -104,7 +101,11 @@ test('лист «Сайты»: читаем строки, пропускаем �
   assert.equal(sites[0].konget_token, '538e1215043c412b9cfcff11319094a9');
   assert.equal(sites[1].active, false);
   assert.equal(sites[2].active, true);
-  const values = sheetValues(sitesSheet([]));
-  assert.deepEqual(values[1], SITES_HEADER);
-  assert.equal(values[0].length, values[1].length);
+  assert.deepEqual(sheetValues(sitesSheet([]))[0], SITES_HEADER);
+});
+
+test('сценарий подходит к сайту из таблицы, только если адрес тот же', () => {
+  assert.equal(host('https://www.Tenet.ru/models/'), 'tenet.ru');
+  assert.equal(host('tenet.ru'), host('http://tenet.ru'));
+  assert.notEqual(host('tenet.ru'), host('tenet-avtoruss.ru'));
 });
