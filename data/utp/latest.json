@@ -1,8 +1,8 @@
 {
   "date": "2026-10-30",
-  "checked_at": "2026-10-30T14:19:13.393Z",
+  "checked_at": "2026-10-30T14:32:27.054Z",
   "previous_date": "2026-10-29",
-  "total_seconds": 258,
+  "total_seconds": 251,
   "parallel": 3,
   "summary": {
     "Не изменилось": 5,
@@ -10,7 +10,7 @@
     "Требует проверки": 0,
     "Ошибка доступа": 0,
     "Первая проверка": 0,
-    "Нет сценария": 0
+    "Нет сценария": 3
   },
   "sites": [
     {
@@ -59,11 +59,11 @@
         }
       ],
       "screens": [
-        "data/screens/1/model-4.jpg"
+        "data/screens/1/model-0.jpg"
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 142,
+      "seconds": 138,
       "pages_opened": 9,
       "change": "Не изменилось",
       "changes": [],
@@ -131,7 +131,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 143,
+      "seconds": 129,
       "pages_opened": 10,
       "change": "Не изменилось",
       "changes": [],
@@ -197,7 +197,7 @@
       "screens": [],
       "comment": "",
       "status": "ok",
-      "seconds": 176,
+      "seconds": 175,
       "pages_opened": 11,
       "change": "Не изменилось",
       "changes": [],
@@ -247,7 +247,7 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 23,
+      "seconds": 20,
       "pages_opened": 8,
       "change": "Не изменилось",
       "changes": [],
@@ -291,11 +291,56 @@
       ],
       "comment": "",
       "status": "ok",
-      "seconds": 114,
+      "seconds": 113,
       "pages_opened": 7,
       "change": "Не изменилось",
       "changes": [],
       "diff": []
+    },
+    {
+      "id": 6,
+      "company": "АВАНГАРД",
+      "responsible": "None",
+      "site": "hongqi-avangard.ru",
+      "brand": "Хончи",
+      "models": [],
+      "screens": [],
+      "comment": "Для сайта ещё не написан сценарий",
+      "status": "no_scenario",
+      "seconds": 0,
+      "pages_opened": 0,
+      "change": "Нет сценария",
+      "changes": []
+    },
+    {
+      "id": 7,
+      "company": "АМР",
+      "responsible": "None",
+      "site": "jetour-amr.ru",
+      "brand": "Jetour",
+      "models": [],
+      "screens": [],
+      "comment": "Для сайта ещё не написан сценарий",
+      "status": "no_scenario",
+      "seconds": 0,
+      "pages_opened": 0,
+      "change": "Нет сценария",
+      "changes": []
+    },
+    {
+      "id": 8,
+      "company": "АКСИОМА",
+      "responsible": "None",
+      "site": "cherypulkovo.ru",
+      "brand": "Chery",
+      "models": [],
+      "screens": [],
+      "comment": "Для сайта ещё не написан сценарий",
+      "status": "no_scenario",
+      "seconds": 0,
+      "pages_opened": 0,
+      "change": "Нет сценария",
+      "changes": []
     }
   ]
 }
