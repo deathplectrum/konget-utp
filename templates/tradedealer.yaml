@@ -1,0 +1,13 @@
+# Общий шаблон сверки УТП для дилерских сайтов на платформе TradeDealer (gac-autoimport.ru, volga-avtomarket.ru…).
+# Адреса — от корня сайта.
+engine: TradeDealer
+
+# С главной берём ссылки на страницы моделей /models/…, на каждой — название, цены и выгоды.
+# Выгоды ищем по всему тексту страницы: в счёт идут только фразы со словами «выгода», «скидка».
+models:
+  list_url: /
+  link: a[href^="/models/"]
+  page:
+    title: h1
+    price: .td-about-model__price, .tr-price-primary, [class*="model"] [class*="price"]
+    benefit: body
