@@ -9,7 +9,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { host, loadSites, siteUrl } from './common.mjs';
+import {
+  host, loadSites, previousOf, siteUrl,
+} from './common.mjs';
 import { detectEngine } from './checks.mjs';
 import { load as loadYaml } from 'js-yaml';
 import {
@@ -370,7 +372,7 @@ async function main() {
       // Сколько времени и страниц ушло на сайт: по этому считаем, сколько сайтов успеем за один сбор.
       res.seconds = Math.round((Date.now() - started) / 1000);
       res.pages_opened = site.pagesOpened || 0;
-      Object.assign(res, decideChange(res, prevById.get(String(site.id))));
+      Object.assign(res, decideChange(res, previousOf(prevById, site)));
       log(`  [${site.id}] ${res.change}. Моделей: ${res.models.length}. ${res.seconds} с, страниц: ${res.pages_opened}${res.comment ? `. ${res.comment}` : ''}`);
       results.push(res);
     }

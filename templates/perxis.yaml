@@ -6,7 +6,7 @@ engine: Perxis
 # Меню моделей → страница каждой модели: цены всех комплектаций и выгоды.
 models:
   list_url: /
-  link: .menu-models__left-item-link, .js-menu-models-link
+  link: .menu-models__left-item-link, .js-menu-models-link, a.footer__menu-link[href^="/model/"]
   name: .menu-models__left-item-title, .menu-models__item-title
   page:
     price: .web_block_grades__card-content .main-caps, .web_block_packages-single__card-price, .web_block_media-model__text h2

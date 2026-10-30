@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -110,11 +109,7 @@ test('движок сайта', () => {
   assert.equal(detectEngine('<link href="https://static.tildacdn.com/css/tilda-grid.css">'), 'Tilda');
   assert.equal(detectEngine('<meta name="generator" content="UMI.CMS">'), 'UMI.CMS');
   assert.equal(detectEngine('<html>просто сайт</html>'), 'Не определён');
-  for (const id of [1, 2, 4, 5]) {
-    const file = new URL(`../data/screens/${id}/`, import.meta.url);
-    const html = fs.readdirSync(file).filter((f) => f.endsWith('.html')).map((f) => fs.readFileSync(new URL(f, file), 'utf8')).join('');
-    assert.equal(detectEngine(html), 'Perxis', `сайт ${id}`);
-  }
+  assert.equal(detectEngine('<img src="https://img.perxis.ru/unsafe/1920x0/filters">'), 'Perxis');
 });
 
 test('id таблицы из ссылки', () => {

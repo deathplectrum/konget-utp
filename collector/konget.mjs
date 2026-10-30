@@ -9,7 +9,9 @@
 
 import { chromium } from 'playwright';
 import { KONGET_ORDER, changedSince, countBy, kongetVerdict, sortBy } from './checks.mjs';
-import { argValue, keepUnchecked, loadSites, log, runQueue, siteBase, siteUrl, store } from './common.mjs';
+import {
+  argValue, keepUnchecked, loadSites, log, previousOf, runQueue, siteBase, siteUrl, store,
+} from './common.mjs';
 
 const PARALLEL = Number(process.env.PARALLEL) || 6;
 const TIMEOUT = 30_000;
@@ -75,7 +77,7 @@ async function main() {
       expected: site.konget_token ? String(site.konget_token) : '',
       seconds: Math.round((Date.now() - started) / 1000),
     };
-    res.was = changedSince(prevById.get(String(site.id)), res, 'konget');
+    res.was = changedSince(previousOf(prevById, site), res, 'konget');
     log(`[${site.id}] ${site.site}: ${res.konget}${res.kind ? ` (${res.kind})` : ''}${res.tokens.length ? ` ${res.tokens.join(', ')}` : ''}${res.reason ? ` (${res.reason})` : ''}`);
     results.push(res);
   }, () => save(true));

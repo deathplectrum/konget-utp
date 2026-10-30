@@ -8,7 +8,9 @@ import { chromium } from 'playwright';
 import {
   HEALTH_ORDER, changedSince, countBy, detectEngine, healthVerdict, sortBy,
 } from './checks.mjs';
-import { argValue, keepUnchecked, loadSites, log, runQueue, siteBase, siteUrl, store } from './common.mjs';
+import {
+  argValue, keepUnchecked, loadSites, log, previousOf, runQueue, siteBase, siteUrl, store,
+} from './common.mjs';
 
 const PARALLEL = Number(process.env.PARALLEL) || 6;
 const TIMEOUT = 30_000;
@@ -75,7 +77,7 @@ async function main() {
       title: (raw.title || '').slice(0, 120),
       seconds: Math.round((Date.now() - started) / 1000),
     };
-    res.was = changedSince(prevById.get(String(site.id)), res, 'health');
+    res.was = changedSince(previousOf(prevById, site), res, 'health');
     log(`[${site.id}] ${site.site}: ${res.health}${res.reason ? ` (${res.reason})` : ''}${res.engine ? `, движок ${res.engine}` : ''}`);
     results.push(res);
   }, () => save(true));

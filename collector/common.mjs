@@ -54,6 +54,12 @@ export function host(site) {
   return String(site || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
 }
 
+// Прошлый результат сайта: тот же ID и тот же адрес. Если под этим ID теперь другой сайт, прошлого нет.
+export function previousOf(prevById, site) {
+  const prev = prevById.get(String(site.id));
+  return prev && host(prev.site) === host(site.site) ? prev : undefined;
+}
+
 export function readJson(file) {
   try {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
