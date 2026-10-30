@@ -16,6 +16,7 @@ export const TONE_OF = {
   [CHANGE.same]: 'green', [CHANGE.changed]: 'blue', [CHANGE.check]: 'amber', [CHANGE.error]: 'red',
   [CHANGE.first]: 'violet', [CHANGE.noScenario]: 'gray',
   обычный: 'green', отложенный: 'blue', 'через контейнер': 'violet',
+  Да: 'green', Нет: 'gray',
 };
 
 const HEALTH_LIST = Object.values(HEALTH);
@@ -26,7 +27,7 @@ const KIND_LIST = ['обычный', 'отложенный', 'через кон�
 // Колонка: заголовок, ширина в точках, вид (id, status, text, wrap, money, link, center) и список для выпадающего меню.
 const col = (title, width, kind = 'text', list = null) => ({ title, width, kind, list });
 
-// Что выгружаем: имя листа → { groups (подписи над колонками: текст, сколько колонок, цвет), columns, rows }.
+// Что выгружаем: имя листа → { groups (подписи над колонками: текст и сколько колонок), columns, rows }.
 export function buildSheets({ health, konget, utp }) {
   const byId = (report) => new Map((report?.sites || []).map((s) => [String(s.id), s]));
   const h = byId(health);
@@ -58,7 +59,7 @@ export function buildSheets({ health, konget, utp }) {
 
   return {
     'Сводка': {
-      groups: [['Сайт', 5, 'indigo'], ['Работа сайта', 1, 'teal'], ['Скрипт Конгет', 2, 'violet'], ['УТП', 2, 'orange'], ['Примечания', 1, 'gray']],
+      groups: [['Сайт', 5], ['Работа сайта', 1], ['Скрипт Конгет', 2], ['УТП', 2], ['Примечания', 1]],
       columns: [
         col('ID', 52, 'id'), col('Компания', 190), col('Сайт', 170, 'link'), col('Бренд', 100), col('Ответственный', 150),
         col('Статус', 160, 'status', HEALTH_LIST),
@@ -69,7 +70,7 @@ export function buildSheets({ health, konget, utp }) {
       rows: summary,
     },
     'Работа сайтов': {
-      groups: [['Сайт', 2, 'indigo'], [checked('Проверка от', health), 5, 'teal']],
+      groups: [['Сайт', 2], [checked('Проверка от', health), 5]],
       columns: [
         col('ID', 52, 'id'), col('Сайт', 170, 'link'),
         col('Статус', 170, 'status', HEALTH_LIST), col('Код ответа', 90, 'center'), col('Открывался, с', 110, 'center'),
@@ -78,7 +79,7 @@ export function buildSheets({ health, konget, utp }) {
       rows: sites(health).map((s) => [s.id, s.site, s.health, s.code ?? '', s.load_seconds ?? '', s.reason || '', (s.was || '').replace('Было: ', '')]),
     },
     'Скрипт Конгет': {
-      groups: [['Сайт', 2, 'indigo'], [checked('Проверка от', konget), 7, 'violet']],
+      groups: [['Сайт', 2], [checked('Проверка от', konget), 7]],
       columns: [
         col('ID', 52, 'id'), col('Сайт', 170, 'link'),
         col('Статус', 170, 'status', KONGET_LIST), col('Как стоит', 140, 'status', KIND_LIST), col('Токен на сайте', 270),
@@ -90,7 +91,7 @@ export function buildSheets({ health, konget, utp }) {
       ]),
     },
     'УТП': {
-      groups: [['Сайт', 3, 'indigo'], [`${checked('Сбор от', utp)}${utp?.previous_date ? `, сравнение с ${utp.previous_date}` : ''}`, 5, 'orange']],
+      groups: [['Сайт', 3], [`${checked('Сбор от', utp)}${utp?.previous_date ? `, сравнение с ${utp.previous_date}` : ''}`, 5]],
       columns: [
         col('ID', 52, 'id'), col('Сайт', 170, 'link'), col('Бренд', 100),
         col('Модель', 150), col('Цена от', 120, 'money'), col('Выгода до', 120, 'money'),
@@ -108,4 +109,41 @@ export function sheetValues({ groups, columns, rows }) {
   const top = [];
   for (const [label, span] of groups) top.push(label.toUpperCase(), ...Array(span - 1).fill(''));
   return [top, columns.map((c) => c.title.toUpperCase()), ...rows];
+}
+
+// Лист «Сайты» — список сайтов, по которому работают все проверки. Его заполняет человек,
+// программа только читает (и один раз создаёт с заголовками, если листа ещё нет).
+export const SITES_SHEET = 'Сайты';
+const SITE_COLUMNS = [
+  col('ID', 52, 'id'), col('Компания', 200), col('Сайт', 190, 'link'), col('Бренд', 110), col('Ответственный', 160),
+  col('Проверять', 110, 'status', ['Да', 'Нет']), col('Токен Конгет', 280), col('Заметки', 260, 'wrap'),
+];
+
+export function sitesSheet(rows = []) {
+  return { groups: [['Сайты дилеров', 5], ['Настройки проверки', 3]], columns: SITE_COLUMNS, rows };
+}
+
+export const SITES_HEADER = SITE_COLUMNS.map((c) => c.title.toUpperCase());
+
+// Строки листа «Сайты» (с третьей, под заголовками) → список сайтов для проверок.
+// Пустые строки и строки без ID или адреса пропускаем; «Проверять: Нет» — сайт временно не проверяем.
+export function parseSites(values) {
+  const out = [];
+  const seen = new Set();
+  for (const r of values) {
+    const id = Number(String(r[0] ?? '').trim());
+    const site = String(r[2] ?? '').trim().replace(/\/+$/, '');
+    if (!id || !site || seen.has(id)) continue;
+    seen.add(id);
+    out.push({
+      id,
+      company: String(r[1] ?? '').trim(),
+      site,
+      brand: String(r[3] ?? '').trim(),
+      responsible: String(r[4] ?? '').trim(),
+      active: String(r[5] ?? '').trim().toLowerCase() !== 'нет',
+      konget_token: String(r[6] ?? '').trim(),
+    });
+  }
+  return out;
 }

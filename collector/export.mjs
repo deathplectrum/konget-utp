@@ -1,6 +1,7 @@
 // Кнопка 4 «Выгрузить данные в таблицу».
 // Берёт последние результаты трёх проверок и переписывает листы Google-таблицы:
-// «Сводка», «Работа сайтов», «Скрипт Конгет», «УТП». Остальные листы таблицы не трогает.
+// «Сводка», «Работа сайтов», «Скрипт Конгет», «УТП». Лист «Сайты» (список сайтов для проверок)
+// заполняет человек: здесь он только оформляется, а создаётся, если его ещё нет.
 //
 // Оформление (цвета групп, узкая колонка ID, выпадающие списки, цвета статусов, фильтр)
 // ставится заново при каждой выгрузке, поэтому таблица всегда выглядит одинаково.
@@ -9,66 +10,31 @@
 //   GOOGLE_SERVICE_ACCOUNT — JSON-ключ служебного аккаунта Google целиком;
 //   SHEET_ID — ссылка на таблицу или её id. Таблицу надо открыть служебному аккаунту как редактору.
 
-import crypto from 'node:crypto';
 import path from 'node:path';
-import { DATA, log, readJson } from './common.mjs';
-import { TONE_OF, buildSheets, sheetValues } from './sheet.mjs';
-
-const SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets';
-
-// Вход в Google от имени служебного аккаунта: подписываем запрос его ключом и получаем пропуск на час.
-async function accessToken(account) {
-  const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
-  const now = Math.floor(Date.now() / 1000);
-  const unsigned = `${b64({ alg: 'RS256', typ: 'JWT' })}.${b64({
-    iss: account.client_email,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600,
-  })}`;
-  const signature = crypto.sign('RSA-SHA256', Buffer.from(unsigned), account.private_key).toString('base64url');
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: `${unsigned}.${signature}` }),
-  });
-  if (!res.ok) throw new Error(`Google не пустил служебный аккаунт: ${res.status} ${await res.text()}`);
-  return (await res.json()).access_token;
-}
-
-async function api(token, url, body) {
-  const res = await fetch(url, {
-    method: body ? 'POST' : 'GET',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (res.status === 403 || res.status === 404) {
-    throw new Error('Нет доступа к таблице. Откройте её служебному аккаунту (кнопка «Настройки доступа» → его адрес → Редактор)');
-  }
-  if (!res.ok) throw new Error(`Google ответил ошибкой ${res.status}: ${await res.text()}`);
-  return res.json();
-}
+import { DATA, loadScenarios, log, readJson } from './common.mjs';
+import { SHEETS_API, api, connect, readRange } from './google.mjs';
+import {
+  SITES_HEADER, SITES_SHEET, TONE_OF, buildSheets, sheetValues, sitesSheet,
+} from './sheet.mjs';
 
 const hex = (h) => ({ red: parseInt(h.slice(1, 3), 16) / 255, green: parseInt(h.slice(3, 5), 16) / 255, blue: parseInt(h.slice(5, 7), 16) / 255 });
 
-// Пары «фон / текст» для групп и статусов.
-const TONES = {
-  green: ['#d9f2e3', '#137333'],
-  blue: ['#dbe8fd', '#1a56c4'],
-  amber: ['#fdf0cc', '#8a5a00'],
-  red: ['#fbdcdc', '#b3261e'],
-  violet: ['#ece3fd', '#6b3fc6'],
-  gray: ['#eceff1', '#546e7a'],
-  indigo: ['#e8eaf6', '#3949ab'],
-  teal: ['#e0f2f1', '#00796b'],
-  orange: ['#fff3e0', '#c25100'],
+// Всё в одном мягком синем стиле. Статусы различаются насыщенностью:
+// спокойные (всё хорошо) — светлые, требующие внимания — темнее, «нет данных» — серые.
+const BAND = ['#dce8f8', '#1e4e8c'];
+const HEAD = ['#eef4fc', '#1e3a5f'];
+const STATUS_STYLE = {
+  calm: ['#eef4fc', '#2b5c9e'],
+  attention: ['#c9dcf5', '#0f3a73'],
+  muted: ['#f1f4f8', '#6b7c93'],
 };
+const STYLE_OF_TONE = { green: 'calm', blue: 'calm', red: 'attention', amber: 'attention', violet: 'attention', gray: 'muted' };
+const LINE = '#e3ebf6';
 const FONT = 'Roboto';
 const MIN_ROWS = 200;
 
 // Запросы оформления одного листа.
-export function formatRequests(sheetId, spec, index, oldRules = 0) {
+export function formatRequests(sheetId, spec, index, oldRules = 0, { input = false } = {}) {
   const n = spec.columns.length;
   const rowCount = Math.max(MIN_ROWS, spec.rows.length + 50);
   const range = (r0, r1, c0, c1) => ({ sheetId, startRowIndex: r0, endRowIndex: r1, startColumnIndex: c0, endColumnIndex: c1 });
@@ -77,8 +43,9 @@ export function formatRequests(sheetId, spec, index, oldRules = 0) {
 
   req.push({
     updateSheetProperties: {
-      properties: { sheetId, index, gridProperties: { rowCount, columnCount: n, frozenRowCount: 2, hideGridlines: true } },
-      fields: 'index,gridProperties(rowCount,columnCount,frozenRowCount,hideGridlines)',
+      // Лист «Сайты» заполняет человек: лишние колонки там не удаляем.
+      properties: { sheetId, index, gridProperties: { rowCount, ...(input ? {} : { columnCount: n }), frozenRowCount: 2, hideGridlines: true } },
+      fields: `index,gridProperties(rowCount,${input ? '' : 'columnCount,'}frozenRowCount,hideGridlines)`,
     },
   });
   req.push({ unmergeCells: { range: range(0, rowCount, 0, n) } });
@@ -87,29 +54,31 @@ export function formatRequests(sheetId, spec, index, oldRules = 0) {
 
   // Строка 1: цветные подписи групп колонок.
   let c = 0;
-  for (const [, span, tone] of spec.groups) {
-    const [bg, fg] = TONES[tone] || TONES.gray;
+  for (const [, span] of spec.groups) {
+    const [bg, fg] = BAND;
     if (span > 1) req.push({ mergeCells: { range: range(0, 1, c, c + span), mergeType: 'MERGE_ALL' } });
     req.push(cell({
       backgroundColor: hex(bg), verticalAlignment: 'MIDDLE', horizontalAlignment: 'LEFT', padding: { left: 8 },
       textFormat: { fontFamily: FONT, fontSize: 9, bold: true, foregroundColor: hex(fg) },
     }, 'backgroundColor,verticalAlignment,horizontalAlignment,padding,textFormat', range(0, 1, c, c + span)));
+    // Белая полоса между группами, чтобы было видно, где кончается одна и начинается другая.
+    if (c > 0) req.push({ updateBorders: { range: range(0, 2, c, c + 1), left: { style: 'SOLID_THICK', color: hex('#ffffff') } } });
     c += span;
   }
 
   // Строка 2: заголовки колонок.
   req.push(cell({
-    backgroundColor: hex('#ffffff'), verticalAlignment: 'MIDDLE', wrapStrategy: 'WRAP',
-    textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex('#1f2933') },
+    backgroundColor: hex(HEAD[0]), verticalAlignment: 'MIDDLE', wrapStrategy: 'WRAP',
+    textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex(HEAD[1]) },
   }, 'backgroundColor,verticalAlignment,wrapStrategy,textFormat', range(1, 2, 0, n)));
-  req.push({ updateBorders: { range: range(1, 2, 0, n), bottom: { style: 'SOLID_MEDIUM', color: hex('#9aa5b1') } } });
+  req.push({ updateBorders: { range: range(1, 2, 0, n), bottom: { style: 'SOLID_MEDIUM', color: hex('#9db8dd') } } });
 
   // Данные: тонкие линии между строками, выравнивание по виду колонки.
   req.push(cell({
     backgroundColor: hex('#ffffff'), verticalAlignment: 'MIDDLE', wrapStrategy: 'CLIP', horizontalAlignment: 'LEFT',
     textFormat: { fontFamily: FONT, fontSize: 10, bold: false, foregroundColor: hex('#1f2933') }, numberFormat: { type: 'TEXT' },
   }, 'backgroundColor,verticalAlignment,wrapStrategy,horizontalAlignment,textFormat,numberFormat', range(2, rowCount, 0, n)));
-  req.push({ updateBorders: { range: range(2, rowCount, 0, n), innerHorizontal: { style: 'SOLID', color: hex('#e4e7eb') } } });
+  req.push({ updateBorders: { range: range(2, rowCount, 0, n), innerHorizontal: { style: 'SOLID', color: hex(LINE) } } });
 
   spec.columns.forEach((col, i) => {
     const data = range(2, rowCount, i, i + 1);
@@ -119,7 +88,7 @@ export function formatRequests(sheetId, spec, index, oldRules = 0) {
       },
     });
     if (col.kind === 'id') {
-      req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0' }, textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex('#52606d') } },
+      req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0' }, textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex('#5b7290') } },
         'horizontalAlignment,numberFormat,textFormat', data));
     }
     if (col.kind === 'center') req.push(cell({ horizontalAlignment: 'CENTER', numberFormat: { type: 'NUMBER', pattern: '0.#' } }, 'horizontalAlignment,numberFormat', data));
@@ -136,7 +105,7 @@ export function formatRequests(sheetId, spec, index, oldRules = 0) {
         },
       });
       for (const value of col.list) {
-        const [bg, fg] = TONES[TONE_OF[value]] || TONES.gray;
+        const [bg, fg] = STATUS_STYLE[STYLE_OF_TONE[TONE_OF[value]] || 'muted'];
         req.push({
           addConditionalFormatRule: {
             rule: {
@@ -159,45 +128,65 @@ export function formatRequests(sheetId, spec, index, oldRules = 0) {
   return req;
 }
 
-export function sheetIdFrom(value) {
-  return String(value || '').match(/\/d\/([A-Za-z0-9_-]+)/)?.[1] || String(value || '').trim();
-}
+// Старый лист из первой версии таблицы, его заменили «Сводка» и остальные листы.
+const LEGACY = ['Проверка'];
 
 async function main() {
-  if (!process.env.GOOGLE_SERVICE_ACCOUNT || !process.env.SHEET_ID) {
-    throw new Error('Не заданы секреты GOOGLE_SERVICE_ACCOUNT и SHEET_ID (см. инструкцию в приложении, вкладка «Настройки»)');
-  }
-  const account = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
-  const id = sheetIdFrom(process.env.SHEET_ID);
+  const conn = await connect();
+  const { token, id } = conn;
   const sheets = buildSheets({
     health: readJson(path.join(DATA, 'health', 'latest.json')),
     konget: readJson(path.join(DATA, 'konget', 'latest.json')),
     utp: readJson(path.join(DATA, 'utp', 'latest.json')),
   });
 
-  const token = await accessToken(account);
   const fields = 'properties.title,sheets(properties(sheetId,title),conditionalFormats(ranges))';
-  let info = await api(token, `${SHEETS_API}/${id}?fields=${encodeURIComponent(fields)}`);
+  const load = () => api(token, `${SHEETS_API}/${id}?fields=${encodeURIComponent(fields)}`);
+  let info = await load();
   const have = new Set(info.sheets.map((s) => s.properties.title));
-  const missing = Object.keys(sheets).filter((t) => !have.has(t));
-  if (missing.length) {
+  const missing = [SITES_SHEET, ...Object.keys(sheets)].filter((t) => !have.has(t));
+  const legacy = info.sheets.filter((s) => LEGACY.includes(s.properties.title));
+  if (missing.length || legacy.length) {
     await api(token, `${SHEETS_API}/${id}:batchUpdate`, {
-      requests: missing.map((title) => ({ addSheet: { properties: { title } } })),
+      requests: [
+        ...missing.map((title) => ({ addSheet: { properties: { title } } })),
+        ...legacy.map((s) => ({ deleteSheet: { sheetId: s.properties.sheetId } })),
+      ],
     });
-    info = await api(token, `${SHEETS_API}/${id}?fields=${encodeURIComponent(fields)}`);
+    info = await load();
   }
   const byTitle = new Map(info.sheets.map((s) => [s.properties.title, s]));
-  const ranges = Object.keys(sheets).map((t) => `'${t}'`);
-  await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges });
+
+  // Лист «Сайты»: если он новый или старого вида, ставим заголовки и переносим сайты из сценариев.
+  // Если он уже нашего вида — данные не трогаем, только оформление.
+  const current = await readRange(conn, `'${SITES_SHEET}'!A1:H`);
+  const ours = SITES_HEADER.every((h, i) => String(current[1]?.[i] ?? '').trim().toUpperCase() === h);
+  let siteRows = current.slice(2);
+  if (!ours) {
+    siteRows = loadScenarios().filter((sc) => sc.site).sort((a, b) => a.id - b.id)
+      .map((sc) => [sc.id, sc.company || '', sc.site, sc.brand || '', sc.responsible || '', sc.active === false ? 'Нет' : 'Да', sc.konget_token || '', '']);
+    await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: [`'${SITES_SHEET}'`] });
+    log(`Лист «${SITES_SHEET}» создан заново: сайтов ${siteRows.length}`);
+  }
+  const sitesSpec = sitesSheet(siteRows);
+
+  await api(token, `${SHEETS_API}/${id}/values:batchClear`, { ranges: Object.keys(sheets).map((t) => `'${t}'`) });
+  const sitesInfo = byTitle.get(SITES_SHEET);
   await api(token, `${SHEETS_API}/${id}:batchUpdate`, {
-    requests: Object.entries(sheets).flatMap(([title, spec], i) => {
-      const sheet = byTitle.get(title);
-      return formatRequests(sheet.properties.sheetId, spec, i, sheet.conditionalFormats?.length || 0);
-    }),
+    requests: [
+      ...formatRequests(sitesInfo.properties.sheetId, sitesSpec, 0, sitesInfo.conditionalFormats?.length || 0, { input: true }),
+      ...Object.entries(sheets).flatMap(([title, spec], i) => {
+        const sheet = byTitle.get(title);
+        return formatRequests(sheet.properties.sheetId, spec, i + 1, sheet.conditionalFormats?.length || 0);
+      }),
+    ],
   });
   await api(token, `${SHEETS_API}/${id}/values:batchUpdate`, {
     valueInputOption: 'RAW',
-    data: Object.entries(sheets).map(([title, spec]) => ({ range: `'${title}'!A1`, values: sheetValues(spec) })),
+    data: [
+      ...(ours ? [{ range: `'${SITES_SHEET}'!A1`, values: sheetValues({ ...sitesSpec, rows: [] }) }] : [{ range: `'${SITES_SHEET}'!A1`, values: sheetValues(sitesSpec) }]),
+      ...Object.entries(sheets).map(([title, spec]) => ({ range: `'${title}'!A1`, values: sheetValues(spec) })),
+    ],
   });
   for (const [title, spec] of Object.entries(sheets)) log(`«${title}»: строк ${spec.rows.length}`);
   log(`Готово: таблица «${info.properties.title}» обновлена`);

@@ -34,6 +34,9 @@ jobs:
       - name: Проверить, открываются ли сайты
         env:
           SITE: ${{ inputs.site }}
+          # Список сайтов — из листа «Сайты» Google-таблицы.
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
         run: |
           if [ -n "$SITE" ]; then
             exec node collector/health.mjs --site "$SITE"

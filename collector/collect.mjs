@@ -2,20 +2,19 @@
 // или у себя командой: npm run collect   (один сайт: npm run collect -- --site 1)
 //
 // Что делает:
-// 1. Читает сценарии сайтов из папки scenarios/ (один файл — один сайт).
+// 1. Берёт список сайтов из листа «Сайты» Google-таблицы, подсказки по сайту — из scenarios/<id>.
 // 2. Открывает страницы сайта в браузере и берёт модели, цены и выгоды по сценарию.
 // 3. Сравнивает с прошлым сбором и пишет итог в data/utp/latest.json и data/utp/history/<дата>.json.
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { load as loadYaml } from 'js-yaml';
 import { chromium } from 'playwright';
+import { loadSites } from './common.mjs';
 import {
   parsePrices, parseBenefits, parseAmounts, cleanModel, mergeModels, validateModels, decideChange, sortSites, summarize, historyToDelete,
 } from './lib.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const SCENARIOS = path.join(ROOT, 'scenarios');
 const DATA = path.join(ROOT, 'data');
 const UTP = path.join(DATA, 'utp');
 const HISTORY = path.join(UTP, 'history');
@@ -25,15 +24,6 @@ const PARALLEL = Number(process.env.PARALLEL) || 3; // сколько сайто
 
 function log(...args) {
   console.log(new Date().toISOString().slice(11, 19), ...args);
-}
-
-function loadScenarios(onlyId) {
-  return fs.readdirSync(SCENARIOS)
-    .filter((f) => /\.ya?ml$/.test(f) && !f.startsWith('_'))
-    .map((f) => ({ file: f, ...loadYaml(fs.readFileSync(path.join(SCENARIOS, f), 'utf8')) }))
-    .filter((s) => s.active !== false)
-    .filter((s) => !onlyId || String(s.id) === String(onlyId))
-    .sort((a, b) => a.id - b.id);
 }
 
 function readJson(file) {
@@ -251,7 +241,7 @@ async function collectSite(browser, site) {
 
 async function main() {
   const onlyId = process.argv.includes('--site') ? process.argv[process.argv.indexOf('--site') + 1] : null;
-  const scenarios = loadScenarios(onlyId);
+  const scenarios = await loadSites(onlyId);
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const previous = loadPrevious(today);

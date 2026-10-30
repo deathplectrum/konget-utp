@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { load as loadYaml } from 'js-yaml';
 import { historyToDelete } from './lib.mjs';
+import { connect, hasGoogle, readRange } from './google.mjs';
+import { SITES_SHEET, parseSites } from './sheet.mjs';
 
 export const ROOT = path.resolve(import.meta.dirname, '..');
 export const SCENARIOS = path.join(ROOT, 'scenarios');
@@ -13,13 +15,34 @@ export function log(...args) {
   console.log(new Date().toISOString().slice(11, 19), ...args);
 }
 
-// Сайты берём из сценариев: один файл — один сайт. Для проверок работы сайта и скрипта
-// Конгет хватает id и адреса, селекторы для цен не нужны.
-export function loadScenarios(onlyId) {
+// Сценарии сайтов (scenarios/*.yaml): где на сайте модели, цены и выгоды — нужны для сверки УТП.
+export function loadScenarios() {
   return fs.readdirSync(SCENARIOS)
     .filter((f) => /\.ya?ml$/.test(f) && !f.startsWith('_'))
-    .map((f) => ({ file: f, ...loadYaml(fs.readFileSync(path.join(SCENARIOS, f), 'utf8')) }))
-    .filter((s) => s.active !== false && s.site)
+    .map((f) => ({ file: f, ...loadYaml(fs.readFileSync(path.join(SCENARIOS, f), 'utf8')) }));
+}
+
+// Список сайтов для проверки. Главный источник — лист «Сайты» Google-таблицы: его обновляет человек.
+// Сценарий с тем же ID добавляет к сайту подсказки для сверки УТП. Если таблица не подключена
+// (нет секретов) или лист пуст, берём сайты из сценариев.
+export async function loadSites(onlyId) {
+  const scenarios = loadScenarios();
+  const byId = new Map(scenarios.map((s) => [String(s.id), s]));
+  let sites = [];
+  if (hasGoogle()) {
+    const rows = parseSites(await readRange(await connect(), `'${SITES_SHEET}'!A3:H`));
+    log(`Лист «${SITES_SHEET}»: сайтов ${rows.length}`);
+    sites = rows.map((r) => {
+      const sc = byId.get(String(r.id)) || {};
+      return { ...sc, ...r, konget_token: r.konget_token || sc.konget_token || '' };
+    });
+  }
+  if (!sites.length) {
+    log('Список сайтов берём из папки scenarios');
+    sites = scenarios.filter((s) => s.site);
+  }
+  return sites
+    .filter((s) => s.active !== false)
     .filter((s) => !onlyId || String(s.id) === String(onlyId))
     .sort((a, b) => a.id - b.id);
 }

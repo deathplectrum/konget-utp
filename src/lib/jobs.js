@@ -1,7 +1,6 @@
 // Четыре кнопки главного экрана. У каждой своя проверка на GitHub (workflow) и свой файл с итогом.
 import {
   pulseOutline, codeSlashOutline, pricetagsOutline, cloudUploadOutline,
-  checkmarkCircle, alertCircle, cloudOffline, timeOutline, helpCircle, closeCircle, keyOutline, searchOutline,
 } from 'ionicons/icons';
 
 export const JOBS = [
@@ -56,37 +55,6 @@ export const JOBS = [
 
 export const JOB = Object.fromEntries(JOBS.map((j) => [j.key, j]));
 
-// Статусы проверок «Работа сайтов» и «Скрипт Конгет». Названия совпадают с теми, что пишут проверки.
-export const HEALTH_STATUS = {
-  'Не работает': { tone: 'red', icon: cloudOffline, hint: 'Сайт не открылся или ответил ошибкой' },
-  'Заглушка': { tone: 'amber', icon: alertCircle, hint: 'Вместо сайта пустая страница или «в разработке»' },
-  'Работает медленно': { tone: 'blue', icon: timeOutline, hint: 'Открывается дольше 10 секунд' },
-  'Работает': { tone: 'green', icon: checkmarkCircle, hint: 'Всё в порядке' },
-};
-
-export const KONGET_STATUS = {
-  'Скрипта нет': { tone: 'red', icon: closeCircle, hint: 'На сайте не нашли app.konget' },
-  'Токен не тот': { tone: 'red', icon: keyOutline, hint: 'Стоит скрипт с другим токеном' },
-  'Скрипт без токена': { tone: 'amber', icon: alertCircle, hint: 'Конгет есть, а token не нашёлся' },
-  'Проверить вручную': { tone: 'violet', icon: searchOutline, hint: 'Скрипт может быть в контейнере тегов, программе его не видно' },
-  'Сайт не открылся': { tone: 'gray', icon: cloudOffline, hint: 'Проверить не получилось' },
-  'Скрипт есть': { tone: 'green', icon: checkmarkCircle, hint: 'Скрипт и токен на месте' },
-};
-
+// Статусы, которые требуют внимания (названия совпадают с теми, что пишут проверки).
 export const KONGET_PROBLEMS = ['Скрипта нет', 'Токен не тот', 'Скрипт без токена', 'Проверить вручную'];
 export const HEALTH_PROBLEMS = ['Не работает', 'Заглушка'];
-
-export function metaOf(table, status) {
-  return table[status] || { tone: 'gray', icon: helpCircle, hint: '' };
-}
-
-// Все сайты из всех проверок: работает ли сайт, есть ли скрипт Конгет. Проблемные сверху.
-export function mergeSites(reports) {
-  const byId = new Map();
-  for (const key of ['utp', 'konget', 'health']) {
-    for (const s of reports[key]?.sites || []) {
-      byId.set(String(s.id), { ...byId.get(String(s.id)), ...s, [key]: s });
-    }
-  }
-  return [...byId.values()];
-}

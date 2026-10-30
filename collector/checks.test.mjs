@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HEALTH, KONGET, findTokens, healthVerdict, kongetVerdict } from './checks.mjs';
-import { buildSheets, sheetValues } from './sheet.mjs';
-import { sheetIdFrom } from './export.mjs';
+import { buildSheets, parseSites, sheetValues, sitesSheet, SITES_HEADER } from './sheet.mjs';
+import { sheetIdFrom } from './google.mjs';
 
 const LIVE = 'Официальный дилер. Модели, цены, тест-драйв, кредит, трейд-ин, сервис и запчасти. '.repeat(3);
 
@@ -88,4 +88,23 @@ test('листы таблицы: сводка по сайтам, проблем�
 test('id таблицы из ссылки', () => {
   assert.equal(sheetIdFrom('https://docs.google.com/spreadsheets/d/1AbC-dEf_123/edit#gid=0'), '1AbC-dEf_123');
   assert.equal(sheetIdFrom(' 1AbC-dEf_123 '), '1AbC-dEf_123');
+});
+
+test('лист «Сайты»: читаем строки, пропускаем пустые и выключенные помечаем', () => {
+  const sites = parseSites([
+    ['101', 'ООО Авто', 'https://dealer.ru/', 'Tenet', 'Иван', 'Да', '538e1215043c412b9cfcff11319094a9'],
+    ['', 'без id', 'x.ru'],
+    ['102', 'Без адреса', ''],
+    ['103', 'Выкл', 'off.ru', 'KGM', '', 'Нет'],
+    ['104', 'Коротко', 'short.ru'],
+    ['101', 'Дубль', 'dup.ru'],
+  ]);
+  assert.deepEqual(sites.map((s) => s.id), [101, 103, 104]);
+  assert.equal(sites[0].site, 'https://dealer.ru');
+  assert.equal(sites[0].konget_token, '538e1215043c412b9cfcff11319094a9');
+  assert.equal(sites[1].active, false);
+  assert.equal(sites[2].active, true);
+  const values = sheetValues(sitesSheet([]));
+  assert.deepEqual(values[1], SITES_HEADER);
+  assert.equal(values[0].length, values[1].length);
 });

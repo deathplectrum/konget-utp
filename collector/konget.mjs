@@ -9,7 +9,7 @@
 
 import { chromium } from 'playwright';
 import { KONGET_ORDER, changedSince, countBy, kongetVerdict, sortBy } from './checks.mjs';
-import { argValue, keepUnchecked, loadScenarios, log, runQueue, siteBase, siteUrl, store } from './common.mjs';
+import { argValue, keepUnchecked, loadSites, log, runQueue, siteBase, siteUrl, store } from './common.mjs';
 
 const PARALLEL = Number(process.env.PARALLEL) || 6;
 const TIMEOUT = 30_000;
@@ -40,7 +40,7 @@ async function checkSite(browser, site) {
 
 async function main() {
   const onlyId = argValue('--site');
-  const sites = loadScenarios(onlyId);
+  const sites = await loadSites(onlyId);
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const db = store('konget');

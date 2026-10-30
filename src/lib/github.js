@@ -15,10 +15,6 @@ export function rawUrl(repo, file) {
   return `https://raw.githubusercontent.com/${repo}/main/${file}`;
 }
 
-export function fileUrl(repo, file) {
-  return `https://github.com/${repo}/blob/main/${file}`;
-}
-
 // Последний итог проверки (file — например, data/utp/latest.json). С ключом читаем через API
 // (всегда свежий), без ключа — обычной ссылкой (GitHub может отдавать копию до 5 минут давности).
 export async function loadData({ repo, token }, file) {
@@ -78,17 +74,3 @@ export async function checkToken({ repo, token }) {
   return { ok: true, text: 'Всё в порядке: ключ подходит' };
 }
 
-// Ссылка «Добавить сайт»: открывает на GitHub новый файл сценария с готовым шаблоном.
-export function newScenarioUrl(repo) {
-  const template = `id: 
-company: 
-site: 
-brand: 
-active: true
-
-pages:
-  - url: https://
-`;
-  const q = new URLSearchParams({ filename: 'scenarios/000-novyi-sait.yaml', value: template });
-  return `https://github.com/${repo}/new/main?${q}`;
-}
