@@ -76,8 +76,10 @@ test('листы таблицы: сводка по сайтам, проблем�
   const rows = (name) => sheetValues(sheets[name]);
   assert.equal(rows('Сводка')[0][0], 'ID');
   assert.equal(rows('Сводка')[1][2], 'b.ru');
-  assert.deepEqual(rows('Сводка')[2].slice(5, 10), ['Работает', 'Скрипт есть', '123456', 'Изменилось', 'T8: цена']);
-  assert.deepEqual(rows('УТП')[1].slice(3, 6), ['T8', 2899000, '']);
+  assert.deepEqual(rows('Сводка')[2].slice(5, 10), ['Работает', 'Скрипт есть', 'Да', 'Изменилось', 'T8: цена']);
+  assert.ok(!JSON.stringify(sheets).includes('123456'), 'сам токен в таблицу не пишем');
+  assert.deepEqual(rows('УТП')[1].slice(1, 7), ['a.ru', 'Tenet', 'Изменилось', 'Да', 'T8: цена', 1]);
+  assert.equal(rows('УТП').length, 2, 'одна строка — один сайт');
   assert.equal(rows('Скрипт Конгет')[0][2], 'Статус на 2026-10-27');
   for (const spec of Object.values(sheets)) assert.ok(spec.rows.every((r) => r.length === spec.columns.length));
 });

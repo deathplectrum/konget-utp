@@ -19,15 +19,15 @@ import {
 
 const hex = (h) => ({ red: parseInt(h.slice(1, 3), 16) / 255, green: parseInt(h.slice(3, 5), 16) / 255, blue: parseInt(h.slice(5, 7), 16) / 255 });
 
-// Один спокойный стиль: светло-зелёная строка заголовков с фильтрами, обычная сетка,
-// статусы — плашками. Всё хорошо — зелёная плашка, нужно посмотреть — тёплая жёлтая, нет данных — серая.
-const HEAD = ['#d9ead3', '#1e1e1e'];
+// Один спокойный сине-бирюзовый стиль, без ярких цветов: голубая строка заголовков с фильтрами,
+// статусы — плашками. Всё хорошо — бирюзовая, нужно посмотреть — голубая, нет данных — серая.
+const HEAD = ['#cfe2f3', '#0b3b60'];
+const HEAD_LINE = '#9fc5e8';
 const STATUS_STYLE = {
-  calm: ['#d9ead3', '#274e13'],
-  attention: ['#fce8b2', '#7f6000'],
-  muted: ['#efefef', '#666666'],
+  calm: ['#d5eeec', '#0e5e58'],
+  attention: ['#dbe7f7', '#1c4587'],
+  muted: ['#eef1f4', '#6b7785'],
 };
-const STYLE_OF_TONE = { green: 'calm', blue: 'calm', red: 'attention', amber: 'attention', violet: 'attention', gray: 'muted' };
 const FONT = 'Arial';
 const MIN_ROWS = 200;
 
@@ -57,6 +57,7 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
     backgroundColor: hex(HEAD[0]), verticalAlignment: 'MIDDLE', horizontalAlignment: 'LEFT', wrapStrategy: 'CLIP',
     textFormat: { fontFamily: FONT, fontSize: 10, bold: true, foregroundColor: hex(HEAD[1]) },
   }, 'backgroundColor,verticalAlignment,horizontalAlignment,wrapStrategy,textFormat', range(0, 1, 0, n)));
+  req.push({ updateBorders: { range: range(0, 1, 0, n), bottom: { style: 'SOLID_MEDIUM', color: hex(HEAD_LINE) } } });
 
   // Данные.
   req.push(cell({
@@ -84,7 +85,7 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
         },
       });
       for (const value of col.list) {
-        const [bg, fg] = STATUS_STYLE[STYLE_OF_TONE[TONE_OF[value]] || 'muted'];
+        const [bg, fg] = STATUS_STYLE[(col.tones || TONE_OF)[value] || 'muted'];
         req.push({
           addConditionalFormatRule: {
             rule: {
@@ -104,7 +105,8 @@ export function formatRequests(sheetId, spec, index, oldRules = 0, { input = fal
     }
   });
 
-  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: rowCount }, properties: { pixelSize: 21 }, fields: 'pixelSize' } });
+  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: rowCount }, properties: { pixelSize: 24 }, fields: 'pixelSize' } });
+  req.push({ updateDimensionProperties: { range: { sheetId, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 32 }, fields: 'pixelSize' } });
   return req;
 }
 

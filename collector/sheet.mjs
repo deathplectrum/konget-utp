@@ -6,26 +6,31 @@ import { CHANGE } from './lib.mjs';
 import { HEALTH, KONGET } from './checks.mjs';
 
 const day = (iso) => (iso ? iso.slice(0, 10) : '');
-const num = (v) => (typeof v === 'number' ? v : '');
 
-// Цвета статусов: зелёный — всё хорошо, жёлтый — посмотреть, красный — плохо.
+// Как выделять значения: calm — всё хорошо, attention — нужно посмотреть, muted — нет данных.
 export const TONE_OF = {
-  [HEALTH.ok]: 'green', [HEALTH.slow]: 'blue', [HEALTH.stub]: 'amber', [HEALTH.down]: 'red',
-  [KONGET.ok]: 'green', [KONGET.wrong]: 'red', [KONGET.noToken]: 'amber', [KONGET.manual]: 'violet',
-  [KONGET.missing]: 'red', [KONGET.down]: 'gray',
-  [CHANGE.same]: 'green', [CHANGE.changed]: 'blue', [CHANGE.check]: 'amber', [CHANGE.error]: 'red',
-  [CHANGE.first]: 'violet', [CHANGE.noScenario]: 'gray',
-  обычный: 'green', отложенный: 'blue', 'через контейнер': 'violet',
-  Да: 'green', Нет: 'gray',
+  [HEALTH.ok]: 'calm', [HEALTH.slow]: 'attention', [HEALTH.stub]: 'attention', [HEALTH.down]: 'attention',
+  [KONGET.ok]: 'calm', [KONGET.wrong]: 'attention', [KONGET.noToken]: 'attention', [KONGET.manual]: 'attention',
+  [KONGET.missing]: 'attention', [KONGET.down]: 'muted',
+  [CHANGE.same]: 'calm', [CHANGE.changed]: 'attention', [CHANGE.check]: 'attention', [CHANGE.error]: 'attention',
+  [CHANGE.first]: 'calm', [CHANGE.noScenario]: 'muted',
+  обычный: 'calm', отложенный: 'calm', 'через контейнер': 'calm',
 };
+// Колонки «Да/Нет»: где «Да» — хорошо (токен есть), а где — повод посмотреть (есть изменения).
+const YES_GOOD = { Да: 'calm', Нет: 'attention' };
+const YES_LOOK = { Да: 'attention', Нет: 'calm' };
+const YES_ON = { Да: 'calm', Нет: 'muted' };
+const YES_NO = ['Да', 'Нет'];
+const yes = (v) => (v ? 'Да' : 'Нет');
 
 const HEALTH_LIST = Object.values(HEALTH);
 const KONGET_LIST = Object.values(KONGET);
 const CHANGE_LIST = Object.values(CHANGE);
 const KIND_LIST = ['обычный', 'отложенный', 'через контейнер'];
 
-// Колонка: заголовок, ширина в точках, вид (id, status, text, wrap, money, link, center) и список для выпадающего меню.
-const col = (title, width, kind = 'text', list = null) => ({ title, width, kind, list });
+// Колонка: заголовок, ширина в точках, вид (id, status, text, wrap, center), список для выпадающего меню
+// и, если нужно, своё выделение значений (иначе берётся TONE_OF).
+const col = (title, width, kind = 'text', list = null, tones = null) => ({ title, width, kind, list, tones });
 
 // Что выгружаем: имя листа → { columns, rows }.
 export function buildSheets({ health, konget, utp }) {
@@ -47,7 +52,7 @@ export function buildSheets({ health, konget, utp }) {
       problems,
       row: [
         Number(id), site.company || '', site.site, site.brand || '', site.responsible || '',
-        hs?.health || '', ks?.konget || '', (ks?.tokens || []).join(', '), us?.change || '',
+        hs?.health || '', ks?.konget || '', ks ? yes(ks.tokens?.length) : '', us?.change || '',
         (us?.changes || []).join('; '),
         [hs?.reason, ks?.reason, us?.comment].filter(Boolean).join('; '),
       ],
@@ -63,7 +68,7 @@ export function buildSheets({ health, konget, utp }) {
       columns: [
         col('ID', 44, 'id'), col('Компания', 190), col('Сайт', 170, 'link'), col('Бренд', 100), col('Ответственный', 150),
         col('Сайт работает', 160, 'status', HEALTH_LIST),
-        col('Скрипт Конгет', 160, 'status', KONGET_LIST), col('Токен', 270),
+        col('Скрипт Конгет', 160, 'status', KONGET_LIST), col('Токен есть', 100, 'status', YES_NO, YES_GOOD),
         col('УТП', 160, 'status', CHANGE_LIST), col('Что изменилось', 340, 'wrap'),
         col('Комментарий', 340, 'wrap'),
       ],
@@ -80,23 +85,27 @@ export function buildSheets({ health, konget, utp }) {
     'Скрипт Конгет': {
       columns: [
         col('ID', 44, 'id'), col('Сайт', 170, 'link'),
-        col(on(konget), 170, 'status', KONGET_LIST), col('Как стоит', 140, 'status', KIND_LIST), col('Токен на сайте', 270),
-        col('Ожидаемый токен', 200), col('Откуда скрипт', 260, 'wrap'), col('Пояснение', 340, 'wrap'), col('Было', 150),
+        col(on(konget), 170, 'status', KONGET_LIST), col('Как стоит', 140, 'status', KIND_LIST),
+        col('Токен есть', 100, 'status', YES_NO, YES_GOOD), col('Пояснение', 380, 'wrap'), col('Было', 150),
       ],
       rows: sites(konget).map((s) => [
-        s.id, s.site, s.konget, s.kind || '', (s.tokens || []).join(', '), s.expected || '', s.where || '', s.reason || '',
+        s.id, s.site, s.konget, s.kind || '', s.konget === KONGET.down ? '' : yes(s.tokens?.length), s.reason || '',
         (s.was || '').replace('Было: ', ''),
       ]),
     },
+    // «УТП»: одна строка — один сайт. Есть ли изменения с прошлого сбора и какие.
     'УТП': {
       columns: [
         col('ID', 44, 'id'), col('Сайт', 170, 'link'), col('Бренд', 100),
-        col('Модель', 150), col('Цена от', 120, 'money'), col('Выгода до', 120, 'money'),
-        col(utp?.previous_date ? `${on(utp)} (было ${utp.previous_date})` : on(utp), 200, 'status', CHANGE_LIST), col('Страница', 280, 'wrap'),
+        col(utp?.previous_date ? `${on(utp)} (было ${utp.previous_date})` : on(utp), 210, 'status', CHANGE_LIST),
+        col('Изменения есть', 120, 'status', YES_NO, YES_LOOK), col('Что изменилось', 420, 'wrap'),
+        col('Моделей', 80, 'center'), col('Комментарий', 300, 'wrap'),
       ],
-      rows: sites(utp).flatMap((s) => (s.models?.length
-        ? s.models.map((m) => [s.id, s.site, s.brand || '', m.model, num(m.price), num(m.max_benefit), s.change, m.source_url || ''])
-        : [[s.id, s.site, s.brand || '', '', '', '', s.change, '']])),
+      rows: sites(utp).map((s) => [
+        s.id, s.site, s.brand || '', s.change,
+        s.change === CHANGE.changed ? 'Да' : [CHANGE.same, CHANGE.first].includes(s.change) ? 'Нет' : '',
+        s.change === CHANGE.changed ? (s.changes || []).join('; ') : '', s.models?.length || '', s.comment || '',
+      ]),
     },
   };
 }
@@ -111,7 +120,7 @@ export function sheetValues({ columns, rows }) {
 export const SITES_SHEET = 'Сайты';
 const SITE_COLUMNS = [
   col('ID', 44, 'id'), col('Компания', 200), col('Сайт', 190, 'link'), col('Бренд', 110), col('Ответственный', 160),
-  col('Проверять', 110, 'status', ['Да', 'Нет']), col('Токен Конгет', 280), col('Заметки', 260, 'wrap'),
+  col('Проверять', 110, 'status', YES_NO, YES_ON), col('Токен Конгет', 280), col('Заметки', 260, 'wrap'),
 ];
 
 export function sitesSheet(rows = []) {
