@@ -137,9 +137,12 @@ async function collectModelPages(context, site, cfg) {
   } finally {
     await list.close();
   }
+  // Одна и та же страница бывает в меню с разными хвостами: …/gs4?mobile, …/gs4?main_menu, …/gs4/.
   const seen = new Set();
-  links = links.filter((l) => l.href && !seen.has(l.href) && seen.add(l.href));
+  const key = (href) => href.split(/[?#]/)[0].replace(/\/+$/, '');
+  links = links.filter((l) => l.href && !seen.has(key(l.href)) && seen.add(key(l.href)));
   if (!links.length) throw new Error(`На ${cfg.list_url} не нашлось ссылок на модели`);
+  if (cfg.max_links) links = links.slice(0, cfg.max_links);
   log(`  [${site.id}] моделей в списке: ${links.length}`);
 
   const page = cfg.page || {};
@@ -163,7 +166,11 @@ async function collectModelPages(context, site, cfg) {
       }, page);
       const prices = found.prices.flatMap(parsePrices);
       const benefits = found.benefits.flatMap(page.benefit_all ? parseAmounts : parseBenefits);
-      const name = cleanModel((found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean), site.brand);
+      // Текст ссылки «О модели» — не название: тогда берём его из адреса страницы (/models/gs3 → GS3).
+      const generic = /^(о модели|подробнее|узнать больше|смотреть)$/i;
+      const fromUrl = () => decodeURIComponent(new URL(link.href).pathname.split('/').filter(Boolean).at(-1) || '').replace(/[-_]+/g, ' ').toUpperCase();
+      const raw = (found.title || link.name).split('\n').map((l) => l.trim()).find(Boolean) || '';
+      const name = cleanModel(generic.test(raw) ? fromUrl() : raw, site.brand);
       // Снимок: если сценарий не дописан, или на странице модели не нашлось цены (один на сайт).
       if (!hasSelectors || (!prices.length && !screens.length)) screens.push(await snapshot(p, site, `model-${i}`));
       models.push({
@@ -231,6 +238,9 @@ async function collectSite(browser, site) {
     if (templates.has(engine)) {
       log(`  [${site.id}] своего сценария нет, беру шаблон движка ${engine}`);
       Object.assign(site, fromTemplate(site, templates.get(engine)), { template: engine });
+    } else if (templates.has('*')) {
+      log(`  [${site.id}] своего сценария и шаблона движка нет (${engine || 'движок неизвестен'}), беру запасной шаблон`);
+      Object.assign(site, fromTemplate(site, templates.get('*')), { template: '*', engine });
     } else {
       site.engine = engine;
     }
@@ -286,11 +296,14 @@ async function collectSiteWith(browser, site) {
     if (unfinished) problems.unshift('Сценарий не заполнен до конца, сделан снимок страницы');
     if (!models.length && !unfinished) problems.push('Модели не найдены');
     const all = [...problems, ...notes];
-    if (site.template) {
+    if (site.template === '*') {
+      base.template = '*';
+      all.push(`Собрано запасным шаблоном (движок: ${site.engine || 'не определён'}), цифры надо проверить`);
+    } else if (site.template) {
       base.template = site.template;
       all.push(`Собрано по общему шаблону движка ${site.template}`);
     }
-    const ok = all.length === (site.template ? 1 : 0);
+    const ok = site.template !== '*' && all.length === (site.template ? 1 : 0);
     return { ...base, models, status: ok ? 'ok' : 'needs_check', comment: all.join('; ') };
   } finally {
     await context.close();

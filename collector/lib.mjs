@@ -91,7 +91,9 @@ export function cleanModel(name, brand = '') {
 // Цены из текста. Если рядом есть «от 2 199 000», берём только такие суммы:
 // так в цену не попадут выгоды и годы из сносок.
 export function parsePrices(text) {
-  const clean = String(text || '').replace(/[\u00a0\u202f\u2009]/g, ' ');
+  // «от 14 770 ₽/мес» — это платёж в кредит, а не цена: убираем такие суммы.
+  const clean = String(text || '').replace(/[\u00a0\u202f\u2009]/g, ' ')
+    .replace(/(?:от\s*)?\d[\d .,]*\d\s*(?:₽|руб\.?|р\.)?\s*(?:\/|в)\s*мес(?:яц)?\.?/gi, ' ');
   const fromParts = [...clean.matchAll(/от\s*(\d[\d .,]*\d(?:\s*млн)?)/gi)].flatMap((m) => parseRubles(m[1]));
   return fromParts.length ? fromParts : parseRubles(clean);
 }
